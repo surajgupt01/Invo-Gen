@@ -1,29 +1,44 @@
 import { Descriptions } from "../Elements";
-import Dollar from "../Icons/Dollor";
-import Yen from "../Icons/Yen";
-import Euro from "../Icons/Euro";
 import Tempelate from "../Icons/Tempelate";
 import PDF from "../Icons/PDF";
 import Share from "../Icons/Share";
 import History from "../Icons/History";
-import Rupee from "../Icons/Rupee";
+import { ReactNode } from "react";
+
 
 export default function Features() {
-  const currency: any = {
-    Rupee: <Rupee />,
-    Dollar: <Dollar />,
-    Yen: <Yen />,
-    Euro: <Euro />,
-  };
-  const logos: any = {
+  // const currency: any = {
+  //   Rupee: <Rupee />,
+  //   Dollar: <Dollar />,
+  //   Yen: <Yen />,
+  //   Euro: <Euro />,
+  // };
+
+  interface Prop {
+
+  logo : keyof LogoProp,
+  curr:string,
+  title : string,
+  desc : string
+
+  
+}
+  interface LogoProp{
+    tempelate : ReactNode,
+    PDF : ReactNode,
+    History : ReactNode,
+    share : ReactNode
+  }
+  const logos: LogoProp = {
     tempelate: <Tempelate />,
     PDF: <PDF />,
     History: <History />,
-    share: <Share />,
+    share: <Share />
   };
+
   return (
     <div className="w-full  p-4 md:flex-row flex flex-col  justify-center items-center">
-      {Descriptions.map((e: any) => (
+      {Descriptions.map((e:Prop ) => (
         <div
           key={e.title}
           className="border-1 p-2 border-gray-200  w-65 h-57 rounded-lg m-4"

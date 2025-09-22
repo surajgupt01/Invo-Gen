@@ -4,12 +4,12 @@ export default function Footer() {
   return (
     <div className=" top-full w-full bg-black min-h-100 text-gray-500 text-sm p-4 flex sm:flex-row flex-col justify-between">
       <div className="mt-20 ml-10">
-        <p className="text-lg font-semibold flex justify-center items-center">
+        <div className="text-lg font-semibold flex justify-center items-center">
           <div className="scale-80">
             <Logo></Logo>
           </div>
           Invoice-Gen
-        </p>
+        </div>
         <p className="md:ml-2 flex justify-center">Professional Invoices</p>
       </div>
 

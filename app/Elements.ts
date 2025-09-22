@@ -1,5 +1,21 @@
+import { ReactNode } from "react"
 
-export const Descriptions: any = [
+interface LogoProp{
+    tempelate : ReactNode,
+    PDF : ReactNode,
+    History : ReactNode,
+    share : ReactNode
+  }
+interface Prop {
+
+  logo : keyof LogoProp,
+  curr:string,
+  title : string,
+  desc : string
+
+  
+}
+export const Descriptions: Prop[] = [
   {
     logo: "tempelate",
     curr: "Rupee",
