@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Google from "../Icons/Google";
 import Left from "../Icons/Left";
-import Logo from "../Icons/Logo";
 
 export default function SignIn() {
   return (
@@ -46,7 +45,7 @@ export default function SignIn() {
             <Google /> Continue with Google
           </button>
           <div className="mt-4">
-            Don't have an account?{" "}
+            {"Don't have an account? "}
             <span className="text-blue-500 cursor-pointer hover:text-blue-700">
               SignIn
             </span>
