@@ -19,7 +19,7 @@ const [v , setValue] = useState('')
 
       <div className="w-full  h-full flex justify-center items-center relative p-2">
         <Link href={"/"} className="absolute top-5 left-5 text-gray-700 hover:text-black cursor-pointer flex justify-center items-center group"><Left/>back</Link>
-        <div className="  p-2 border-gray-300 border-1 shadow-md rounded-lg md:scale-100 scale-95 w-100 h-150 backdrop-blur-md  bg-white/90  flex flex-col items-center justify-center">
+        <div className="  p-2 border-gray-300 border-1 shadow-md rounded-lg md:scale-100 scale-95 w-100 h-150 backdrop-blur-md  bg-white  flex flex-col items-center justify-center">
           <p className="font-semibold w-60 text-center mb-4 text-md text-gray-600">
            Join us today <br></br> Quick and easy invoicing at your fingertips.
           </p>

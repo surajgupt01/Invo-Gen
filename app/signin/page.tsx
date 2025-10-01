@@ -13,7 +13,7 @@ export default function SignUp() {
 
       <div className="w-full  h-full flex justify-center items-center relative  ">
         <Link href={"/"} className="absolute top-5 left-5 text-gray-700 hover:text-black cursor-pointer flex justify-center items-center group"><Left/>back</Link>
-        <div className="  p-2 border-gray-300 border-1 shadow-md rounded-lg md:w-100 w-100 h-120 md:scale-100 scale-95  backdrop-blur-md  bg-white/85  flex flex-col items-center justify-center">
+        <div className="  p-2 border-gray-300 border-1 shadow-md rounded-lg md:w-100 w-100 h-120 md:scale-100 scale-95  backdrop-blur-md  bg-white  flex flex-col items-center justify-center">
           <p className="font-semibold w-60 text-center mb-4 text-md text-gray-600">
             Welcome back — securely sign in to manage your invoices. 
           </p>
