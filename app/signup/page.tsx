@@ -13,7 +13,7 @@ const [v , setValue] = useState('')
   return (
     <div className="md:p-4 p-3  w-full h-screen bg-gradient-to-br [@media(min-width:930px)]:from-gray-50 [@media(min-width:930px)]:via-white [@media(min-width:930px)]:to-gray-100 from-teal-600 via-cyan-500 to-green-500 flex  justify-center  items-center">
        
-       <div className="flex shadow-lg shadow-gray-400 rounded-xl w-full h-full">
+       <div className="flex shadow-md  rounded-xl w-full h-full bg-white/30">
         
         <SignSideBar/>
 
