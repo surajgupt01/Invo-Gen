@@ -62,18 +62,7 @@ import { ReactNode } from "react";
 
 import { useEffect, useState } from "react";
 
-const initialCards = [
-  { id: 1, title: "Invoice #1021", color: "bg-white" },
-  { id: 2, title: "Invoice #1022", color: "bg-gray-50" },
-  { id: 3, title: "Invoice #1023", color: "bg-gray-100" },
-];
 
-  interface Prop {
-    logo: keyof LogoProp;
-    curr: string;
-    title: string;
-    desc: string;
-  }
   interface LogoProp {
     template: ReactNode;
     PDF: ReactNode;

@@ -6,6 +6,7 @@ import Nav from "./component/Nav";
 import Tick from "./Icons/Tick";
 import Link from "next/link";
 
+
 export default function Home() {
   return (
     <div className="w-full h-full selection:bg-teal-400 scroll-smooth">
