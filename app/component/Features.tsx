@@ -43,7 +43,7 @@ export default function Features() {
         <div
           key={card.title}
           className={`
-            absolute inset-0 rounded-xl border -rotate-8  
+            absolute inset-0 rounded-xl  -rotate-8  
             shadow-lg md:p-6 p-4 m-auto
             transition-all duration-700 ease-in-out sm:h-60 sm:w-70 h-50 w-50 
             ${

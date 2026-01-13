@@ -140,9 +140,9 @@ function PayCard({
   ];
   return (
     <div
-      className={`border ${
+      className={` ${
         Category == "Lite" ? "h-full" : "h-auto"
-      } w-auto rounded-lg p-8 cursor-pointer shadow-xl shadow-gray-200 hover:scale-105 duration-300 ease-in-out`}
+      } w-65 rounded-lg p-8 cursor-pointer shadow-xl shadow-gray-200 hover:scale-105 duration-300 ease-in-out`}
     >
       <div className="font-bold text-2xl">{Category}</div>
       <div className="">
