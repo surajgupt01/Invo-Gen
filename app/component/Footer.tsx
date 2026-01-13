@@ -1,4 +1,4 @@
-import Logo from "../Icons/Logo";
+
 
 export default function Footer() {
   return (
