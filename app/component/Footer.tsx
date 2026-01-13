@@ -2,20 +2,36 @@ import Logo from "../Icons/Logo";
 
 export default function Footer() {
   return (
-    <div className=" top-full w-full bg-black min-h-100 text-gray-500 text-sm p-4 flex sm:flex-row flex-col justify-between">
-      <div className="mt-20 ml-10">
-        <div className="text-lg font-semibold flex justify-center items-center">
-          <div className="scale-80">
-            <Logo></Logo>
+    <div className=" top-full w-full bg-black min-h-100 text-gray-500 text-sm p-8 flex sm:flex-col flex-col justify-between">
+      <div className="mt-20 sm:ml-10  p-4 sm:w-[55%] w-full ">
+        <div className="text-4xl font-semibold flex gap-1 items-center">
+          <div className="scale-110">
+            {/* <Logo textColor="text-white"></Logo> */}
           </div>
-          Invoice-Gen
+          <span className="text-white">Ledg
+            
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-blue-400">erly</span>
+
+          </span>
         </div>
-        <p className="md:ml-2 flex justify-center">Professional Invoices</p>
+        {/* <p className="ml-2 flex">Professional Invoices</p> */}
+
+        <div className="sm:text-3xl text-2xl font-semibold mt-4">
+          <p className="text-gray-300">Create professional invoices in seconds — without spreadsheets.</p>
+          <p className="sm:text-2xl text-xl mt-4">Built for freelancers and small businesses who want clean,
+          client-ready invoices without the hassle.</p>
+          
+          <div className="text-xs mt-6 flex items-center gap-2 ">
+            <button className="rounded-xs hover:shadow-lg shadow-gray-900 hover:-translate-y-1 duration-300 cursor-pointer hover:text-teal-500 font-normal border-1 p-2 bg-white text-black">Contact Sales</button>
+            <button className="rounded-xs hover:shadow-lg shadow-gray-900 hover:-translate-y-1 duration-500 cursor-pointer hover:text-teal-500 font-normal border-1 p-2 bg-black text-white">Try now</button>
+          </div>
+        </div>
+
       </div>
 
-      <div className="flex flex-col items-center sm:w-[50%] w-full mt-20">
-        <div className="flex w-full justify-evenly">
-          <div>
+      <div className="flex flex-col items-center sm:w-[100%] w-full mt-20">
+        <div className="flex  justify-evenly w-[85%]">
+          <div className="flex flex-col gap-2">
             <p className="cursor-pointer hover:text-gray-300 m-2">About</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">Features</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">Pricing</p>{" "}
@@ -23,14 +39,14 @@ export default function Footer() {
             <p className="cursor-pointer hover:text-gray-300 m-2">Blog</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">About</p>
           </div>
-          <div>
+          <div  className="flex flex-col gap-2">
             <p className="cursor-pointer hover:text-gray-300 m-2">
               Documentation
             </p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">FAQ</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">Support</p>
           </div>
-          <div>
+          <div  className="flex flex-col gap-2">
             <p className="cursor-pointer m-2 hover:text-gray-300">X(Twitter)</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">LinkedIn</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">YouTube</p>
