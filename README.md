@@ -59,12 +59,12 @@ src/
 
 ## What This Project Demonstrates
 
-- **Real-world SaaS UI/UX design
-- **Complex form state management with Zustand
-- **Pixel-perfect invoice layouts
-- **HTML-to-PDF rendering
-- **Clean, scalable Next.js App Router architecture
-- **Built with production-grade practices and interview-ready code structure.
+- Real-world SaaS UI/UX design
+- Complex form state management with Zustand
+- Pixel-perfect invoice layouts
+- HTML-to-PDF rendering
+- Clean, scalable Next.js App Router architecture
+- Built with production-grade practices and interview-ready code structure.
 
 
 
