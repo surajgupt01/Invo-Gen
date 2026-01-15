@@ -44,3 +44,16 @@ git clone https://github.com/your-username/invo-gen.git
 cd invo-gen
 npm install
 npm run dev
+```
+
+## Project Structure
+```
+src/
+ ├─ app/            # Next.js App Router
+ ├─ components/     # Reusable UI components
+ ├─ store/          # Zustand stores
+ ├─ constants/      # Currency & config
+ ├─ styles/         # Global styles
+ └─ utils/          # Helper functions
+```
+
