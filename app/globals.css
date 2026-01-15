@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
+
 @custom-variant dark (&:is(.dark *));
 
 
@@ -9,6 +11,15 @@ html {
   scroll-behavior: smooth;
 }
 
+@layer base {
+  body {
+    font-family: 'sans-serif', sans-serif;
+    -webkit-font-smoothing: antialiased
+  }
+  h1, h2, h3 {
+    font-family: 'Roboto', sans-serif;
+  }
+}
 
 
 .custom-input {
