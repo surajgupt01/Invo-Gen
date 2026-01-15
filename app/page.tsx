@@ -6,7 +6,6 @@ import Nav from "./component/Nav";
 import Tick from "./Icons/Tick";
 import Link from "next/link";
 
-
 export default function Home() {
   return (
     <div className="w-full h-full selection:bg-teal-400 scroll-smooth">
@@ -15,15 +14,23 @@ export default function Home() {
 
         <HeroSection />
 
-        <div className="inline-flex  justify-center items-start border border-white/20 rounded-xl md:p-4 p-2 sm:mt-6 mt-10  bg-black/5 shadow-xl shadow-gray-300 ">
-          <div className="md:p-[8px] p-[6px] shadow-lg shadow-gray-400  border-white/20 border rounded-xl inline-flex justify-center items-center bg-black/10">
-            <img
-              src="/dash-Img.png"
-              className="md:w-[65vw] rounded-lg w-[97vw] "
-              alt="dashboard"
-            />
-          </div>
-        </div>
+<div
+  className="
+    inline-flex justify-center items-start
+    rounded-xl md:p-3 p-2 m-2
+    sm:mt-6 mt-10
+    bg-teal-400/40
+    shadow-lg shadow-emerald-400/30
+  "
+>
+  <img
+    src="/dash-Img.png"
+    className="md:w-[65vw] w-[97vw] md:h-auto h-[25vh] rounded-lg"
+    alt="dashboard"
+  />
+</div>
+
+
 
         <div className="md:flex flex md:flex-row flex-col  justify-center items-center gap-6 md:mt-20 mt-5  p-8 h-150 w-full ">
           <div className="font-bold flex-col md:text-4xl sm:text-3xl text-xl md:w-[80%] w-full  flex items-center justify-center md:mt-30 mt-15 p-6 text-gray-600">
@@ -76,8 +83,8 @@ export default function Home() {
         <div className="md:flex md:flex-row flex flex-col justify-center items-center gap-6 mt-20   md:p-8 p-4 md:h-100 h-auto bg-teal-100 w-full  ">
           <div className="font-bold  flex-col md:text-4xl sm:text-3xl text-xl flex items-start justify-center md:mt-30 mt-0 md:p-6 p-2 text-gray-600">
             <p className=" md:text-left text-center leading-12  ">
-              <span className="md:text-6xl text-5xl">Unlock</span> Your Business Potential{" "}
-              <span className="md:text-5xl text-3xl">Today!</span>
+              <span className="md:text-6xl text-5xl">Unlock</span> Your Business
+              Potential <span className="md:text-5xl text-3xl">Today!</span>
             </p>
 
             <p className="  md:mt-6 mt-4 font-light sm:text-lg text-sm">
