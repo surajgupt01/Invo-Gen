@@ -69,10 +69,12 @@ src/
 
 
 ## Author
+
+**Suraj Gupta**
+
+🌐 **Portfolio:** https://portfolio-v1-ten-lemon.vercel.app/
+💼 **LinkedIn:** https://www.linkedin.com/in/suraj-gupta-1894051ba/
+
 ```
-Suraj Gupta
-Full-Stack Developer
-🌐 Portfolio: https://portfolio-v1-ten-lemon.vercel.app/
-💼 LinkedIn: https://www.linkedin.com/in/suraj-gupta-1894051ba/
-```
+
 
