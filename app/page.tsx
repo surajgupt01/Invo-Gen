@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="w-full h-full selection:bg-teal-400 scroll-smooth">
+    <div className="w-full h-full selection:bg-teal-400 scroll-smooth tracking-wide">
       <div className=" bg-linear-to-b from-gray-200/20 via-teal-50 to-gray-200/20 flex flex-col items-center scroll-smooth  ">
         <Nav />
 
@@ -25,7 +25,7 @@ export default function Home() {
 >
   <img
     src="/dash-Img.png"
-    className="md:w-[65vw] w-[97vw] md:h-auto h-[25vh] rounded-lg"
+    className="md:w-[65vw] w-[97vw] md:h-auto h-[27vh] rounded-lg"
     alt="dashboard"
   />
 </div>
@@ -34,7 +34,7 @@ export default function Home() {
 
         <div className="md:flex flex md:flex-row flex-col  justify-center items-center gap-6 md:mt-20 mt-5  p-8 h-150 w-full ">
           <div className="font-bold flex-col md:text-4xl sm:text-3xl text-xl md:w-[80%] w-full  flex items-center justify-center md:mt-30 mt-15 p-6 text-gray-600">
-            <p className="w-full text-left leading-12 h-full ">
+            <p className="w-full text-left leading-12 h-full font-medium ">
               <span className="md:text-8xl text-4xl">Everything</span> You Need
               to Create{" "}
               <span className="md:text-6xl text-3xl">Professional</span>{" "}
@@ -54,18 +54,18 @@ export default function Home() {
 
         <div
           id="PriceSection"
-          className="font-bold  flex-col md:text-4xl md:h-200  sm:text-3xl text-xl w-full flex items-center justify-center mt-10 text-gray-600"
+          className=" flex-col md:text-4xl md:h-200  sm:text-3xl text-xl w-full flex items-center justify-center mt-10 text-gray-600"
         >
-          <p className="w-full text-center">
+          <p className="w-full text-center font-medium ">
             Pricing that scales with your business
           </p>
 
-          <p className="md:w-150 sm:w-120 w-80 text-center mt-6 font-light sm:text-lg text-sm">
+          <p className="md:w-150 sm:w-120 w-80 font-medium  text-center mt-6  sm:text-lg text-sm">
             Everything you need to create professional invoices, without
             complexity.
           </p>
 
-          <div className="w-full  md:h-108 h-auto md:flex flex md:flex-row flex-col justify-center items-center p-4 gap-4 mt-8">
+          <div className="w-full   md:h-108 h-auto md:flex flex md:flex-row flex-col justify-center items-center p-4 gap-4 mt-8">
             <PayCard
               Category="Free"
               Price="$0"
@@ -82,12 +82,12 @@ export default function Home() {
 
         <div className="md:flex md:flex-row flex flex-col justify-center items-center gap-6 mt-20   md:p-8 p-4 md:h-100 h-auto bg-teal-100 w-full  ">
           <div className="font-bold  flex-col md:text-4xl sm:text-3xl text-xl flex items-start justify-center md:mt-30 mt-0 md:p-6 p-2 text-gray-600">
-            <p className=" md:text-left text-center leading-12  ">
+            <p className=" md:text-left text-center leading-12 font-medium  ">
               <span className="md:text-6xl text-5xl">Unlock</span> Your Business
               Potential <span className="md:text-5xl text-3xl">Today!</span>
             </p>
 
-            <p className="  md:mt-6 mt-4 font-light sm:text-lg text-sm">
+            <p className="  md:mt-6 mt-4 font-light sm:text-lg text-sm ml-2">
               No complexity—just clean, professional invoices.
             </p>
             <Link href={"/signin"}>
@@ -152,7 +152,7 @@ function PayCard({
       } w-65 rounded-lg p-8 cursor-pointer shadow-xl shadow-gray-200 hover:scale-105 duration-300 ease-in-out`}
     >
       <div className="font-bold text-2xl">{Category}</div>
-      <div className="">
+      <div className="font-light text-gray-500">
         {Category == "Free" &&
           FreeFeatures.map((e: string, index: number) => (
             <span

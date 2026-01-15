@@ -2,9 +2,9 @@
 
 export default function Footer() {
   return (
-    <div className=" top-full w-full bg-black min-h-100 text-gray-500 text-sm p-8 flex sm:flex-col flex-col justify-between">
+    <div className=" top-full w-full bg-black min-h-100 text-gray-500 text-sm p-8 flex sm:flex-col flex-col justify-between font-medium tracking-wide">
       <div className="mt-20 sm:ml-10  p-4 sm:w-[55%] w-full ">
-        <div className="text-4xl font-semibold flex gap-1 items-center">
+        <div className="text-4xl  flex gap-1 items-center">
           <div className="scale-110">
             {/* <Logo textColor="text-white"></Logo> */}
           </div>
@@ -16,7 +16,7 @@ export default function Footer() {
         </div>
         {/* <p className="ml-2 flex">Professional Invoices</p> */}
 
-        <div className="sm:text-3xl text-2xl font-semibold mt-4">
+        <div className="sm:text-3xl text-2xl  mt-4">
           <p className="text-gray-300">Create professional invoices in seconds — without spreadsheets.</p>
           <p className="sm:text-2xl text-xl mt-4">Built for freelancers and small businesses who want clean,
           client-ready invoices without the hassle.</p>
