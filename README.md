@@ -9,8 +9,8 @@
 
 A **modern SaaS-style invoice generator** that helps freelancers and small businesses create **professional, print-ready invoices** with real-time preview and PDF export.
 
-🔗 **Live Demo:** https://your-live-link.com  
-📦 **Repository:** https://github.com/your-username/invo-gen
+🔗 **Live Demo:** https://invo-gen-nine.vercel.app/
+📦 **Repository:** https://github.com/surajgupt01/Invo-Gen
 
 ---
 
@@ -55,5 +55,24 @@ src/
  ├─ constants/      # Currency & config
  ├─ styles/         # Global styles
  └─ utils/          # Helper functions
+```
+
+## What This Project Demonstrates
+
+- **Real-world SaaS UI/UX design
+- **Complex form state management with Zustand
+- **Pixel-perfect invoice layouts
+- **HTML-to-PDF rendering
+- **Clean, scalable Next.js App Router architecture
+- **Built with production-grade practices and interview-ready code structure.
+
+
+
+## Author
+```
+Suraj Gupta
+Full-Stack Developer
+🌐 Portfolio: https://portfolio-v1-ten-lemon.vercel.app/
+💼 LinkedIn: https://www.linkedin.com/in/suraj-gupta-1894051ba/
 ```
 
