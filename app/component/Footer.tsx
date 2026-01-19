@@ -16,9 +16,9 @@ export default function Footer() {
         </div>
         {/* <p className="ml-2 flex">Professional Invoices</p> */}
 
-        <div className="sm:text-3xl text-2xl  mt-4">
-          <p className="text-gray-300">Create professional invoices in seconds — without spreadsheets.</p>
-          <p className="sm:text-2xl text-xl mt-4">Built for freelancers and small businesses who want clean,
+        <div className="sm:text-2xl text-xl  mt-4 tracking-wide font-mono">
+          <p className="text-gray-400">Create professional invoices in seconds — without spreadsheets.</p>
+          <p className="sm:text-xl text-lg mt-2">Built for freelancers and small businesses who want clean,
           client-ready invoices without the hassle.</p>
           
           <div className="text-xs mt-6 flex items-center gap-2 ">
@@ -37,7 +37,6 @@ export default function Footer() {
             <p className="cursor-pointer m-2 hover:text-gray-300">Pricing</p>{" "}
             <p className="cursor-pointer m-2 hover:text-gray-300">Contact</p>{" "}
             <p className="cursor-pointer hover:text-gray-300 m-2">Blog</p>{" "}
-            <p className="cursor-pointer m-2 hover:text-gray-300">About</p>
           </div>
           <div  className="flex flex-col gap-2">
             <p className="cursor-pointer hover:text-gray-300 m-2">

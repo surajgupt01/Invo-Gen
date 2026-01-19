@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="w-full h-full selection:bg-teal-400 scroll-smooth tracking-wide">
+    <div className="w-full h-full selection:bg-teal-400 scroll-smooth tracking-wide font-mono">
       <div className=" bg-linear-to-b from-gray-200/20 via-teal-50 to-gray-200/20 flex flex-col items-center scroll-smooth  ">
         <Nav />
 
@@ -25,7 +25,7 @@ export default function Home() {
 >
   <img
     src="/dash-Img.png"
-    className="md:w-[65vw] w-[97vw] md:h-auto h-[27vh] rounded-lg"
+    className="md:w-[65vw] w-[97vw] md:h-auto h-[26vh] rounded-lg"
     alt="dashboard"
   />
 </div>
@@ -149,7 +149,7 @@ function PayCard({
     <div
       className={` ${
         Category == "Lite" ? "h-full" : "h-auto"
-      } w-65 rounded-lg p-8 cursor-pointer shadow-xl shadow-gray-200 hover:scale-105 duration-300 ease-in-out`}
+      } w-65 rounded-lg p-6 cursor-pointer shadow-xl shadow-gray-200 hover:scale-105 duration-300 ease-in-out`}
     >
       <div className="font-bold text-2xl">{Category}</div>
       <div className="font-light text-gray-500">
@@ -157,7 +157,7 @@ function PayCard({
           FreeFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-sm font-light mt-2"
+              className="flex items-center gap-1 text-xs font-light mt-2 leading-5"
             >
               <Tick />
               {e}
@@ -167,7 +167,7 @@ function PayCard({
           LiteFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-sm font-light mt-2"
+              className="flex items-center gap-1 text-xs leading-6 font-light mt-2"
             >
               <Tick />
               {e}
@@ -177,7 +177,7 @@ function PayCard({
           ProFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-sm font-light mt-2"
+              className="flex items-center gap-1 text-xs font-light mt-2 leading-5"
             >
               <Tick />
               {e}
