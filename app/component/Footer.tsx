@@ -16,7 +16,7 @@ export default function Footer() {
         </div>
         {/* <p className="ml-2 flex">Professional Invoices</p> */}
 
-        <div className="sm:text-2xl text-xl  mt-4 tracking-wide font-mono">
+        <div className="sm:text-2xl text-xl  mt-4 tracking-wide">
           <p className="text-gray-400">Create professional invoices in seconds — without spreadsheets.</p>
           <p className="sm:text-xl text-lg mt-2">Built for freelancers and small businesses who want clean,
           client-ready invoices without the hassle.</p>

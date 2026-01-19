@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="w-full h-full selection:bg-teal-400 scroll-smooth tracking-wide font-mono">
+    <div className="w-full h-full selection:bg-teal-400 scroll-smooth tracking-wide ">
       <div className=" bg-linear-to-b from-gray-200/20 via-teal-50 to-gray-200/20 flex flex-col items-center scroll-smooth  ">
         <Nav />
 
