@@ -69,20 +69,20 @@ export default function FAQ() {
 
   return (
     <div className="mt-30 flex flex-col items-center w-full h-auto  md:p-6 p-4">
-      <div className="bg-gray-400 rounded-full text-xs font-semibold text-gray-700 p-2 ">
+      <div className="bg-gray-200 rounded-full text-xs font-semibold text-gray-700 p-4 ">
         Frequently Asked Questions
       </div>
       <div className="text-4xl font-bold text-gray-600 mt-10">FAQ</div>
-      <div className="bg-gray-800 rounded-xl md:w-150 w-full h-auto mt-4 p-4">
-        <div className="bg-gray-800 rounded-xl w-full mt-4 md:p-4 p-2 space-y-2">
+      <div className="bg-gray-100 rounded-xl md:w-150 w-full h-auto mt-4 p-4">
+        <div className="bg-gray-100 rounded-xl w-full mt-4 md:p-4 p-2 space-y-2">
           {Questions.map((ele, idx) => {
             const isOpen = open === idx;
 
             return (
-              <div key={idx} className={`rounded-sm  overflow-hidden bg-gray-800 ${open==idx ? 'bg-gray-900 overflow-auto' : ''}`}>
+              <div key={idx} className={`rounded-sm  overflow-hidden bg-gray-100 ${open==idx ? 'bg-gray-200 overflow-auto' : ''}`}>
                 <button
                   onClick={() => setOpen(isOpen ? -1 : idx)}
-                  className="w-full text-left flex justify-between cursor-pointer items-center md:p-3 p-2 text-sm text-gray-500 font-semibold hover:bg-gray-900 transition-all"
+                  className="w-full text-left flex justify-between cursor-pointer items-center md:p-3 p-2 text-sm text-gray-700 font-semibold hover:bg-gray-200 transition-all"
                 >
                   <span>{ele.question}</span>
 
@@ -100,7 +100,7 @@ export default function FAQ() {
                     isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
-                  <p className="p-3 text-xs text-gray-400">{ele.answer}</p>
+                  <p className="p-3 text-xs text-gray-700">{ele.answer}</p>
                 </div>
               </div>
             );
