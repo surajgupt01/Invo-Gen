@@ -7,7 +7,7 @@ interface NavProp {
 }
 export function NavLogo({ textColor }: NavProp) {
   return (
-    <div className="  w-full cursor-pointer font-bold sm:text-xl tracking-widest text-xs flex items-center ">
+    <div className="  w-full cursor-pointer font-bold sm:text-xl tracking-widest text-md flex items-center ">
       {/* <Logo textColor = {textColor}/> */}
       <span className={`${textColor}`}>
         Lu

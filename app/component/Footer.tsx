@@ -21,7 +21,7 @@ export default function Footer() {
             <p className="text-gray-800">
               Create professional invoices in seconds — without spreadsheets.
             </p>
-            <p className="sm:text-sm text-sm mt-2">
+            <p className="sm:text-sm text-sm mt-2 font-light text-gray-500">
               Built for freelancers and small businesses who want clean,
               client-ready invoices without the hassle.
             </p>
@@ -33,11 +33,6 @@ export default function Footer() {
               <button className="rounded-xs hover:shadow-lg shadow-gray-200 hover:-translate-y-1 duration-300 cursor-pointer hover:text-teal-500 font-normal border-1 p-2 bg-black text-white">
                 Try now
               </button>
-            </div>
-            <div className="flex justify-start gap-2  items-center flex-row  w-full mt-8 text-[8px]">
-              <p>© 2025 Invoice-Gen. All rights reserved.</p>
-              <p>Privacy Policy</p>
-              <p>Terms of Use</p>
             </div>
           </div>
         </div>
@@ -65,6 +60,12 @@ export default function Footer() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="flex lg:justify-start justify-center gap-4  items-center flex-row  w-full mt-8 text-[8px] px-2 lg:px-14 ">
+        <p>© 2025 Invoice-Gen. All rights reserved.</p>
+        <p>Privacy Policy</p>
+        <p>Terms of Use</p>
       </div>
 
       <div
