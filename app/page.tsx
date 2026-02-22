@@ -59,11 +59,11 @@ export default function Home() {
           id="PriceSection"
           className=" flex-col md:text-4xl md:h-200  sm:text-3xl text-xl w-full flex items-center justify-center mt-10 text-gray-600"
         >
-          <p className="w-full text-center font-medium ">
+          <p className="w-full text-center font-medium text-gray-800 ">
             Pricing that scales with your business
           </p>
 
-          <p className="md:w-150 sm:w-120 w-80 font-medium  text-center mt-6  sm:text-lg text-sm">
+          <p className="md:w-150 sm:w-120 w-80 font-medium tracking-wider  text-center mt-6  sm:text-lg text-sm">
             Everything you need to create professional invoices, without
             complexity.
           </p>
@@ -267,15 +267,15 @@ function PayCard({
     <div
       className={` ${
         Category == "Lite" ? "h-full" : "h-auto"
-      } w-65 rounded-lg p-6 cursor-pointer shadow-xl shadow-gray-200 hover:scale-105 duration-300 ease-in-out`}
+      } w-65 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category==='Pro' && 'bg-gradient-to-br from-emerald-700 via-emerald-600 to-green-600' } ${Category==='Lite' && 'bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500' }  hover:scale-105 duration-300 ease-in-out`}
     >
-      <div className="font-bold text-2xl">{Category}</div>
-      <div className="font-light text-gray-500">
+      <div className={`font-bold text-2xl text-gray-200 ${Category=='Free' && 'text-gray-700' }`}>{Category}</div>
+      <div className="font-light text-gray-200">
         {Category == "Free" &&
           FreeFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5"
+              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-800"
             >
               <Tick />
               {e}
@@ -295,7 +295,7 @@ function PayCard({
           ProFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5"
+              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-200"
             >
               <Tick />
               {e}
@@ -303,19 +303,19 @@ function PayCard({
           ))}
       </div>
       <div className="mt-2">
-        <span className="text-3xl">
+        <span className="text-3xl text-gray-50">
           {Price}
           <span className="text-sm font-light">
             {Category == "Pro" ? `/year` : `/month`}
           </span>
         </span>
-        <div className="w-full mt-2">
+        <div className=" mt-2">
           <button
-            className={`p-2 flex mt-4 items-center justify-center rounded-full w-full ${
+            className={`p-2 flex mt-4 items-center justify-center  border border-gray-300 ${
               Category == "Free"
-                ? "bg-gray-300 text-gray-800"
-                : "bg-black text-gray-300"
-            } cursor-pointer hover:text-teal-600  text-sm font-normal hover:scale-105 ease-in-out duration-500`}
+                ? "hover:border-gray-400 text-gray-800"
+                : "hover:bg-black hover:text-gray-100  text-gray-800"
+            } cursor-pointer  text-sm font-normal ease-in-out duration-200`}
           >
             {mssg}
           </button>
