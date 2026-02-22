@@ -8,7 +8,6 @@ import VideoIcon from "./Icons/Video";
 import { Descriptions } from "./Elements";
 import Image from "next/image";
 
-
 export default function Home() {
   return (
     <div className="w-full h-full selection:bg-teal-400 scroll-smooth tracking-wide ">
@@ -19,6 +18,7 @@ export default function Home() {
 
         <div
           className="
+
     inline-flex justify-center items-start
     rounded-sm md:p-3 p-2 m-2
     sm:mt-6 mt-10
@@ -106,7 +106,7 @@ export default function Home() {
                 rounded-xs text-white md:text-sm md:mt-4 mt-2 text-sm cursor-pointer transition-all ease-in-out duration-500"
               >
                 see how it works
-                <VideoIcon/>
+                <VideoIcon />
               </div>
             </div>
 

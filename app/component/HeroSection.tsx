@@ -2,16 +2,20 @@ import Link from "next/link";
 import Arrow from "../Icons/Arrow";
 import Magnify from "../Icons/Magnify";
 import Create from "../Icons/Create";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <div className="flex flex-col  w-full items-center justify-end h-100 sm:mt-0 ">
+    <div className="flex flex-col  w-full items-center justify-end h-120 sm:mt-0 ">
+
       <div className="md:text-5xl text-3xl  font-bold text-gray-700 w-full flex justify-center">
         Professional Invoice
       </div>
+
       <div className="md:text-6xl  text-3xl w-full    font-bold bg-clip-text flex justify-center text-transparent bg-linear-to-r from-green-600 to-blue-500">
         Generation Made Simple
       </div>
+
       <div className="mt-10">
         <p className="text-gray-600 md-text-xl text-sm text-md   md:w-190 sm:w-160 w-80 text-center">
           Create, customize, and send professional invoices in minutes. Perfect
@@ -22,7 +26,7 @@ export default function HeroSection() {
       <div className="mt-8 flex  p-2 w-full justify-center items-center">
         <Link
           href={"/#Features"}
-          className="p-3 flex gap-1 h-11 group overflow-hidden justify-center items-center  text-sm  text-gray-200 hover:text-teal-500 bg-black   rounded-xl shadow-2xl shadow-gray-300 border-1 border-gray-300 cursor-pointer hover:scale-102 transition-all ease-in-out duration-500"
+          className="p-3 flex gap-1 h-11 group overflow-hidden justify-center items-center  text-sm  text-gray-200 hover:text-teal-500 bg-gray-900 hover:bg-black   rounded-sm shadow-2xl shadow-gray-300 border-1 border-gray-300 cursor-pointer hover:scale-102 transition-all ease-in-out duration-500"
         >
           <div className="flex flex-col gap-5 items-center justify-center duration-300 ease-in-out -mt-10 group-hover:mt-10">
             <div className="flex flex-row items-center justify-center ">
@@ -57,6 +61,10 @@ export default function HeroSection() {
             </div>
           </div>
         </Link>
+      </div>
+      <div className=" text-gray-600 w-full h-auto  flex text-[10px] justify-center items-center ">
+       <Image className="" alt="" src={'/ChatGPT Image Feb 23, 2026, 12_01_02 AM.png'} width={120} height={10}></Image>
+        <span className=""><span className="font-semibold md:text-sm text-xs">Trusted</span> by 1000+ businesses & freelancers</span>
       </div>
     </div>
   );
