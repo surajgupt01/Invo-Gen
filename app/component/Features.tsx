@@ -43,12 +43,12 @@ export default function Features() {
         <div
           key={card.title}
           className={`
-            absolute inset-0 rounded-xl  -rotate-8  
-            shadow-lg md:p-6 p-4 m-auto
+            absolute inset-0  -rotate-8  
+            shadow-lg md:p-4 py-6 p-4 m-auto
             transition-all duration-700 ease-in-out sm:h-60 sm:w-70 h-50 w-50 
             ${
               i === 0 &&
-              "z-30 scale-100 translate-y-0 translate-x-0 -rotate-8 bg-yellow-50"
+              "z-30 scale-100 translate-y-0 translate-x-0 -rotate-8 bg-white"
             }
             ${
               i === 1 &&
