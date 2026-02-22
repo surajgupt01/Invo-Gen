@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Arrow from "../Icons/Arrow";
-
+import Magnify from "../Icons/Magnify";
+import Create from "../Icons/Create";
 
 export default function HeroSection() {
   return (
@@ -19,13 +20,42 @@ export default function HeroSection() {
       </div>
 
       <div className="mt-8 flex  p-2 w-full justify-center items-center">
-        <Link href={'/dashboard'}><div className="md:p-4 p-3 flex justify-center items-center bg-black text-white md:text-md text-sm  rounded-3xl shadow-xl shadow-gray-400 cursor-pointer hover:scale-105 transition-all ease-in-out duration-500">
-          Create new Invoices
-          <Arrow />
-        </div>
+        <Link
+          href={"/#Features"}
+          className="p-3 flex gap-1 h-11 group overflow-hidden justify-center items-center  text-sm bg-gray-50 text-gray-800 hover:text-blue-400 hover:bg-neutral-100  rounded-xl shadow-2xl shadow-gray-300 border-1 border-gray-300 cursor-pointer hover:scale-102 transition-all ease-in-out duration-500"
+        >
+          <div className="flex flex-col gap-5 items-center justify-center duration-300 ease-in-out -mt-10 group-hover:mt-10">
+            <div className="flex flex-row items-center justify-center ">
+              <Magnify /> {"Learn more"}
+            </div>
+            <div className="flex flex-row items-center justify-center">
+              <Magnify /> {"Learn more"}
+            </div>
+          </div>
         </Link>
-        <Link href={'/#Features'} className="p-3 flex justify-center items-center ml-4 text-md text-gray-600 hover:text-black  rounded-2xl shadow-2xl shadow-gray-300 border-1 border-gray-300 cursor-pointer hover:scale-102 transition-all ease-in-out duration-500">
-          Learn more
+        <Link href={"/dashboard"}>
+          <div
+            className="group inline-flex items-center justify-center gap-1
+                md:py-4 py-3 px-4
+                bg-black text-white
+                md:text-md text-sm
+                rounded-full  shadow-gray-400
+                cursor-pointer
+                ml-2
+                transition-all duration-500"
+          >
+            <span>Create new Invoices</span>
+
+            <div className="relative w-5 h-5 flex items-center justify-center overflow-hidden">
+              <div className="absolute transition-transform duration-300 group-hover:-translate-y-full">
+                <Create />
+              </div>
+
+              <div className="absolute translate-y-full transition-transform duration-300 group-hover:translate-y-0">
+                <Arrow />
+              </div>
+            </div>
+          </div>
         </Link>
       </div>
     </div>
