@@ -1,5 +1,4 @@
 import FAQ from "./component/FAQ";
-import Features from "./component/Features";
 import Footer from "./component/Footer";
 import HeroSection from "./component/HeroSection";
 import Nav from "./component/Nav";
@@ -8,8 +7,7 @@ import Link from "next/link";
 import VideoIcon from "./Icons/Video";
 import { Descriptions } from "./Elements";
 import Image from "next/image";
-import Template from "./Icons/Tempelate";
-import Docs from "./Icons/Doc";
+
 
 export default function Home() {
   return (
