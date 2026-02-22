@@ -66,7 +66,7 @@ export default function HeroSection() {
           <Image
             className=""
             alt=""
-            src={"/ChatGPT Image Feb 23, 2026, 12_01_02 AM.png"}
+            src={"/avatar.png"}
             width={120}
             height={40}
           ></Image>
