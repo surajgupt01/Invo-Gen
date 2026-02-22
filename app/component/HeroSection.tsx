@@ -6,8 +6,7 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <div className="flex flex-col  w-full items-center justify-end h-120 sm:mt-0 ">
-
+    <div className="flex flex-col  w-full items-center justify-end lg:h-120 h-110 sm:mt-0 ">
       <div className="md:text-5xl text-3xl  font-bold text-gray-700 w-full flex justify-center">
         Professional Invoice
       </div>
@@ -62,9 +61,24 @@ export default function HeroSection() {
           </div>
         </Link>
       </div>
-      <div className=" text-gray-600 w-full h-auto  flex text-[10px] justify-center items-center ">
-       <Image className="" alt="" src={'/ChatGPT Image Feb 23, 2026, 12_01_02 AM.png'} width={120} height={10}></Image>
-        <span className=""><span className="font-semibold md:text-sm text-xs">Trusted</span> by 1000+ businesses & freelancers</span>
+      <div className=" text-gray-600 w-full h-auto flex  flex-col text-[10px] justify-center items-center mt-4 ">
+        <div className="w-full flex flex-row justify-center items-center gap-2">
+          <Image
+            className=""
+            alt=""
+            src={"/ChatGPT Image Feb 23, 2026, 12_01_02 AM.png"}
+            width={120}
+            height={40}
+          ></Image>
+          <span className="">
+            <span className="font-semibold lg:text-sm text-[8px]">Trusted</span> by
+            1000+ businesses & freelancers
+            <br></br>
+            <span className="lg:text-xs text-gray-500 font-sans text-[7px]">
+              Helping businesses get paid faster, every day.
+            </span>
+          </span>
+        </div>
       </div>
     </div>
   );

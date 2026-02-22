@@ -21,7 +21,7 @@ export default function Home() {
 
     inline-flex justify-center items-start
     rounded-sm md:p-3 p-2 m-2
-    sm:mt-6 mt-10
+    sm:mt-3 mt-10
     bg-gradient-to-r from bg-teal-600/30 via-cyan-600/80  to-blue-600/30
     shadow-xl shadow-emerald-400/30 hover:shadow-2xl duration-300 ease-in-out cursor-pointer
   "
