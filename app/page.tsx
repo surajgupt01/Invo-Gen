@@ -285,7 +285,7 @@ function PayCard({
           LiteFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs leading-6 font-light mt-2"
+              className="flex items-center gap-1 text-xs leading-6 font-light mt-2 text-gray-100"
             >
               <Tick />
               {e}
@@ -295,7 +295,7 @@ function PayCard({
           ProFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-200"
+              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-100"
             >
               <Tick />
               {e}
