@@ -285,7 +285,7 @@ function PayCard({
           LiteFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs leading-6 font-light mt-2 text-gray-100"
+              className="flex items-center gap-1 text-xs leading-6 font-light mt-2 text-white"
             >
               <Tick />
               {e}
@@ -295,7 +295,7 @@ function PayCard({
           ProFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-100"
+              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-white"
             >
               <Tick />
               {e}
@@ -303,7 +303,7 @@ function PayCard({
           ))}
       </div>
       <div className="mt-2">
-        <span className="text-3xl text-gray-50">
+        <span className={`text-3xl text-gray-50 ${Category=='Free' && 'text-gray-700'}`}>
           {Price}
           <span className="text-sm font-light">
             {Category == "Pro" ? `/year` : `/month`}
