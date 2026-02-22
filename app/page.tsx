@@ -20,9 +20,9 @@ export default function Home() {
         <div
           className="
     inline-flex justify-center items-start
-    rounded-3xl md:p-3 p-2 m-2
+    rounded-sm md:p-3 p-2 m-2
     sm:mt-6 mt-10
-    bg-gradient-to-b from bg-teal-500/60 via-green-400/80  to-blue-500/60
+    bg-gradient-to-r from bg-teal-600/30 via-cyan-600/80  to-blue-600/30
     shadow-xl shadow-emerald-400/30 hover:shadow-2xl duration-300 ease-in-out cursor-pointer
   "
         >
@@ -30,7 +30,7 @@ export default function Home() {
             width={2000}
             height={4000}
             src="/dash-Img.png"
-            className="md:w-[65vw] w-[97vw] md:h-auto h-[26vh] rounded-2xl"
+            className="md:w-[65vw] w-[97vw] md:h-auto h-[26vh] rounded-xs"
             alt="dashboard"
           />
         </div>
