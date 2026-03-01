@@ -58,14 +58,14 @@ export default function Home() {
         <PaymentOptions />
         <div className="md:flex md:flex-row flex flex-col mt-20  lg:px-35 px-5  h-auto bg-gradient-to-b from-neutral-950 via-gray-950 to-neutral-950 w-full">
           <div className="font-bold border-l border-gray-900 w-full  flex-col md:text-4xl sm:text-3xl text-xl flex items-start justify-center  mt-0  py-6 text-teal-100">
-            <p className=" md:text-left text-center font-medium  px-2">
+            <p className=" md:text-left text-center font-bold ml-1 text-gray-50">
               Unlock Your Business Potential Today!
             </p>
 
-            <p className="mt-1 font-light sm:text-lg text-sm ml-2 text-teal-100 px-2">
+            <p className="mt-1 font-light sm:text-lg text-sm  text-gray-300 px-1">
               No complexity—just clean, professional invoices.
             </p>
-            <div className="flex items-center border-b border-gray-900 w-full p-2">
+            <div className="flex items-center border-b border-gray-900 w-full py-2">
               <Link href={"/signin"}>
                 <div
                   className="md:py-3 py-2 px-6 ml-2 flex justify-center items-center active:scale-90  bg-neutral-50 tracking-wide   
