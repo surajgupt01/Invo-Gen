@@ -2,11 +2,11 @@ import FAQ from "./component/FAQ";
 import Footer from "./component/Footer";
 import HeroSection from "./component/HeroSection";
 import Nav from "./component/Nav";
-import Tick from "./Icons/Tick";
 import Link from "next/link";
 import VideoIcon from "./Icons/Video";
 import { Descriptions } from "./Elements";
 import Image from "next/image";
+import PaymentOptions from "./component/PayCards";
 
 export default function Home() {
   return (
@@ -55,34 +55,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div
-          id="PriceSection"
-          className=" flex-col md:text-4xl md:h-200  sm:text-3xl text-xl w-full flex items-center justify-center mt-10 text-gray-600"
-        >
-          <p className="w-full text-center font-medium text-gray-800 ">
-            Pricing that scales with your business
-          </p>
-
-          <p className="md:w-150 sm:w-120 w-80 font-medium tracking-wider  text-center mt-6  sm:text-lg text-sm">
-            Everything you need to create professional invoices, without
-            complexity.
-          </p>
-
-          <div className="w-full   md:h-108 h-auto md:flex flex md:flex-row flex-col justify-center items-center p-4 gap-4 mt-8">
-            <PayCard
-              Category="Free"
-              Price="$0"
-              mssg="Your current plan"
-            ></PayCard>
-            <PayCard
-              Category="Lite"
-              Price="$3"
-              mssg="Upgrade to Lite"
-            ></PayCard>
-            <PayCard Category="Pro" Price="$26" mssg="Upgrade to Pro"></PayCard>
-          </div>
-        </div>
-
+        <PaymentOptions />
         <div className="md:flex md:flex-row flex flex-col mt-20  lg:px-35 px-5  h-auto bg-gradient-to-b from-neutral-950 via-gray-950 to-neutral-950 w-full">
           <div className="font-bold border-l border-gray-900 w-full  flex-col md:text-4xl sm:text-3xl text-xl flex items-start justify-center  mt-0  py-6 text-teal-100">
             <p className=" md:text-left text-center leading-12 font-medium  px-2">
@@ -224,103 +197,6 @@ export default function Home() {
       </div>
 
       <Footer />
-    </div>
-  );
-}
-
-function PayCard({
-  Category,
-  Price,
-  mssg,
-}: {
-  Category: string;
-  Price: string;
-  mssg: string;
-}) {
-  const FreeFeatures = [
-    "Create unlimited invoices.",
-    " Download invoices as PDF",
-    "Auto-calculate totals & tax",
-    " Multi-currency support",
-    "Clean, professional template",
-    "Data stays in your browser",
-  ];
-
-  const LiteFeatures = [
-    " Everything in Free",
-    "Save clients & products",
-    "Invoice history & re-download",
-    "Edit past invoices",
-    "Faster invoice creation",
-    "Email-ready PDF export",
-  ];
-
-  const ProFeatures = [
-    "Everything in Lite",
-    "Upload business logo",
-    "Custom brand colors",
-    "Advanced tax / GST configuration",
-    " Remove watermark",
-    " Priority feature updates",
-  ];
-  return (
-    <div
-      className={` ${
-        Category == "Lite" ? "h-full" : "h-auto"
-      } w-65 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category==='Pro' && 'bg-gradient-to-br from-emerald-700 via-emerald-600 to-green-600' } ${Category==='Lite' && 'bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500' }  hover:scale-105 duration-300 ease-in-out`}
-    >
-      <div className={`font-bold text-2xl text-gray-200 ${Category=='Free' && 'text-gray-700' }`}>{Category}</div>
-      <div className="font-light text-gray-200">
-        {Category == "Free" &&
-          FreeFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-800"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-        {Category == "Lite" &&
-          LiteFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs leading-6 font-light mt-2 text-white"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-        {Category == "Pro" &&
-          ProFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-white"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-      </div>
-      <div className="mt-2">
-        <span className={`text-3xl text-gray-50 ${Category=='Free' && 'text-gray-700'}`}>
-          {Price}
-          <span className="text-sm font-light">
-            {Category == "Pro" ? `/year` : `/month`}
-          </span>
-        </span>
-        <div className=" mt-2">
-          <button
-            className={`p-2 flex mt-4 items-center justify-center  border border-gray-300 ${
-              Category == "Free"
-                ? "hover:border-gray-400 text-gray-800"
-                : "hover:bg-black hover:text-gray-100  text-gray-800"
-            } cursor-pointer  text-sm font-normal ease-in-out duration-200`}
-          >
-            {mssg}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
