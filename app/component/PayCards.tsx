@@ -50,7 +50,7 @@ export default function PaymentOptions() {
           </div>
         </div>
         <div className="w-full flex flex-row h-auto justify-center  my-4 p-2">
-        <div className="lg:w-[90%]   h-auto  grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-2 ">
+        <div className="xl:w-[90%]   h-auto  grid xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1   gap-2 ">
           <PayCard
             Category="Free"
             mPrice="$0"
@@ -139,13 +139,13 @@ function PayCard({
   ];
   return (
     <div
-      className={`w-80 text-xs h-130 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category === "Pro" && "bg-gradient-to-br from-emerald-600 via-emerald-950 to-green-600"} ${Category === "Lite" && "bg-gradient-to-br from-orange-300 via-orange-500 to-amber-300"} ${Category == "Enterprise" && "bg-gradient-to-br from-[#c1446c] via-[#4c1d2f] to-[#e73c3c]"}  hover:scale-101 duration-300 ease-in-out`}
+      className={`lg:w-80 w-70 text-xs h-130 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category === "Pro" && "bg-gradient-to-br from-emerald-600 via-emerald-950 to-green-600"} ${Category === "Lite" && "bg-gradient-to-br from-orange-300 via-orange-500 to-amber-300"} ${Category == "Enterprise" && "bg-gradient-to-br from-[#c1446c] via-[#4c1d2f] to-[#e73c3c]"}  hover:scale-101 duration-300 ease-in-out`}
     >
       <div
         className={`font-bold text-2xl flex justify-between ${Category == "Free" && "text-gray-700"} ${Category == "Enterprise" && "text-[#250b15] tracking-wide text-shadow-2xs text-shadow-[#9e2e59]"} ${Category == "Pro" && "text-emerald-950"} ${Category == "Lite" && "text-orange-950"}`}
       >
         {Category}
-        {Category=='Pro' && <span className="text-xs font-normal text-white animate-pulse">{"⭐ Most Popular"}</span>}
+        {Category=='Pro' && <span className="text-[10px]  text-white/90 font-extralight  flex items-center justify-center p-1 rounded-tr-sm rounded-bl-sm">{"# Most Popular"}</span>}
       </div>
       <div className="my-4">
         <span

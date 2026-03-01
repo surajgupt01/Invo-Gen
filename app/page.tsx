@@ -104,7 +104,7 @@ export default function Home() {
               </section>
 
               <div className="w-full h-auto   flex justify-center items-center">
-                <div className="grid grid-cols-3 gap-2 lg:w-[50%] w-full">
+                <div className="grid grid-cols-3 gap-2 xl:w-[50%] w-full">
                   <div className="col-span-2 bg-teal-800 h-50  flex-col">
                     <div
                       className="w-full h-full  bg-white flex-col gap-2 flex justify-center items-start p-4 text-gray-700 text-[16px]  
