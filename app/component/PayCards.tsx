@@ -139,7 +139,7 @@ function PayCard({
   ];
   return (
     <div
-      className={`lg:w-80 w-70 text-xs h-130 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category === "Pro" && "bg-gradient-to-br from-emerald-600 via-emerald-950 to-green-600"} ${Category === "Lite" && "bg-gradient-to-br from-orange-300 via-orange-500 to-amber-300"} ${Category == "Enterprise" && "bg-gradient-to-br from-[#c1446c] via-[#4c1d2f] to-[#e73c3c]"}  hover:scale-101 duration-300 ease-in-out`}
+      className={`lg:w-80 w-75 text-xs h-130 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category === "Pro" && "bg-gradient-to-br from-emerald-600 via-emerald-950 to-green-600"} ${Category === "Lite" && "bg-gradient-to-br from-orange-300 via-orange-500 to-amber-300"} ${Category == "Enterprise" && "bg-gradient-to-br from-[#c1446c] via-[#4c1d2f] to-[#e73c3c]"}  hover:scale-101 duration-300 ease-in-out`}
     >
       <div
         className={`font-bold text-2xl flex justify-between ${Category == "Free" && "text-gray-700"} ${Category == "Enterprise" && "text-[#250b15] tracking-wide text-shadow-2xs text-shadow-[#9e2e59]"} ${Category == "Pro" && "text-emerald-950"} ${Category == "Lite" && "text-orange-950"}`}
@@ -183,7 +183,7 @@ function PayCard({
           LiteFeatures.map((e: string, index: number) => (
             <span
               key={index}
-              className="flex items-center gap-1 text-xs leading-6 font-light mt-2 text-gray-100"
+              className="flex items-center gap-1 text-xs leading-5 font-light mt-2 text-gray-100"
             >
               <Tick />
               {e}
