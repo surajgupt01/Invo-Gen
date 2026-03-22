@@ -1,6 +1,6 @@
 "use client";
 
-import { NavLogo } from "./Nav";
+// import { NavLogo } from "./Nav";
 import { ItemsStore } from "../store/InvoiceTabel";
 import { useCustomerStore } from "../store/CustomerDetail";
 import { useOptionalData } from "../store/OptionalDataStore";
