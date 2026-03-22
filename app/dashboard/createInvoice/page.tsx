@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ItemsStore } from "@/app/store/InvoiceTabel";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
-import CurrencySelect from "@/app/component/Currecny";
+import CurrencySelect from "@/app/component/Currency";
 import List from "@/app/Icons/List";
 import OpenArrow from "@/app/Icons/OpenArrow";
 import Bin from "@/app/Icons/Bin";
