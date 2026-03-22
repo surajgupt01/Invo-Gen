@@ -13,7 +13,6 @@ import Info from "@/app/Icons/Info";
 import Preview from "@/app/component/Preview";
 import { useOptionalData } from "@/app/store/OptionalDataStore";
 import { useOwner } from "@/app/store/OwnerDetail";
-import Logo from "@/app/Icons/Logo";
 import QR from "@/app/Icons/QR";
 
 
@@ -38,8 +37,8 @@ import QR from "@/app/Icons/QR";
 
 export default function CreateInvoice() {
 
-  const [dispaly , setDisplay] = useState(false)
-  const [expand , setExpan]  = useState(false)
+  // const [dispaly , setDisplay] = useState(false)
+  // const [expand , setExpan]  = useState(false)
   return (
     <div className="lg:flex-row flex flex-col h-full w-full relative gap-2  border-neutral-900 rounded-sm p-2 transition-all duration-500 ease-in-out">
       
@@ -501,10 +500,9 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
   );
 }
 
-import { useRef } from "react";
 import Image from "next/image";
 import ImageAlt from "@/app/Icons/Img";
-import { File } from "buffer";
+
 function PaymentOptions() {
   interface Owner {
     CompanyName: string;
