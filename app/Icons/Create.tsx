@@ -5,7 +5,7 @@ export default function Create() {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="currentColor"
+      stroke="currentColor "
       className="size-4 group-hover:translate-x-300 translate-x-0 transition-transform duration-300 "
     >
       <path

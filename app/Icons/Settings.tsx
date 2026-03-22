@@ -6,7 +6,7 @@ export default function Settings() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-4"
+      className="size-4 text-red-800"
     >
       <path
         strokeLinecap="round"

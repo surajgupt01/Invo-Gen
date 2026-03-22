@@ -6,7 +6,7 @@ export default function Overview() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-4"
+      className="size-4 text-teal-500"
     >
       <path
         strokeLinecap="round"

@@ -6,7 +6,7 @@ export default function Tempelates() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-4"
+      className="size-4 text-yellow-700"
     >
       <path
         strokeLinecap="round"
