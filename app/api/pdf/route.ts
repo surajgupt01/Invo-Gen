@@ -66,7 +66,9 @@ export async function POST(req: Request) {
 
     await browser.close();
 
-    return new Response(Buffer.from(pdf), {
+    const pdfUint8 = new Uint8Array(Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf));
+
+    return new Response(pdfUint8, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=invoice.pdf",
