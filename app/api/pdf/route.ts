@@ -10,27 +10,29 @@ export async function POST(req: Request) {
   try {
     const { html } = await req.json();
 
-    // ✅ Important for Vercel stability
     chromium.setGraphicsMode = false;
 
-    // ✅ Always use sparticuz chromium on Vercel
-    const executablePath = await chromium.executablePath();
+    const chromeArgs = [
+      ...chromium.args,
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+    ];
 
     browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath,
+      args: chromeArgs,
+      executablePath: await chromium.executablePath(),
       headless: true,
     });
 
     const page = await browser.newPage();
 
-    // ✅ Set viewport manually
     await page.setViewport({
       width: 1280,
       height: 800,
     });
 
-    // ✅ Wrap incoming HTML safely
     const fullHTML = `
       <!DOCTYPE html>
       <html>
@@ -40,9 +42,8 @@ export async function POST(req: Request) {
             body {
               margin: 0;
               padding: 20px;
-              background: white;
-              color: black;
               font-family: Arial, sans-serif;
+              background: white;
             }
           </style>
         </head>
@@ -52,39 +53,27 @@ export async function POST(req: Request) {
       </html>
     `;
 
-    // ❗ Use "load" instead of networkidle (more reliable on Vercel)
+    // ✅ Use setContent (your case)
     await page.setContent(fullHTML, {
       waitUntil: "load",
     });
 
-    // ✅ Ensure proper rendering
-    await page.emulateMediaType("screen");
+    await page.emulateMediaType("print");
 
-    // ✅ Wait for fonts + layout
-    await page.evaluateHandle("document.fonts.ready");
-    await new Promise((r) => setTimeout(r, 1000));
+    // ✅ IMPORTANT: force render delay
+    await new Promise((r) => setTimeout(r, 1500));
 
-    // ✅ Generate PDF
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      preferCSSPageSize: true,
-      margin: {
-        top: "10mm",
-        bottom: "15mm",
-        left: "5mm",
-        right: "5mm",
-      },
     });
 
-    // 🔍 Debug (keep during testing)
     console.log("PDF size:", pdf?.length);
 
     if (!pdf || pdf.length < 1000) {
-      throw new Error("Generated PDF is empty or corrupted");
+      throw new Error("PDF generation failed (empty buffer)");
     }
 
-    // ✅ Return proper binary response
     return new Response(Buffer.from(pdf), {
       headers: {
         "Content-Type": "application/pdf",
@@ -103,8 +92,6 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    if (browser) await browser.close();
   }
 }
