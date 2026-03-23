@@ -5,17 +5,18 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+  let browser;
+
   try {
     const { html } = await req.json();
 
+    // ✅ Important for Vercel stability
     chromium.setGraphicsMode = false;
 
-    const executablePath =
-      process.env.NODE_ENV === "production"
-        ? await chromium.executablePath()
-        : undefined;
+    // ✅ Always use sparticuz chromium on Vercel
+    const executablePath = await chromium.executablePath();
 
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       args: chromium.args,
       executablePath,
       headless: true,
@@ -23,11 +24,13 @@ export async function POST(req: Request) {
 
     const page = await browser.newPage();
 
+    // ✅ Set viewport manually
     await page.setViewport({
       width: 1280,
       height: 800,
     });
 
+    // ✅ Wrap incoming HTML safely
     const fullHTML = `
       <!DOCTYPE html>
       <html>
@@ -35,27 +38,37 @@ export async function POST(req: Request) {
           <meta charset="utf-8" />
           <style>
             body {
+              margin: 0;
+              padding: 20px;
               background: white;
               color: black;
               font-family: Arial, sans-serif;
             }
           </style>
         </head>
-        <body>${html}</body>
+        <body>
+          ${html}
+        </body>
       </html>
     `;
 
+    // ❗ Use "load" instead of networkidle (more reliable on Vercel)
     await page.setContent(fullHTML, {
-      waitUntil: "networkidle2",
-      timeout: 30000,
+      waitUntil: "load",
     });
 
-    await page.evaluateHandle("document.fonts.ready");
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // ✅ Ensure proper rendering
+    await page.emulateMediaType("screen");
 
+    // ✅ Wait for fonts + layout
+    await page.evaluateHandle("document.fonts.ready");
+    await new Promise((r) => setTimeout(r, 1000));
+
+    // ✅ Generate PDF
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
+      preferCSSPageSize: true,
       margin: {
         top: "10mm",
         bottom: "15mm",
@@ -64,11 +77,15 @@ export async function POST(req: Request) {
       },
     });
 
-    await browser.close();
+    // 🔍 Debug (keep during testing)
+    console.log("PDF size:", pdf?.length);
 
-    const pdfUint8 = new Uint8Array(Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf));
+    if (!pdf || pdf.length < 1000) {
+      throw new Error("Generated PDF is empty or corrupted");
+    }
 
-    return new Response(pdfUint8, {
+    // ✅ Return proper binary response
+    return new Response(Buffer.from(pdf), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=invoice.pdf",
@@ -85,5 +102,9 @@ export async function POST(req: Request) {
       }),
       { status: 500 }
     );
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
   }
 }
