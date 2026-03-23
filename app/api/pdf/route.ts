@@ -1,97 +1,68 @@
 import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
+import puppeteer, { Browser } from "puppeteer-core";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-export async function POST(req: Request) {
-  let browser;
+const isLocal = process.env.NODE_ENV === "development";
+let browser: Browser | undefined;
 
+export async function POST(req: Request) {
   try {
     const { html } = await req.json();
 
-    chromium.setGraphicsMode = false;
-
-    const chromeArgs = [
-      ...chromium.args,
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
-    ];
-
-    browser = await puppeteer.launch({
-      args: chromeArgs,
-      executablePath: await chromium.executablePath(),
-      headless: true,
-    });
+    // Reuse browser across requests
+    if (!browser?.connected) {
+      browser = await puppeteer.launch(
+        isLocal
+          ? { channel: "chrome", headless: true }
+          : {
+              args: chromium.args,
+              executablePath: await chromium.executablePath(),
+              headless: true,
+            }
+      );
+    }
 
     const page = await browser.newPage();
+    await page.emulateMediaType("print");
 
-    await page.setViewport({
-      width: 1280,
-      height: 800,
-    });
-
-    const fullHTML = `
-      <!DOCTYPE html>
+    await page.setContent(
+      `<!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8" />
+          <script src="https://cdn.tailwindcss.com"></script>
           <style>
-            body {
-              margin: 0;
-              padding: 20px;
-              font-family: Arial, sans-serif;
-              background: white;
-            }
+            body { background: white; color: black; font-family: Arial, sans-serif; }
           </style>
         </head>
-        <body>
-          ${html}
-        </body>
-      </html>
-    `;
-
-    // ✅ Use setContent (your case)
-    await page.setContent(fullHTML, {
-      waitUntil: "load",
-    });
-
-    await page.emulateMediaType("print");
-
-    // ✅ IMPORTANT: force render delay
-    await new Promise((r) => setTimeout(r, 1500));
+        <body>${html}</body>
+      </html>`,
+      { waitUntil: "networkidle0", timeout: 30000 }
+    );
 
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
+      omitBackground: false,
+      margin: { top: "10mm", bottom: "15mm", left: "5mm", right: "5mm" },
     });
 
-    console.log("PDF size:", pdf?.length);
+    // Close only this page, keep browser alive for reuse
+    await page.close();
 
-    if (!pdf || pdf.length < 1000) {
-      throw new Error("PDF generation failed (empty buffer)");
-    }
-
-    return new Response(Buffer.from(pdf), {
+    return new Response(new Uint8Array(pdf), {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": "attachment; filename=invoice.pdf",
+        "Content-Disposition": 'attachment; filename="invoice.pdf"',
       },
     });
-
   } catch (error) {
     console.error("PDF Generation Error:", error);
-
     return new Response(
-      JSON.stringify({
-        error: "Failed to generate PDF",
-        details: String(error),
-      }),
+      JSON.stringify({ error: "Failed to generate PDF", details: String(error) }),
       { status: 500 }
     );
-  } finally {
-    if (browser) await browser.close();
   }
 }

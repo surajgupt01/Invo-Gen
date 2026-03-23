@@ -68,8 +68,8 @@ export default function Preview() {
     try {
       setLoading(true);
 
-      const invoiceHTML = `<h1>Hello World</h1>`
-      // document.getElementById("invoice")?.innerHTML;
+     const invoiceHTML =  document.getElementById("invoice")?.innerHTML;
+      
 
 
       if (!invoiceHTML) {
