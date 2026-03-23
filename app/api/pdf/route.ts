@@ -1,17 +1,30 @@
 import chromium from "@sparticuz/chromium";
 import puppeteer, { Browser } from "puppeteer-core";
+import fs from "fs";
+import path from "path";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const isLocal = process.env.NODE_ENV === "development";
 let browser: Browser | undefined;
+let tailwindCSS: string | null = null;
+
+// ✅ Read from local file — no network, no 404s
+const getTailwindCSS = () => {
+  if (tailwindCSS) return tailwindCSS;
+  tailwindCSS = fs.readFileSync(
+    path.join(process.cwd(), "public/tailwind-pdf.css"),
+    "utf-8"
+  );
+  console.log("Tailwind CSS length:", tailwindCSS.length); // should be large
+  return tailwindCSS;
+};
 
 export async function POST(req: Request) {
   try {
     const { html } = await req.json();
 
-    // Reuse browser across requests
     if (!browser?.connected) {
       browser = await puppeteer.launch(
         isLocal
@@ -24,6 +37,8 @@ export async function POST(req: Request) {
       );
     }
 
+    const css = getTailwindCSS(); // ✅ sync, no await needed
+
     const page = await browser.newPage();
     await page.emulateMediaType("print");
 
@@ -32,14 +47,14 @@ export async function POST(req: Request) {
       <html>
         <head>
           <meta charset="utf-8" />
-          <script src="https://cdn.tailwindcss.com"></script>
+          <style>${css}</style>
           <style>
             body { background: white; color: black; font-family: Arial, sans-serif; }
           </style>
         </head>
         <body>${html}</body>
       </html>`,
-      { waitUntil: "networkidle0", timeout: 30000 }
+      { waitUntil: "domcontentloaded", timeout: 30000 }
     );
 
     const pdf = await page.pdf({
@@ -49,7 +64,6 @@ export async function POST(req: Request) {
       margin: { top: "10mm", bottom: "15mm", left: "5mm", right: "5mm" },
     });
 
-    // Close only this page, keep browser alive for reuse
     await page.close();
 
     return new Response(new Uint8Array(pdf), {

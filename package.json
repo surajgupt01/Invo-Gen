@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "generate:pdf-css": "npx @tailwindcss/cli -i ./app/globals.css -o ./public/tailwind-pdf.css --minify",
+    "vercel-build": "npm run generate:pdf-css && next build",
     "start": "next start",
     "lint": "eslint"
   },
