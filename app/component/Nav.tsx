@@ -7,8 +7,10 @@ interface NavProp {
 }
 export function NavLogo({ textColor }: NavProp) {
   return (
-    <div className="  w-full cursor-pointer font-bold sm:text-xl tracking-widest text-md flex items-center ">
+    <Link href={'/'}>
+    <div className="  w-full cursor-pointer font-bold sm:text-xl tracking-widest text-md flex flex-row items-start ">
       {/* <Logo textColor = {textColor}/> */}
+
       <span className={`${textColor}`}>
         Lu
         <span className="text-transparent bg-clip-text tracking-widest  bg-gradient-to-r from-green-500 to-blue-400">
@@ -22,12 +24,13 @@ export function NavLogo({ textColor }: NavProp) {
         height={200}
       ></Image> */}
     </div>
+    </Link>
   );
 }
 
 export default function Nav() {
   return (
-    <div className="flex justify-evenly  w-full  p-1 px-4   fixed h-15      bg-gray-300/10 backdrop-blur-sm  z-100">
+    <div className="flex justify-evenly  w-full  p-1 px-4   fixed h-auto      bg-gray-300/10 backdrop-blur-sm  z-100">
       <NavLogo textColor="text-black" />
       <div className="flex p-2   w-full justify-end items-center">
         {/* <li className="cursor-pointer hover:text-gray-700">Home</li> */}

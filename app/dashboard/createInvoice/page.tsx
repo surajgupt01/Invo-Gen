@@ -39,7 +39,7 @@ export default function CreateInvoice() {
   // const [expand , setExpan]  = useState(false)
   return (
     <div className=" flex flex-col h-full w-full   border-neutral-900 rounded-sm transition-all duration-500 ease-in-out">
-      <div className="bg-neutral-950 border-b border-neutral-900 shadow shadow-neutral-800 inset-0 p-2 px-6 flex justify-around items-center ">
+      <div className="bg-neutral-950 border-b border-neutral-900 shadow shadow-neutral-800 inset-0 p-2 px-6 flex justify-between items-center">
         <NavLogo textColor="text-gray-100"/>
         <div className="bg-neutral-800 lg:w-50 w-38 py-1 px-1 gap-2 flex justify-center items-center rounded-md">
           {choices.map((e) => (
