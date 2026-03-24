@@ -15,42 +15,69 @@ import { useOptionalData } from "@/app/store/OptionalDataStore";
 import { useOwner } from "@/app/store/OwnerDetail";
 import QR from "@/app/Icons/QR";
 
+function fileToBase64(file: globalThis.File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject("Failed to convert file");
+      }
+    };
 
-  function fileToBase64(file: globalThis.File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    reader.onerror = reject;
 
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject("Failed to convert file");
-        }
-      };
-
-      reader.onerror = reject;
-
-      reader.readAsDataURL(file as Blob);
-    });
-  }
+    reader.readAsDataURL(file as Blob);
+  });
+}
 
 export default function CreateInvoice() {
-
-  // const [dispaly , setDisplay] = useState(false)
+  const [dispaly, setDisplay] = useState("Form");
+  const choices = ["Form", "Preview"];
   // const [expand , setExpan]  = useState(false)
   return (
-    <div className="lg:flex-row flex flex-col h-full w-full relative gap-2  border-neutral-900 rounded-sm p-2 transition-all duration-500 ease-in-out">
-      
-   
-      <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out">
-        <FormComponent />
+    <div className=" flex flex-col h-full w-full   border-neutral-900 rounded-sm transition-all duration-500 ease-in-out">
+      <div className="bg-neutral-950 border-b border-neutral-900 shadow shadow-neutral-800 inset-0 p-2 px-6 flex justify-around items-center ">
+        <NavLogo textColor="text-gray-100"/>
+        <div className="bg-neutral-800 lg:w-50 w-38 py-1 px-1 gap-2 flex justify-center items-center rounded-md">
+          {choices.map((e) => (
+            <button
+              onClick={() => setDisplay(e)}
+              key={e}
+              className={`text-neutral-500 text-sm hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == e ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} `}
+            >
+              {e}
+            </button>
+          ))}
+          <button
+            onClick={() => setDisplay("Both")}
+            className={`text-neutral-500 text-sm hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == 'Both' ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} hidden lg:block `}
+          >{`Both`}</button>
+        </div>
       </div>
+      {dispaly == "Both" && (
+        <div className="lg:flex-row flex flex-col overflow-auto w-full relative gap-2  border-neutral-900  rounded-sm p-2 transition-all duration-500 ease-in-out">
+          <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out">
+            <FormComponent />
+          </div>
 
-      <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out">
-        <Preview />
-      </div>
-
+          <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out">
+            <Preview />
+          </div>
+        </div>
+      )}
+      {dispaly == "Form" && (
+        <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out">
+          <FormComponent />
+        </div>
+      )}
+      {dispaly == "Preview" && (
+        <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out">
+          <Preview />
+        </div>
+      )}
     </div>
   );
 }
@@ -154,7 +181,6 @@ function FormComponent() {
   //   console.log(Object.fromEntries(data.entries()));
   // }
 
-
   const [logo, setLogo] = useState("");
 
   const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,7 +207,7 @@ function FormComponent() {
           </h1>
           <div className="grid grid-cols-2 gap-4 w-full">
             <label htmlFor="logo" className="col-span-2">
-              <div className="w-full  group col-span-2 flex-1  cursor-pointer  bg-neutral-950 flex flex-col gap-2 items-center justify-center">
+              <div className="w-full border border-dashed border-neutral-700 rounded-sm  group col-span-2 flex-1 px-4 py-8  cursor-pointer  bg-neutral-950 flex flex-col gap-2 items-center justify-center">
                 <input
                   id="logo"
                   type="file"
@@ -206,7 +232,8 @@ function FormComponent() {
                 </label>
                 <p className="text-neutral-700 whitespace-pre-line text-center text-xs">
                   {" "}
-                  {`drag and drop your saved company's logo \n here, or browse your file`}{" "}
+                  {`drag and drop your saved company's logo \n here, `} or{" "}
+                  <span className="text-teal-700">browse your file</span>{" "}
                 </p>
               </div>
             </label>
@@ -502,6 +529,8 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
 
 import Image from "next/image";
 import ImageAlt from "@/app/Icons/Img";
+import Nav, { NavLogo } from "@/app/component/Nav";
+import LogoutButton from "@/app/component/LogoutButton";
 
 function PaymentOptions() {
   interface Owner {
@@ -582,7 +611,7 @@ function PaymentOptions() {
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const base64 = await fileToBase64(file)
+    const base64 = await fileToBase64(file);
     setUrl(base64);
     OwnerDetailHandler("QR", base64);
   };
@@ -591,7 +620,7 @@ function PaymentOptions() {
   return (
     <div
       className="
-                 bg-neutral-950  overflow-hidden text-xs font-bold px-2 py-4 mb-2   shadow-xs rounded-xs duration-500 ease-in-out transition-all `}
+                 bg-neutral-950  overflow-hidden  text-xs font-bold px-2 py-4 mb-2   shadow-xs rounded-xs duration-500 ease-in-out transition-all `}
                 "
     >
       <div className="flex items-center gap-1 ">
@@ -625,7 +654,7 @@ function PaymentOptions() {
       </div>
       {option == "UPI" && (
         <label htmlFor="QR">
-          <div className="w-full min-h-70 group  p-4 flex-1  cursor-pointer  bg-neutral-950 flex flex-col gap-2 items-center justify-center">
+          <div className="w-full min-h-70 group border border-dashed border-neutral-700 rounded-sm   p-4 flex-1  cursor-pointer  bg-neutral-950 flex flex-col gap-2 items-center justify-center">
             <input
               id="QR"
               type="file"
@@ -645,7 +674,8 @@ function PaymentOptions() {
             </label>
             <p className="text-neutral-700 whitespace-pre-line text-center">
               {" "}
-              {`drag and drop your saved QR image \n here, or browse your file`}{" "}
+              {`drag and drop your saved QR image \n  here, or`}{" "}
+              <span className="text-teal-700"> browse your file</span>{" "}
             </p>
             <input
               className="border border-white/10 rounded-xs px-2 w-60 py-2 text-gray-400 tracking-wide bg-neutral-950 outline-0"

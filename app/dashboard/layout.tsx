@@ -58,7 +58,7 @@ export default function DashboardLayout({
         // </div>
         }
          {/* <button onClick={()=>setMenu(e=>!e)} className={`${menu ? 'left-48' : 'left-2'} absolute z-100   p-2 hover:text-neutral-600 top-2`}>{menu?<CloseSide/> : <Menu/>}</button> */}
-        <div className="flex-1 min-w-0 min-h-0 p-1 transition-all duration-500 ease-in-out ">{children}</div>
+        <div className="flex-1 min-w-0 min-h-0  transition-all duration-500 ease-in-out ">{children}</div>
       </div>
     </div>
   );
