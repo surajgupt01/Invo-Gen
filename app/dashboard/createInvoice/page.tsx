@@ -529,8 +529,8 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
 
 import Image from "next/image";
 import ImageAlt from "@/app/Icons/Img";
-import Nav, { NavLogo } from "@/app/component/Nav";
-import LogoutButton from "@/app/component/LogoutButton";
+import  { NavLogo } from "@/app/component/Nav";
+
 
 function PaymentOptions() {
   interface Owner {
