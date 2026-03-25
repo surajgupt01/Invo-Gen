@@ -61,7 +61,6 @@ export async function POST(req: Request) {
       format: "A4",
       printBackground: true,
       omitBackground: false,
-      margin: { top: "10mm", bottom: "15mm", left: "5mm", right: "5mm" },
     });
 
     await page.close();
