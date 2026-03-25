@@ -30,7 +30,7 @@ export function NavLogo({ textColor }: NavProp) {
 
 export default function Nav() {
   return (
-    <div className="flex justify-evenly  w-full  p-1 px-4   fixed h-auto      bg-gray-300/10 backdrop-blur-sm  z-100">
+    <div className="flex justify-evenly  items-center w-full  p-1 px-4   fixed h-auto      bg-gray-300/10 backdrop-blur-sm  z-100">
       <NavLogo textColor="text-black" />
       <div className="flex p-2   w-full justify-end items-center">
         {/* <li className="cursor-pointer hover:text-gray-700">Home</li> */}
