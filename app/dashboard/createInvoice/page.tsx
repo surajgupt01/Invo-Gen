@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ItemsStore } from "@/app/store/InvoiceTabel";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
 import CurrencySelect from "@/app/component/Currency";
@@ -35,26 +35,34 @@ function fileToBase64(file: globalThis.File): Promise<string> {
 
 export default function CreateInvoice() {
   const [dispaly, setDisplay] = useState("Form");
-  const choices = ["Form", "Preview"];
+  interface choice{
+    title : string,
+    icon :  React.ReactNode
+  }
+  const choices : choice[]  = [{title : "Form" , icon : <Docs/> }, {title : "Preview" , icon : <SeePassword/>}];
   // const [expand , setExpan]  = useState(false)
   return (
     <div className=" flex flex-col h-full w-full   border-neutral-900 rounded-sm transition-all duration-500 ease-in-out">
       <div className="bg-neutral-950 border-b border-neutral-900 shadow shadow-neutral-800 inset-0 p-2 px-6 flex justify-between items-center">
         <NavLogo textColor="text-gray-100"/>
-        <div className="bg-neutral-800 lg:w-50 w-38 py-1 px-1 gap-2 flex justify-center items-center rounded-md">
+        <div className="bg-neutral-800 lg:w-62 w-44 py-1 px-1 gap-2 flex justify-center items-center rounded-md">
           {choices.map((e) => (
             <button
-              onClick={() => setDisplay(e)}
-              key={e}
-              className={`text-neutral-500 text-sm hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == e ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} `}
+              onClick={() => setDisplay(e.title)}
+              key={e.title}
+              className={`text-neutral-500 text-sm flex justify-center items-center gap-0.5 hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == e.title ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} `}
             >
-              {e}
+               {e.icon}
+              
+              {e.title}
             </button>
+            
           ))}
           <button
             onClick={() => setDisplay("Both")}
-            className={`text-neutral-500 text-sm hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == 'Both' ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} hidden lg:block `}
-          >{`Both`}</button>
+            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == 'Both' ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} hidden lg:flex justify-center items-center gap-0.5 `}
+          ><Both/>{`Both`}</button>
+          
         </div>
       </div>
       {dispaly == "Both" && (
@@ -530,6 +538,10 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
 import Image from "next/image";
 import ImageAlt from "@/app/Icons/Img";
 import  { NavLogo } from "@/app/component/Nav";
+import SeePassword from "@/app/Icons/SeePassword";
+import Docs from "@/app/Icons/Doc";
+import { int } from "zod";
+import Both from "@/app/Icons/Both";
 
 
 function PaymentOptions() {

@@ -189,7 +189,9 @@ export default function Preview() {
       <div className="w-full text-xs flex justify-between gap-2 p-4">
 
 
-        <div className="bg-green-800 text-green-500 px-3 py-1 text-sm rounded-md">{"Live"}</div>
+        <div className="bg-green-800 flex justify-center items-center gap-0.5 text-green-500 px-3 py-1 text-sm rounded-md">
+          <div className="w-1 h-1 rounded-full bg-green-500"></div>
+          {"Live"}</div>
         <div className="flex items-center justify-center gap-2">
         <button
           onClick={handleDownload}
