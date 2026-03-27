@@ -11,12 +11,16 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data } = useSession();
+  const { data, status } = useSession();
+
+  const [menu, setMenu] = useState(false);
+
+  if (status === "loading") {
+    return <div className="text-white">Loading...</div>;
+  }
 
   const name = data?.user?.name ?? "";
   const email = data?.user?.email ?? "";
-
-  const [menu, setMenu] = useState(false);
 
   return (
     <div className="h-screen w-full overflow-hidden bg-black selection:bg-teal-500">
