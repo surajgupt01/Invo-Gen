@@ -5,6 +5,8 @@ import SideNav from "../component/SideNav";
 import { useState } from "react";
 import Menu from "../Icons/Menu";
 import CloseSide from "../Icons/CloseSide";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react"
 
 export default function DashboardLayout({
   children,
@@ -12,11 +14,23 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { data, status } = useSession();
-
+  const router = useRouter(); 
   const [menu, setMenu] = useState(false);
+
+  // 👇 add this
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/signin");
+    }
+  }, [status, router]);
 
   if (status === "loading") {
     return <div className="text-white">Loading...</div>;
+  }
+
+
+  if (status === "unauthenticated") {
+    return null;
   }
 
   const name = data?.user?.name ?? "";
@@ -33,14 +47,13 @@ export default function DashboardLayout({
 
         <button
           onClick={() => setMenu((e) => !e)}
-          className={`${menu ? "left-48" : "left-2"} absolute z-100 lg:block hidden   p-2 hover:text-neutral-600 top-2`}
+          className={`${menu ? "left-48" : "left-2"} absolute z-100 lg:block hidden p-2 hover:text-neutral-600 top-2`}
         >
           {menu ? <CloseSide /> : <Menu />}
         </button>
-        <div className="flex-1 min-w-0 min-h-0  transition-all duration-500 ease-in-out ">
+        <div className="flex-1 min-w-0 min-h-0 transition-all duration-500 ease-in-out">
           {children}
         </div>
-        {/* <div className="absolute top-[90%] left-25 p-4 z-1000 bg-white/70 rounded-full w-50 h-10"></div> */}
       </div>
     </div>
   );
