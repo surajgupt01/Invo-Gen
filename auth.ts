@@ -5,6 +5,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./prisma/prisma"
 import type { Adapter } from "@auth/core/adapters"
 
+export const runtime = "nodejs"
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma) as Adapter,
 
