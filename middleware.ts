@@ -9,6 +9,8 @@ export async function middleware(req: NextRequest) {
     secret: process.env.AUTH_SECRET,
   })
 
+  console.log("token --> ",token)
+
   if (!token && req.nextUrl.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/signin", req.url))
   }
