@@ -1,7 +1,6 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-
 import Link from "next/link";
 import Google from "../Icons/Google";
 import Left from "../Icons/Left";
@@ -10,7 +9,7 @@ import Github from "../Icons/Github";
 
 export default function SignUp() {
   return (
-    <div className="md:p-4 p-3  w-full h-screen bg-gradient-to-br [@media(min-width:930px)]:from-gray-50 [@media(min-width:930px)]:via-white [@media(min-width:930px)]:to-gray-100 from-teal-600 via-cyan-500 to-green-500  flex  justify-center  items-center ">
+    <div className="md:p-4 p-3  w-full h-screen   flex  justify-center  items-center ">
       <div className="flex  rounded-4xl w-full h-full">
         <SignSideBar />
 
