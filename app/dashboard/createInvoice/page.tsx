@@ -1,13 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { ItemsStore } from "@/app/store/InvoiceTabel";
+import React, {  useState } from "react";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
-import CurrencySelect from "@/app/component/Currency";
 import List from "@/app/Icons/List";
 import OpenArrow from "@/app/Icons/OpenArrow";
-import Bin from "@/app/Icons/Bin";
-import Add from "@/app/Icons/Add";
 import AddInfo from "@/app/Icons/AddInfo";
 import Info from "@/app/Icons/Info";
 import Preview from "@/app/component/Preview";
@@ -35,29 +31,33 @@ function fileToBase64(file: globalThis.File): Promise<string> {
 
 export default function CreateInvoice() {
   const [dispaly, setDisplay] = useState("Form");
-  // interface choice{
-  //   title : string,
-  //   icon :  React.ReactNode
-  // }
-  // const choices : choice[]  = [{title : "Form" , icon : <Docs/> }, {title : "Preview" , icon : <SeePassword/>}];
-  // const [expand , setExpan]  = useState(false)
+
   return (
     <div className=" flex flex-col h-full w-full   border-neutral-900 rounded-sm transition-all duration-500 ease-in-out">
       <div className="bg-neutral-950 border-b border-neutral-900  inset-0 p-2 px-6 flex justify-center items-center">
         {/* <NavLogo textColor="text-gray-100"/> */}
         <div className="bg-neutral-900 lg:w-62 w-44 py-1 px-1 gap-2 flex justify-center items-center rounded-md">
-           <button
+          <button
             onClick={() => setDisplay("Form")}
-            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == 'Form' ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""}  lg:flex justify-center items-center gap-0.5 `}
-          ><Docs/>{`Form`}</button>
+            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == "Form" ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""}  lg:flex justify-center items-center gap-0.5 `}
+          >
+            <Docs />
+            {`Form`}
+          </button>
           <button
             onClick={() => setDisplay("Both")}
-            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == 'Both' ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} hidden lg:flex justify-center items-center gap-0.5 `}
-          ><Both/>{`Both`}</button>
-           <button
+            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == "Both" ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} hidden lg:flex justify-center items-center gap-0.5 `}
+          >
+            <Both />
+            {`Both`}
+          </button>
+          <button
             onClick={() => setDisplay("Preview")}
-            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == 'Preview' ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""}  lg:flex justify-center items-center gap-0.5 `}
-          ><SeePassword/>{`Preview`}</button>
+            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == "Preview" ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""}  lg:flex justify-center items-center gap-0.5 `}
+          >
+            <SeePassword />
+            {`Preview`}
+          </button>
         </div>
       </div>
       {dispaly == "Both" && (
@@ -86,9 +86,6 @@ export default function CreateInvoice() {
 }
 function FormComponent() {
   const [expand, setExpand] = useState(false);
-
-  const { Items, changeHandler, addRow, delRow, Total, subTotal, TaxHandler } =
-    ItemsStore();
 
   const { DetailHandler, Details } = useCustomerStore();
 
@@ -173,38 +170,26 @@ function FormComponent() {
     { label: "Issue Date", name: "IssueDate", type: "date" },
   ];
 
-  const [currency, setCurrency] = useState("INR");
-
-  useEffect(() => {
-    DetailHandler("Currency", currency);
-  }, [currency]);
-
-  // function getData(form : ) {
-  //   const data = new FormData(form);
-  //   console.log(Object.fromEntries(data.entries()));
-  // }
-
   const [logo, setLogo] = useState("");
 
   const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
     if (!file) return;
 
-    const base64 = await fileToBase64(file); // ✅ works now
+    const base64 = await fileToBase64(file);
 
-    setLogo(base64); // ✅ use base64
-    OwnerDetailHandler("companyLogo", base64); // ✅ send base64
+    setLogo(base64);
+    OwnerDetailHandler("companyLogo", base64);
   };
   return (
     <div className="w-full scroll-smooth">
       <form
-        className="w-full  space-y-4  "
+        className="w-full  space-y-4  px-2"
         onSubmit={(e) => {
           e.preventDefault();
-          // getData(e.currentTarget);
         }}
       >
-        <div className="   p-3 rounded-xs bg-neutral-950 shadow-xs ">
+        <div className="   p-6 rounded-xs bg-neutral-950 shadow-xs ">
           <h1 className="text-sm font-semibold mt-2 mb-4 text-gray-400 tracking-wide">
             {"Organization's Detail"}
           </h1>
@@ -260,7 +245,7 @@ function FormComponent() {
             ))}
           </div>
         </div>
-        <div className="p-2 rounded-sm shadow-xs bg-neutral-950 ">
+        <div className="p-6 rounded-sm shadow-xs bg-neutral-950 ">
           <h1 className="text-sm font-semibold mt-2 mb-4 text-gray-400">
             {"Customer's Detail"}
           </h1>
@@ -285,10 +270,10 @@ function FormComponent() {
               </div>
             ))}
 
-            <div className="flex flex-col gap-1 w-full">
+            {/* <div className="flex flex-col gap-1 w-full">
               <div className="text-xs text-gray-300">Currency</div>
               <CurrencySelect value={currency} onChange={setCurrency} />
-            </div>
+            </div> */}
           </div>
         </div>
         <div
@@ -317,149 +302,12 @@ function FormComponent() {
             </div>
           </div>
           <div
-            className={`  rounded-lg py-4 px-2  transition-opacity
+            className={`  rounded-lg py-4  transition-opacity
       duration-500 ease-in-out ${
         expand ? " translate-y-0" : "pointer-events-none  opacity-0"
       } `}
           >
-            <table className="w-full table-fixed border-separate border-spacing-x-0 text-sm">
-              <thead className="text-neutral-400 text-xs">
-                <tr>
-                  <th className="p-2 w-[40%] font-medium text-left">
-                    Item Details
-                  </th>
-                  <th className="w-[12%] font-medium text-left">Quantity</th>
-                  <th className="w-[18%] font-medium text-left">Rate</th>
-                  <th className="w-[12%] font-medium text-left">Discount</th>
-                  <th className="w-[14%] font-medium text-left">Amount</th>
-                  <th className="w-[6%] font-medium"></th>
-                </tr>
-                <tr>
-                  <td colSpan={6} className="border-b border-gray-200" />
-                </tr>
-              </thead>
-
-              <tbody className="text-gray-400">
-                {Items.map((e, index) => (
-                  <tr key={index} className="text-sm">
-                    <td className="p-2">
-                      <input
-                        className="w-full p-2 font-light border-neutral-800 bg-neutral-900 text-xs rounded-xs border outline-0"
-                        placeholder="item"
-                        value={e.description}
-                        onChange={(temp: React.ChangeEvent<HTMLInputElement>) =>
-                          changeHandler(
-                            "description",
-                            index,
-                            temp.currentTarget.value,
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        className="w-full p-2 font-light border text-xs border-neutral-800 bg-neutral-900 rounded-xs outline-0"
-                        placeholder="qty"
-                        type="text"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        value={e.qty}
-                        onChange={(temp: React.ChangeEvent<HTMLInputElement>) =>
-                          changeHandler("qty", index, temp.currentTarget.value)
-                        }
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        className="w-full p-2 font-light border border-neutral-800 bg-neutral-900 text-xs rounded-xs outline-0"
-                        placeholder="rate"
-                        type="text"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        value={e.rate}
-                        onChange={(temp: React.ChangeEvent<HTMLInputElement>) =>
-                          changeHandler("rate", index, temp.currentTarget.value)
-                        }
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        className="w-full p-2 border font-light border-neutral-800 bg-neutral-900 text-xs rounded-xs outline-0"
-                        placeholder="disc"
-                        type="text"
-                        value={e.discount}
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        onChange={(temp: React.ChangeEvent<HTMLInputElement>) =>
-                          changeHandler(
-                            "discount",
-                            index,
-                            temp.currentTarget.value,
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        className="w-full p-2 font-light text-xs border border-neutral-800 bg-neutral-900 rounded-xs outline-0"
-                        type="text"
-                        value={Items[index].amt}
-                        readOnly
-                      />
-                    </td>
-                    <td className="p-2 text-center">
-                      <button
-                        onClick={(
-                          event: React.MouseEvent<HTMLButtonElement>,
-                        ) => {
-                          event.preventDefault();
-                          delRow(index);
-                        }}
-                      >
-                        <Bin />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div
-              onClick={(e: React.MouseEvent) => {
-                e.preventDefault();
-
-                addRow();
-              }}
-              className="inline-flex items-center text-xs font-semibold p-1 gap-1 cursor-pointer group  mt-4 ml-2  duration-200 rounded-sm   "
-            >
-              <div className="group-hover:text-teal-600">
-                <Add />
-              </div>
-
-              <span className="group-hover:text-gray-700">Add new line</span>
-            </div>
-
-            <div className=" text-right right-25 bottom-0 pr-6 py-2 font-semibold flex flex-col items-end gap-2 ">
-              <div className="flex flex-row gap-4  justify-between w-30">
-                <span className="text-gray-500">{"Sub Total"}</span>
-                <span className="text-neutral-700">{subTotal}</span>
-              </div>
-              <div className="flex flex-row  justify-between items-center w-30">
-                <span className="text-gray-500 ">{"Tax"}</span>
-                <div className="felx flex-row items-center gap-1">
-                  <input
-                    className="text-right py-1 px-2 text-md w-14 outline-0 border-b border-neutral-800 text-neutral-700  "
-                    type=""
-                    placeholder="GST%"
-                    onChange={(e) => TaxHandler(Number(e.currentTarget.value))}
-                  ></input>
-                  <span className="text-neutral-700 ">{"%"}</span>
-                </div>
-              </div>
-              <div className="flex flex-row gap-8 text-lg  justify-end  border-t border-neutral-800 w-60">
-                <span className="text-gray-500">{"Total"}</span>
-                <span className="text-neutral-700">{Total}</span>
-              </div>
-            </div>
+            <ItemsTable />
           </div>
         </div>
 
@@ -532,13 +380,12 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
 
 import Image from "next/image";
 import ImageAlt from "@/app/Icons/Img";
-// import  { NavLogo } from "@/app/component/Nav";
+
 import SeePassword from "@/app/Icons/SeePassword";
 import Docs from "@/app/Icons/Doc";
-// import { int } from "zod";
-import Both from "@/app/Icons/Both";
-// import { Doc } from "zod/v4/core";
 
+import Both from "@/app/Icons/Both";
+import ItemsTable from "./Table";
 
 function PaymentOptions() {
   interface Owner {
@@ -561,26 +408,6 @@ function PaymentOptions() {
   }
 
   const OwnerField: OwnerField[] = [
-    // {
-    //   label: "Company Name",
-    //   name: "CompanyName",
-    //   placeholder: "Company name",
-    // },
-    // {
-    //   label: "Company Address",
-    //   name: "CompanyAddress",
-    //   placeholder: "Company Address",
-    // },
-    // {
-    //   label: "Tax Details",
-    //   name: "TaxDetail",
-    //   placeholder: "Tax Details eg : GSTIN - ",
-    // },
-    // {
-    //   label: "Company Mail",
-    //   name: "CompanyMail",
-    //   placeholder: "Company Mail",
-    // },
     {
       label: "Owner Name",
       name: "OwnerName",
