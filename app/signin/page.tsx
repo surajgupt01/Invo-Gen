@@ -13,7 +13,7 @@ export default function SignUp() {
       <div className="flex  rounded-4xl w-full h-full">
         <SignSideBar />
 
-        <div className="w-full  h-full flex justify-center items-center relative lg:bg-gray-50 ">
+        <div className="w-full flex justify-center items-center relative lg:bg-gray-50 ">
           <Link
             href={"/"}
             className="absolute top-5 left-5 text-gray-700 hover:text-black cursor-pointer flex justify-center items-center group"
