@@ -15,8 +15,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Luen",
-  description: "Generate Profession Invoices",
-};
+  description: "Generate Professional Invoices",
+
+  openGraph: {
+    title: "Luen",
+    description: "Generate Professional Invoices",
+    url: "https://www.Luen.in", 
+    siteName: "Luen",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 1200,
+        height: 630,
+        alt: "Luen - Invoice Platform",
+      },
+    ],
+    type: "website",
+  },
+}
 
 export default function RootLayout({
   children,
