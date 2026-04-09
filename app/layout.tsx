@@ -32,6 +32,12 @@ export const metadata: Metadata = {
     ],
     type: "website",
   },
+    twitter: {
+    card: "summary_large_image",
+    title: "Luen",
+    description: "Generate Professional Invoices",
+    images: ["/favicon.png"],
+  },
 }
 
 export default function RootLayout({
