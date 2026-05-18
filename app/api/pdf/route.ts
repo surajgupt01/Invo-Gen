@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       `,
       {
         waitUntil: "networkidle",
-      }
+      },
     );
 
     const pdf = await page.pdf({
@@ -46,23 +46,40 @@ export async function POST(req: Request) {
       printBackground: true,
     });
 
-    return new Response( new Uint8Array(pdf), {
+    return new Response(new Uint8Array(pdf), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": 'attachment; filename="invoice.pdf"',
       },
     });
-  } catch (error) {
-    console.error("PDF Error:", error);
+  } catch (error: unknown) {
+    console.error("FULL ERROR:", error);
 
-    return Response.json(
-      {
-        error: "Failed to generate PDF",
-        details: String(error),
-      },
+    if (error instanceof Error) {
+      return new Response(
+        JSON.stringify({
+          message: error.message,
+          stack: error.stack,
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        message: "Unknown error",
+      }),
       {
         status: 500,
-      }
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
     );
   } finally {
     if (browser) {

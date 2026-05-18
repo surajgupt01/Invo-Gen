@@ -1,7 +1,5 @@
 "use client";
 
-// import axios from "axios";
-// import Create from "../Icons/Create";
 import Download from "../Icons/Download";
 import Draft from "../Icons/Draft";
 import Minus from "../Icons/Minus";
@@ -15,54 +13,12 @@ import InvoicePreview3 from "@/app/component/Design3";
 import InvoicePreview4 from "@/app/component/Design4";
 import InvoicePreview5 from "@/app/component/Design5";
 
-// import { Session } from "next-auth";
-// import { useOwner } from "../store/OwnerDetail";
-// import { useCustomerStore } from "../store/CustomerDetail";
-// import { ItemsStore } from "../store/InvoiceTabel";
-// import { useOptionalData } from "../store/OptionalDataStore";
-// import { useSession } from "next-auth/react";
-
-// type ItemsDetail = {
-//   description: string;
-//   qty: string;
-//   rate: string;
-//   discount: string;
-//   amt: string;
-// };
-
-// interface InvoiceDetails {
-//   OwnerName: string;
-//   PhNo: string;
-//   AccountNumber: string;
-//   BankName: string;
-//   BankCode: string;
-//   BankAddress: string;
-//   CustomerName: string;
-//   CustomerAddress: string;
-//   DueDate: string;
-//   InvoiceNo: string;
-//   Currency: string;
-//   Subject: string;
-//   InvoiceId: string;
-//   IssueDate: string;
-//   AdditionalInfo: string;
-//   Terms: string;
-//   ItemsTable: ItemsDetail[];
-//   subtotal: string;
-//   tax: string;
-//   discount?: string;
-//   total: string;
-//   BrandLogo: string;
-//   Signature?: string;
-//   userId: string;
-// }
-
 export default function Preview() {
   const [loading, setLoading] = useState(false);
 
   const [scaler, setScale] = useState(0.7);
 
-  const TemplateDesigns : Record<string, React.ComponentType>  = {
+  const TemplateDesigns: Record<string, React.ComponentType> = {
     classic: InvoicePreview,
     modern: TempDesign,
     regular: InvoicePreview2,
@@ -73,71 +29,7 @@ export default function Preview() {
 
   const { name } = useInvoiceSelect();
 
-  const FinalDesign = TemplateDesigns[name] || TemplateDesigns.classic
-
-  // const { data: session, status } = useSession();
-
-  // const { OwnerDetails } = useOwner();
-  // const { Details } = useCustomerStore();
-  // const { AdditionalInfo, TermsConditions } = useOptionalData();
-  // const {  Items } = ItemsStore();
-
-  // async function handleDownload() {
-  //   try {
-  //     setLoading(true);
-
-  //    const invoiceHTML =  document.getElementById("invoice")?.innerHTML;
-
-  //     if (!invoiceHTML) {
-  //       alert("Invoice not found");
-  //       return;
-  //     }
-
-  //     const res = await fetch("/api/pdf", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ html: invoiceHTML }),
-  //     });
-
-  //     const blob = await res.blob();
-  //     const url = URL.createObjectURL(blob);
-
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = "invoice1.pdf";
-  //     a.click();
-
-  //     URL.revokeObjectURL(url);
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to download PDF");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-
-  //   // const InvDetails: InvoiceDetails = {
-  //   //   ...OwnerDetails,
-  //   //   ItemsTable: Items,
-  //   //   ...Details,
-  //   //   AdditionalInfo: AdditionalInfo,
-  //   //   Terms: TermsConditions,
-  //   //   subtotal: "0",
-  //   //   tax: "0",
-  //   //   userId : '',
-  //   //   BrandLogo: "aaa",
-  //   //   Signature: "aaa",
-  //   //   InvoiceId: "hhh",
-  //   //   IssueDate: "aaaa",
-  //   //   total: "aaa",
-  //   // };
-
-  //   // const uploadInv = await axios.post(
-  //   //   "/api/CreateInvoice",
-  //   //   //  header : {"Content-Type" : "application/json"},
-  //   //   InvDetails,
-  //   // );
-  //   // console.log(uploadInv.data);
-  // }
+  const FinalDesign = TemplateDesigns[name] || TemplateDesigns.classic;
 
   async function handleDownload() {
     try {
@@ -170,9 +62,12 @@ export default function Preview() {
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        console.error(err);
-        alert("Failed to generate PDF");
+        const errText = await res.text();
+
+        console.error("SERVER ERROR:", errText);
+
+        alert(errText || "Failed to generate PDF");
+
         return;
       }
 
@@ -234,8 +129,7 @@ export default function Preview() {
             >
               {/* <InvoicePreview /> */}
 
-              <FinalDesign/>
-              
+              <FinalDesign />
             </div>
           </div>
         </div>
