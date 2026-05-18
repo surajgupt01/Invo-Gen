@@ -62,7 +62,7 @@ export default function Preview() {
       });
 
       if (!res.ok) {
-        const errText = await res.text();
+        const errText = await res.json();
 
         console.error("SERVER ERROR:", errText);
 

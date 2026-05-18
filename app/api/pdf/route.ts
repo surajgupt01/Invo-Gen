@@ -1,50 +1,70 @@
-import { chromium } from "playwright";
+import chromium from "@sparticuz/chromium";
+import puppeteer, { Browser } from "puppeteer-core";
+import fs from "fs";
+import path from "path";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-export async function POST(req: Request) {
-  let browser;
+const isLocal = process.env.NODE_ENV === "development";
+let browser: Browser | undefined;
+let tailwindCSS: string | null = null;
 
+// ✅ Read from local file — no network, no 404s
+const getTailwindCSS = () => {
+  if (tailwindCSS) return tailwindCSS;
+  tailwindCSS = fs.readFileSync(
+    path.join(process.cwd(), "public/tailwind-pdf.css"),
+    "utf-8"
+  );
+  console.log("Tailwind CSS length:", tailwindCSS.length); // should be large
+  return tailwindCSS;
+};
+
+export async function POST(req: Request) {
   try {
     const { html } = await req.json();
 
-    browser = await chromium.launch({
-      headless: true,
-    });
+    if (!browser?.connected) {
+      browser = await puppeteer.launch(
+        isLocal
+          ? { channel: "chrome", headless: true }
+          : {
+              args: chromium.args,
+              executablePath: await chromium.executablePath(),
+              headless: true,
+            }
+      );
+    }
+
+    const css = getTailwindCSS(); // ✅ sync, no await needed
 
     const page = await browser.newPage();
+    await page.emulateMediaType("print");
 
     await page.setContent(
-      `
-      <!DOCTYPE html>
+      `<!DOCTYPE html>
       <html>
         <head>
-          <script src="https://cdn.tailwindcss.com"></script>
-
+          <meta charset="utf-8" />
+          <style>${css}</style>
           <style>
-            body {
-              background: white;
-              
-              font-family: Arial, sans-serif;
-            }
+            body { background: white; color: black; font-family: Arial, sans-serif; }
           </style>
         </head>
-
-        <body>
-          ${html}
-        </body>
-      </html>
-      `,
-      {
-        waitUntil: "networkidle",
-      },
+        <body>${html}</body>
+      </html>`,
+      { waitUntil: "domcontentloaded", timeout: 30000 }
     );
 
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
+      omitBackground: false,
+      // margin: { top: "10mm", bottom: "15mm", left: "5mm", right: "5mm" },
     });
+
+    await page.close();
 
     return new Response(new Uint8Array(pdf), {
       headers: {
@@ -52,38 +72,11 @@ export async function POST(req: Request) {
         "Content-Disposition": 'attachment; filename="invoice.pdf"',
       },
     });
-  } catch (error: unknown) {
-    console.error("FULL ERROR:", error);
-
-    if (error instanceof Error) {
-      return new Response(
-        JSON.stringify({
-          message: error.message,
-          stack: error.stack,
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-    }
-
+  } catch (error) {
+    console.error("PDF Generation Error:", error);
     return new Response(
-      JSON.stringify({
-        message: "Unknown error",
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
+      JSON.stringify({ error: "Failed to generate PDF", details: String(error) }),
+      { status: 500 }
     );
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
   }
 }
