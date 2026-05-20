@@ -1,6 +1,6 @@
 "use client";
 
-import { PDFViewer, pdf } from "@react-pdf/renderer";
+import { BlobProvider, PDFViewer, pdf } from "@react-pdf/renderer";
 import { useEffect, useMemo, useState } from "react";
 import Download from "../Icons/Download";
 import Draft from "../Icons/Draft";
@@ -25,8 +25,25 @@ function useDebouncedValue<T>(value: T, delay: number) {
   return debouncedValue;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const handleChange = () => setIsMobile(mediaQuery.matches);
+
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return isMobile;
+}
+
 export default function Preview() {
   const [loading, setLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const { name } = useInvoiceSelect();
   const {
@@ -139,10 +156,50 @@ export default function Preview() {
           </button>
         </div>
       </div>
-      <div className="relative lg:bg-zinc-900 w-[95%] flex-1 rounded-sm border border-neutral-900 overflow-hidden">
-        <PDFViewer showToolbar className="w-full h-full border-0">
-          {viewerDocument}
-        </PDFViewer>
+      <div className="relative lg:bg-zinc-900 w-[95%] flex-1 min-h-[70dvh] rounded-sm border border-neutral-900 overflow-hidden">
+        {isMobile ? (
+          <BlobProvider document={viewerDocument}>
+            {({ url, loading: previewLoading, error }) => {
+              if (previewLoading) {
+                return (
+                  <div className="h-full min-h-[70dvh] flex items-center justify-center text-sm text-neutral-400">
+                    Generating preview...
+                  </div>
+                );
+              }
+
+              if (error || !url) {
+                return (
+                  <div className="h-full min-h-[70dvh] flex items-center justify-center p-4 text-center text-sm text-neutral-400">
+                    PDF preview is not available on this device. Use Download to save it.
+                  </div>
+                );
+              }
+
+              return (
+                <div className="relative h-full min-h-[70dvh] bg-neutral-900">
+                  <iframe
+                    title="Invoice PDF preview"
+                    src={url}
+                    className="h-full min-h-[70dvh] w-full border-0 bg-white"
+                  />
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="absolute bottom-3 right-3 rounded-md bg-teal-600 px-3 py-2 text-xs font-medium text-white shadow-lg"
+                  >
+                    Open PDF
+                  </a>
+                </div>
+              );
+            }}
+          </BlobProvider>
+        ) : (
+          <PDFViewer showToolbar className="w-full h-full border-0">
+            {viewerDocument}
+          </PDFViewer>
+        )}
       </div>
     </div>
   );
