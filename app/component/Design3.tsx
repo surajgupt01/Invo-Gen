@@ -1,10 +1,7 @@
 "use client";
 
-import { useItemsStore } from "../store/InvoiceTabel";
-import { useCustomerStore } from "../store/CustomerDetail";
-import { useOptionalData } from "../store/OptionalDataStore";
-import { useOwner } from "../store/OwnerDetail";
 import Image from "next/image";
+import { sampleInvoiceData } from "./sampleInvoiceData";
 
 /**
  * Modern Dark-Header Invoice Template
@@ -31,11 +28,11 @@ export default function InvoicePreview3() {
     txnType,
     taxConfig,
     currency,
-  } = useItemsStore();
-
-  const { Details } = useCustomerStore();
-  const { AdditionalInfo, TermsConditions } = useOptionalData();
-  const { OwnerDetails } = useOwner();
+    Details,
+    AdditionalInfo,
+    TermsConditions,
+    OwnerDetails,
+  } = sampleInvoiceData;
 
   // Currency & Locale Setup
   const sym = mode === "india" ? "₹" : currency.symbol;

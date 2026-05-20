@@ -13,6 +13,7 @@ import type {
   TaxConfig,
   TxnType,
 } from "../store/InvoiceTabel";
+import { sampleInvoicePdfData } from "./sampleInvoiceData";
 
 type CustomerDetails = {
   CustomerName: string;
@@ -60,7 +61,7 @@ export type InvoicePdfData = {
 };
 
 type InvoicePdfDocumentProps = {
-  data: InvoicePdfData;
+  data?: InvoicePdfData;
   templateName: string;
 };
 
@@ -801,7 +802,7 @@ function TemplatePage({ data, kind }: { data: InvoicePdfData; kind: TemplateKind
 }
 
 export default function InvoicePdfDocument({
-  data,
+  data = sampleInvoicePdfData,
   templateName,
 }: InvoicePdfDocumentProps) {
   const kind = getKind(templateName);
