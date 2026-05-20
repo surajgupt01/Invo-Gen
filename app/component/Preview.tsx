@@ -1,81 +1,109 @@
 "use client";
 
+import { PDFViewer, pdf } from "@react-pdf/renderer";
+import { useEffect, useMemo, useState } from "react";
 import Download from "../Icons/Download";
 import Draft from "../Icons/Draft";
-import Minus from "../Icons/Minus";
-import Plus from "../Icons/Plus";
+import { useCustomerStore } from "../store/CustomerDetail";
 import { useInvoiceSelect } from "../store/InvoiceSelected";
-import InvoicePreview from "./InvoicePreview";
-import { useState } from "react";
-import TempDesign from "@/app/component/ModernTemp";
-import InvoicePreview2 from "@/app/component/Design2";
-import InvoicePreview3 from "@/app/component/Design3";
-import InvoicePreview4 from "@/app/component/Design4";
-import InvoicePreview5 from "@/app/component/Design5";
+import { useItemsStore } from "../store/InvoiceTabel";
+import { useOptionalData } from "../store/OptionalDataStore";
+import { useOwner } from "../store/OwnerDetail";
+import InvoicePdfDocument, { type InvoicePdfData } from "./InvoicePdfDocument";
+
+function useDebouncedValue<T>(value: T, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export default function Preview() {
   const [loading, setLoading] = useState(false);
 
-  const [scaler, setScale] = useState(0.7);
-
-  const TemplateDesigns: Record<string, React.ComponentType> = {
-    classic: InvoicePreview,
-    modern: TempDesign,
-    regular: InvoicePreview2,
-    trendy: InvoicePreview3,
-    sassy: InvoicePreview4,
-    free: InvoicePreview5,
-  };
-
   const { name } = useInvoiceSelect();
+  const {
+    Items,
+    Total,
+    subTotal,
+    totalCgst,
+    totalSgst,
+    totalIgst,
+    totalTax,
+    mode,
+    txnType,
+    taxConfig,
+    currency,
+  } = useItemsStore();
+  const { Details } = useCustomerStore();
+  const { AdditionalInfo, TermsConditions } = useOptionalData();
+  const { OwnerDetails } = useOwner();
 
-  const FinalDesign = TemplateDesigns[name] || TemplateDesigns.classic;
+  const pdfData = useMemo<InvoicePdfData>(
+    () => ({
+      items: Items,
+      total: Total,
+      subTotal,
+      totalCgst,
+      totalSgst,
+      totalIgst,
+      totalTax,
+      mode,
+      txnType,
+      taxConfig,
+      currency,
+      details: Details,
+      ownerDetails: OwnerDetails,
+      additionalInfo: AdditionalInfo,
+      termsConditions: TermsConditions,
+    }),
+    [
+      Items,
+      Total,
+      subTotal,
+      totalCgst,
+      totalSgst,
+      totalIgst,
+      totalTax,
+      mode,
+      txnType,
+      taxConfig,
+      currency,
+      Details,
+      OwnerDetails,
+      AdditionalInfo,
+      TermsConditions,
+    ]
+  );
+
+  const viewerPdfData = useDebouncedValue(pdfData, 600);
+
+  const invoiceDocument = useMemo(
+    () => <InvoicePdfDocument data={pdfData} templateName={name} />,
+    [pdfData, name]
+  );
+
+  const viewerDocument = useMemo(
+    () => <InvoicePdfDocument data={viewerPdfData} templateName={name} />,
+    [viewerPdfData, name]
+  );
 
   async function handleDownload() {
     try {
       setLoading(true);
 
-      const invoiceEl = document.getElementById("invoice");
-
-      if (!invoiceEl) {
-        alert("Invoice not found");
-        return;
-      }
-
-      // ✅ Get computed styles and inline them
-      const allStyles = Array.from(document.styleSheets)
-        .flatMap((sheet) => {
-          try {
-            return Array.from(sheet.cssRules).map((rule) => rule.cssText);
-          } catch {
-            return [];
-          }
-        })
-        .join("\n");
-
-      const invoiceHTML = invoiceEl.outerHTML;
-
-      const res = await fetch("/api/pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ html: invoiceHTML, styles: allStyles }), // ✅ send styles too
-      });
-
-      if (!res.ok) {
-        const errText = await res.json();
-
-        console.error("SERVER ERROR:", errText);
-
-        alert(errText || "Failed to generate PDF");
-
-        return;
-      }
-
-      const blob = await res.blob();
+      const blob = await pdf(invoiceDocument).toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "invoice1.pdf";
+      a.download = `invoice-${Details.InvoiceNo || "draft"}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -111,45 +139,10 @@ export default function Preview() {
           </button>
         </div>
       </div>
-      <div className="relative lg:bg-zinc-900 w-[95%] flex-1  rounded-sm border border-neutral-900 lg:overflow-auto flex justify-center custom-scrollbar">
-        {/* centering wrapper */}
-        <div className="flex  lg:items-start min-h-full lg:py-5   lg:overflow-auto custom-scrollbar">
-          {/* scale wrapper */}
-          <div
-            style={{
-              transform: window.innerWidth >= 800 ? `scale(${scaler})` : ``,
-              transformOrigin: "top center",
-            }}
-            className="transition-transform duration-200 scale-48"
-          >
-            {/* real invoice size */}
-            <div
-              id="invoice"
-              className="w-[794px] h-[1123px] bg-white shadow-lg"
-            >
-              {/* <InvoicePreview /> */}
-
-              <FinalDesign />
-            </div>
-          </div>
-        </div>
-
-        {/* zoom controls */}
-        <div className="flex flex-col bg-gray-200 justify-center items-center w-10 py-2 rounded-sm gap-4 fixed bottom-15 right-8  ">
-          <button
-            onClick={() => setScale((e) => (e >= 1.5 ? e : e + 0.1))}
-            className="active:scale-80 hover:text-gray-700"
-          >
-            <Plus />
-          </button>
-
-          <button
-            onClick={() => setScale((e) => (e <= 0.3 ? e : e - 0.1))}
-            className="active:scale-80 hover:text-gray-700"
-          >
-            <Minus />
-          </button>
-        </div>
+      <div className="relative lg:bg-zinc-900 w-[95%] flex-1 rounded-sm border border-neutral-900 overflow-hidden">
+        <PDFViewer showToolbar className="w-full h-full border-0">
+          {viewerDocument}
+        </PDFViewer>
       </div>
     </div>
   );
