@@ -10,6 +10,7 @@ import { useItemsStore } from "../store/InvoiceTabel";
 import { useOptionalData } from "../store/OptionalDataStore";
 import { useOwner } from "../store/OwnerDetail";
 import InvoicePdfDocument, { type InvoicePdfData } from "./InvoicePdfDocument";
+import { Loader2, FileText, ExternalLink } from "lucide-react";
 
 function useDebouncedValue<T>(value: T, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -45,7 +46,14 @@ export default function Preview() {
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
 
-  const { name } = useInvoiceSelect();
+  // 🔑 FIXED: Safely destructure selectedTemplate (or fall back to 'name' or 'classic')
+  const invoiceSelectStore = useInvoiceSelect() as {
+    selectedTemplate?: string;
+    name?: string;
+  };
+  const activeTemplateName =
+    invoiceSelectStore.selectedTemplate || invoiceSelectStore.name || "classic";
+
   const {
     Items,
     Total,
@@ -59,6 +67,7 @@ export default function Preview() {
     taxConfig,
     currency,
   } = useItemsStore();
+
   const { Details } = useCustomerStore();
   const { AdditionalInfo, TermsConditions } = useOptionalData();
   const { OwnerDetails } = useOwner();
@@ -103,13 +112,13 @@ export default function Preview() {
   const viewerPdfData = useDebouncedValue(pdfData, 600);
 
   const invoiceDocument = useMemo(
-    () => <InvoicePdfDocument data={pdfData} templateName={name} />,
-    [pdfData, name]
+    () => <InvoicePdfDocument data={pdfData} templateName={activeTemplateName} />,
+    [pdfData, activeTemplateName]
   );
 
   const viewerDocument = useMemo(
-    () => <InvoicePdfDocument data={viewerPdfData} templateName={name} />,
-    [viewerPdfData, name]
+    () => <InvoicePdfDocument data={viewerPdfData} templateName={activeTemplateName} />,
+    [viewerPdfData, activeTemplateName]
   );
 
   async function handleDownload() {
@@ -132,52 +141,80 @@ export default function Preview() {
   }
 
   return (
-    <div className=" h-full  bg-neutral-950 flex flex-col items-center py-2 ">
-      {/* <div className=" font-semibold w-full  border-gray-900 text-gray-500 tracking-wider p-4">Preview</div> */}
-
-      <div className="w-full text-xs flex justify-between gap-2 p-4">
-        <div className="bg-green-800 flex justify-center items-center gap-0.5 text-green-500 px-3 py-1 text-sm rounded-md">
-          <div className="w-1 h-1 rounded-full bg-green-500"></div>
-          {"Live"}
+    <div className="h-full w-full bg-[#090909] flex flex-col items-center p-2 space-y-2 font-mono select-none">
+      
+      {/* --- TOP CONTROL BAR --- */}
+      <div className="w-full bg-[#121212] border border-neutral-800 p-2.5 px-4 flex justify-between items-center rounded-none font-sans">
+        
+        {/* Live Indicator */}
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full bg-[#00D2B5] opacity-75" />
+            <span className="relative inline-flex h-2 w-2 bg-[#00D2B5]" />
+          </span>
+          <span className="text-xs font-bold uppercase tracking-widest text-white">
+            Live Telemetry Preview
+          </span>
+          <span className="text-[9px] text-neutral-400 font-mono bg-[#090909] px-2 py-0.5 border border-neutral-800 uppercase hidden sm:inline-block">
+            LAYOUT: {activeTemplateName}
+          </span>
         </div>
-        <div className="flex items-center justify-center gap-2">
+
+        {/* Download & Draft Actions */}
+        <div className="flex items-center gap-2 font-mono">
           <button
             onClick={handleDownload}
             disabled={loading}
-            className="px-2 py-1 bg-teal-600 rounded-md  hover:bg-teal-700 flex items-center gap-1 disabled:opacity-60 text-neutral-200 cursor-pointer"
+            className="px-3 py-1.5 bg-[#00D2B5] text-[#090909] font-bold text-xs uppercase tracking-wider hover:bg-[#00b89f] transition rounded-none flex items-center gap-1.5 disabled:opacity-50 font-sans shadow-sm"
           >
-            <Download />
-            {loading ? "Generating..." : "Download"}
+            {loading ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Download />
+                Download PDF
+              </>
+            )}
           </button>
 
-          <button className="px-2 bg-gray-300 py-1 border border-gray-900 rounded-md hover:bg-gray-200 flex items-center gap-1">
+          <button className="px-3 py-1.5 bg-[#181818] border border-neutral-800 text-neutral-300 font-bold text-xs uppercase tracking-wider hover:bg-neutral-800 transition rounded-none flex items-center gap-1.5 font-sans">
             <Draft />
-            Save as Draft
+            Save Draft
           </button>
         </div>
       </div>
-      <div className="relative lg:bg-zinc-900 w-[95%] flex-1 min-h-[70dvh] rounded-sm border border-neutral-900 overflow-hidden">
+
+      {/* --- PDF VIEWPORT --- */}
+      <div className="relative w-full flex-1 min-h-[70dvh] bg-[#121212] border border-neutral-800 rounded-none overflow-hidden">
         {isMobile ? (
           <BlobProvider document={viewerDocument}>
             {({ url, loading: previewLoading, error }) => {
               if (previewLoading) {
                 return (
-                  <div className="h-full min-h-[70dvh] flex items-center justify-center text-sm text-neutral-400">
-                    Generating preview...
+                  <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center gap-2 text-xs text-neutral-400 font-mono">
+                    <Loader2 className="w-5 h-5 text-[#00D2B5] animate-spin" />
+                    <span>Rendering mobile PDF document...</span>
                   </div>
                 );
               }
 
               if (error || !url) {
                 return (
-                  <div className="h-full min-h-[70dvh] flex items-center justify-center p-4 text-center text-sm text-neutral-400">
-                    PDF preview is not available on this device. Use Download to save it.
+                  <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center p-6 text-center text-xs text-neutral-400 font-mono">
+                    <FileText className="w-8 h-8 text-neutral-600 mb-2" />
+                    <span>Inline PDF preview is limited on this mobile browser.</span>
+                    <span className="text-[10px] text-neutral-500 mt-1">
+                     {` Use the "Download PDF" button above to view your document.`}
+                    </span>
                   </div>
                 );
               }
 
               return (
-                <div className="relative h-full min-h-[70dvh] bg-neutral-900">
+                <div className="relative h-full min-h-[70dvh] bg-[#090909]">
                   <iframe
                     title="Invoice PDF preview"
                     src={url}
@@ -187,20 +224,22 @@ export default function Preview() {
                     href={url}
                     target="_blank"
                     rel="noreferrer"
-                    className="absolute bottom-3 right-3 rounded-md bg-teal-600 px-3 py-2 text-xs font-medium text-white shadow-lg"
+                    className="absolute bottom-3 right-3 bg-[#00D2B5] text-[#090909] px-3 py-1.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg font-sans"
                   >
                     Open PDF
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
               );
             }}
           </BlobProvider>
         ) : (
-          <PDFViewer showToolbar className="w-full h-full border-0">
+          <PDFViewer showToolbar className="w-full h-full border-0 rounded-none">
             {viewerDocument}
           </PDFViewer>
         )}
       </div>
+
     </div>
   );
 }

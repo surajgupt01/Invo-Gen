@@ -5,8 +5,9 @@ import SideNav from "../component/SideNav";
 import { useState, useEffect } from "react";
 import Menu from "../Icons/Menu";
 import CloseSide from "../Icons/CloseSide";
-import { useRouter } from "next/navigation";
-import { X, Layers } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import { X } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -15,10 +16,11 @@ export default function DashboardLayout({
 }) {
   const { data, status } = useSession();
   const router = useRouter();
-  
+  const pathname = usePathname();
+
   // Desktop sidebar collapsed state
-  const [menu, setMenu] = useState(false);
-  
+  const [menu, setMenu] = useState(true);
+
   // Mobile drawer open state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -27,6 +29,11 @@ export default function DashboardLayout({
       router.push("/signin");
     }
   }, [status, router]);
+
+  // Automatically close mobile menu on route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   // Loading State
   if (status === "loading") {
@@ -55,20 +62,20 @@ export default function DashboardLayout({
       {/* ==========================================
           MOBILE TOP NAVBAR (< lg screens)
       ========================================== */}
-      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#121212] border-b border-neutral-800 shrink-0 z-40">
-        <div className="flex items-center gap-2 font-sans">
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#090909] border-b border-neutral-800 shrink-0 z-40">
+        <Link href="/dashboard/overview" className="flex items-center gap-2 font-sans">
           <div className="w-6 h-6 bg-[#00D2B5] text-[#090909] font-black text-xs flex items-center justify-center font-mono">
             L
           </div>
           <span className="font-bold text-sm tracking-widest text-white uppercase">
             Luen
           </span>
-        </div>
+        </Link>
 
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 text-neutral-400 hover:text-white bg-[#090909] border border-neutral-800 focus:outline-none transition"
+          className="p-1.5 text-neutral-400 hover:text-white bg-[#121212] border border-neutral-800 focus:outline-none transition"
           aria-label="Toggle Mobile Menu"
         >
           {mobileMenuOpen ? (
@@ -80,7 +87,7 @@ export default function DashboardLayout({
       </header>
 
       {/* ==========================================
-          MOBILE SIDEBAR DRAWER & OVERLAY (< lg)
+          MOBILE DRAWER USING YOUR SideNav COMPONENT (< lg)
       ========================================== */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
@@ -90,28 +97,18 @@ export default function DashboardLayout({
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Slide-over Drawer Panel */}
-          <div className="relative w-72 max-w-[80vw] bg-[#121212] border-r border-neutral-800 h-full flex flex-col z-50 shadow-2xl">
-            {/* Mobile Drawer Top Header */}
-            <div className="p-3 border-b border-neutral-800 flex items-center justify-between bg-[#181818]">
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[#00D2B5]" />
-                <span className="text-xs font-bold uppercase tracking-widest text-white font-sans">
-                  Navigation
-                </span>
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-1 text-neutral-400 hover:text-white transition"
-              >
-                <CloseSide />
-              </button>
-            </div>
-
-            {/* Mobile SideNav Container */}
-            <div className="flex-1 overflow-y-auto">
-              <SideNav name={name} email={email} menu={false} />
-            </div>
+          {/* Slide-over Container rendering your exact SideNav */}
+          <div className="relative h-full z-50 shadow-2xl flex">
+            <SideNav name={name} email={email} menu={true} />
+            
+            {/* Close Button Header overlay for mobile drawer */}
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="absolute top-3 right-3 p-1.5 text-neutral-400 hover:text-white bg-[#121212] border border-neutral-800 transition z-50"
+              title="Close Menu"
+            >
+              <CloseSide />
+            </button>
           </div>
         </div>
       )}
@@ -125,7 +122,7 @@ export default function DashboardLayout({
         <div
           className={`${
             menu ? "" : "h-full z-30"
-          } duration-300 ease-in-out lg:block hidden border-r border-neutral-800/80 bg-[#121212]`}
+          } duration-300 ease-in-out lg:block hidden bg-[#090909]`}
         >
           <SideNav name={name} email={email} menu={menu} />
         </div>
@@ -134,9 +131,9 @@ export default function DashboardLayout({
         <button
           onClick={() => setMenu((e) => !e)}
           className={`${
-            menu ? "left-48" : "left-2"
-          } absolute z-40 lg:block hidden p-1.5 text-neutral-400 hover:text-white bg-[#090909] border border-neutral-800 top-2.5 transition-all duration-300`}
-          title={menu ? "Expand Sidebar" : "Collapse Sidebar"}
+            menu ? "left-52" : "left-2"
+          } absolute z-40 lg:block hidden p-1.5 text-neutral-400 hover:text-white bg-[#121212] border border-neutral-800 top-2.5 transition-all duration-300`}
+          title={menu ? "Collapse Sidebar" : "Expand Sidebar"}
         >
           {menu ? <CloseSide /> : <Menu />}
         </button>
