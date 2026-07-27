@@ -44,7 +44,7 @@ export default  function SideNav({name , email , menu} : { name: string , email 
       <div className={`${menu ? '' : ' delay-100  hidden'}  h-full flex-col flex justify-between mt-6 `}>
         <div className={``}>
           <span className="text-xs text-neutral-300 tracking-wide">MAIN</span>
-          <Link href={'/dashboard'} className={`flex items-center mt-4 gap-1 hover:bg-white/10 ${route=='overview' ? 'bg-white/20' : ''} cursor-pointer text-neutral-400 py-1.5 px-2 rounded-xs`}>
+          <Link href={'/dashboard/overview'} className={`flex items-center mt-4 gap-1 hover:bg-white/10 ${route=='overview' ? 'bg-white/20' : ''} cursor-pointer text-neutral-400 py-1.5 px-2 rounded-xs`}>
             <div>
               <Overview />
             </div>
@@ -73,7 +73,7 @@ export default  function SideNav({name , email , menu} : { name: string , email 
           </Link>
 
           <Link
-            href={"/dashboard"}
+            href={"/dashboard/settings"}
             className={`flex items-center mt-1  hover:bg-white/10 gap-1 ${route=='settings' ? 'bg-white/10' : ''}  cursor-pointer text-neutral-400 py-1.5 px-2 rounded-xs`}
           >
             <div>
