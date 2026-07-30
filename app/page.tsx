@@ -28,7 +28,7 @@ export default function Home() {
   );
 }
 
-export function DashboardPreview() {
+function DashboardPreview() {
   return (
     <div className="w-[90%] max-w-5xl mx-auto my-12 md:my-16 flex justify-center font-sans select-none">
       {/* Outer App Frame Container */}
