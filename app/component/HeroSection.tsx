@@ -5,10 +5,10 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 pt-10 pb-16 lg:mt-20">
+    <div className="w-full max-w-5xl mx-auto px-4 pt-10 pb-16 lg:mt-10">
       
       {/* Outer Paper/Canvas Card */}
-      <div className="relative bg-white border border-gray-200 rounded-md   overflow-hidden">
+      <div className="relative bg-white  rounded-md overflow-hidden">
         
         {/* Top Status & Brand Header Bar */}
         <div className="bg-gray-50/80 px-6 py-3 border-b border-gray-200 flex flex-wrap items-center justify-between gap-4">
@@ -21,8 +21,8 @@ export default function HeroSection() {
           
           <div className="flex items-center gap-4 text-xs font-mono text-gray-500">
             <span>STATUS: <strong className="text-teal-700 font-semibold">READY TO ISSUE</strong></span>
-            <span className="hidden sm:inline text-gray-300">|</span>
-            <span className="hidden sm:inline">NO ACCOUNT NEEDED</span>
+            {/* <span className="hidden sm:inline text-gray-300">|</span>
+            <span className="hidden sm:inline">NO ACCOUNT NEEDED</span> */}
           </div>
         </div>
 
@@ -63,24 +63,8 @@ export default function HeroSection() {
 
           </div>
 
-          {/* Interactive Feature Strip inside Invoice */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-xs text-gray-600">
-            <div className="p-3 bg-teal-50/50 border border-teal-200/60 rounded-sm">
-              <span className="font-semibold text-teal-900 block mb-1">✓ Auto-Calculations</span>
-              Subtotals, GST/VAT, and custom discounts handled automatically.
-            </div>
-            <div className="p-3 bg-teal-50/50 border border-teal-200/60 rounded-sm">
-              <span className="font-semibold text-teal-900 block mb-1">✓ Brand Customization</span>
-              Upload logo, business details, and custom payment QR codes.
-            </div>
-            <div className="p-3 bg-teal-50/50 border border-teal-200/60 rounded-sm">
-              <span className="font-semibold text-teal-900 block mb-1">✓ Clean PDF Export</span>
-              Download crisp, pixel-perfect PDFs with zero watermarks.
-            </div>
-          </div>
-
-          {/* Invoice Footer / Action Area */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-gray-200">
+          {/* Action Area & CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-10">
             
             {/* Action CTA Button */}
             <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
@@ -120,6 +104,36 @@ export default function HeroSection() {
               </span>
             </div>
 
+          </div>
+
+          {/* Clean White Cards with Dark Border (Moved below buttons) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3  pt-8 border-t border-gray-200">
+            <div className="p-4 bg-white  border-zinc-800 rounded-sm shadow-2xs">
+              <span className="font-semibold text-zinc-900 block mb-1.5 text-xs sm:text-sm">
+                ✓ Auto-Calculations
+              </span>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                Subtotals, GST/VAT, and custom discounts handled automatically.
+              </p>
+            </div>
+
+            <div className="p-4 bg-white  border-zinc-800 rounded-sm shadow-2xs">
+              <span className="font-semibold text-zinc-900 block mb-1.5 text-xs sm:text-sm">
+                ✓ Brand Customization
+              </span>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                Upload logo, business details, and custom payment QR codes.
+              </p>
+            </div>
+
+            <div className="p-4 bg-white  border-zinc-800 rounded-sm shadow-2xs">
+              <span className="font-semibold text-zinc-900 block mb-1.5 text-xs sm:text-sm">
+                ✓ Clean PDF Export
+              </span>
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                Download crisp, pixel-perfect PDFs with zero watermarks.
+              </p>
+            </div>
           </div>
 
         </div>

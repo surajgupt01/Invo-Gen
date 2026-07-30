@@ -30,26 +30,27 @@ export default function Home() {
 
 function DashboardPreview() {
   return (
-    <div className="w-[90%] max-w-5xl mx-auto my-12 md:my-16 flex justify-center font-sans select-none">
+    /* Standardized to w-full max-w-5xl px-4 to match HeroSection exactly */
+    <div className="w-full max-w-5xl mx-auto px-4 my-10 md:my-14 flex justify-center font-sans select-none">
+      
       {/* Outer App Frame Container */}
-      <div className="relative w-full bg-white border border-zinc-200/80 rounded-xs p-2 md:p-3 shadow-2xs transition-all duration-300 hover:border-zinc-300">
-        
+    
         {/* App Window Top Header Bar */}
- 
+     
 
-        {/* Dashboard Image Preview Wrapper */}
-        <div className="relative w-full overflow-hidden rounded-2xs bg-zinc-50 aspect-[1/1] border border-zinc-100">
+        {/* Dashboard Image Preview Wrapper (aspect-[16/10] on desktop, square on mobile if needed) */}
+        <div className="relative w-full overflow-hidden rounded-xs bg-zinc-50 aspect-[1/1]  border border-zinc-100">
           <Image
             src="/dash_Img2.jpeg"
             alt="Luen Dashboard Preview"
             fill
-            sizes=""
+           
             priority
             className="object-cover object-top hover:object-bottom transition-all duration-1000 ease-in-out"
           />
         </div>
 
-      </div>
+      {/* </div> */}
     </div>
   );
 }
