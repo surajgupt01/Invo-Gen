@@ -1,82 +1,142 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className=" w-full  min-h-100 border-t border-gray-100 text-gray-800 text-sm p-0">
-      <div className="  flex sm:flex-row flex-col justify-between items-center font-medium tracking-wide">
-        <div className="mt-20 sm:ml-10  py-4 px-2 sm:w-[55%] w-full ">
-          <div className="text-4xl  flex gap-1 items-center">
-            <div className="">{/* <Logo textColor="text-white"></Logo> */}</div>
+    <footer className="w-full bg-[#FAFAFA] border-t border-zinc-200/80 text-zinc-800 font-sans select-none overflow-hidden pt-12 pb-6">
+      
+      {/* Main Footer Container (Aligned with max-w-5xl layout) */}
+      <div className="w-[90%] max-w-5xl mx-auto">
+        
+        {/* Top Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-12 border-b border-zinc-200/80">
+          
+          {/* Left Column: Branding, Tagline & Action Buttons */}
+          <div className="lg:col-span-7 space-y-4">
+            
+            {/* Brand Logo */}
+            <Link href="/" className="inline-block text-3xl font-bold tracking-tight text-zinc-900">
+              Lu<span className="text-teal-500">en</span>
+            </Link>
 
-            <span className="text-gray-800">
-              Lu
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-blue-400">
-                en
-              </span>
-            </span>
-          </div>
-          {/* <p className="ml-2 flex">Professional Invoices</p> */}
+            {/* Tagline */}
+            <div className="space-y-1 max-w-md">
+              <h3 className="text-base sm:text-lg font-semibold tracking-tight text-zinc-900 leading-snug">
+                Create professional invoices in seconds — without spreadsheets.
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed">
+                Built for freelancers and small businesses who want clean, client-ready invoices without the hassle.
+              </p>
+            </div>
 
-          <div className="sm:text-lg text-md mt-2 tracking-widest px-2">
-            <p className="text-gray-800">
-              Create professional invoices in seconds — without spreadsheets.
-            </p>
-            <p className="sm:text-sm text-sm mt-2 font-light text-gray-500">
-              Built for freelancers and small businesses who want clean,
-              client-ready invoices without the hassle.
-            </p>
-
-            <div className="text-xs mt-6 flex items-center gap-2 ">
-              <button className="rounded-xs hover:shadow-lg shadow-gray-100 hover:border-gray-400 hover:-translate-y-1 duration-300 cursor-pointer hover:text-teal-500 font-normal border-1 p-2 bg-white text-black">
+            {/* CTA Buttons */}
+            <div className="flex items-center gap-2 pt-2">
+              <a
+                href="mailto:support@luen.app"
+                className="px-4 py-2 text-xs font-medium text-zinc-800 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xs shadow-2xs transition-colors cursor-pointer"
+              >
                 Contact Sales
-              </button>
-              <button className="rounded-xs hover:shadow-lg shadow-gray-200 hover:-translate-y-1 duration-300 cursor-pointer hover:text-teal-500 font-normal border-1 p-2 bg-black text-white">
+              </a>
+
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 text-xs font-medium text-white bg-zinc-950 hover:bg-black rounded-xs shadow-2xs transition-colors cursor-pointer"
+              >
                 Try now
-              </button>
+              </Link>
             </div>
-          </div>
-        </div>
 
-        <div className="flex flex-col items-center sm:w-[60%] w-full mt-20">
-          <div className="flex  justify-evenly w-full text-xs">
-            <div className="flex flex-col gap-4 items-start">
-              <p className="cursor-pointer hover:text-gray-500">About</p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">Features</p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">Pricing</p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">Contact</p>{" "}
-              <p className="cursor-pointer hover:text-gray-500">Blog</p>{" "}
+          </div>
+
+          {/* Right Column: Navigation Links */}
+          <div className="lg:col-span-5 grid grid-cols-3 gap-6 text-xs font-sans pt-2">
+            
+            {/* Column 1: Product / About */}
+            <div className="flex flex-col gap-3 items-start">
+              <Link href="/#about" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                About
+              </Link>
+              <Link href="/#Features" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                Features
+              </Link>
+              <Link href="/#PriceSection" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                Pricing
+              </Link>
+              <a href="mailto:support@luen.app" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                Contact
+              </a>
+              <Link href="/blog" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                Blog
+              </Link>
             </div>
-            <div className="flex flex-col gap-4 items-start">
-              <p className="cursor-pointer hover:text-gray-500 ">
+
+            {/* Column 2: Resources & Docs */}
+            <div className="flex flex-col gap-3 items-start">
+              <Link href="/docs" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 Documentation
-              </p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">FAQ</p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">Support</p>
+              </Link>
+              <Link href="/#FAQ" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                FAQ
+              </Link>
+              <a href="mailto:support@luen.app" className="text-zinc-600 hover:text-teal-600 transition-colors">
+                Support
+              </a>
             </div>
-            <div className="flex flex-col gap-4 items-start">
-              <p className="cursor-pointer  hover:text-gray-500">X(Twitter)</p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">LinkedIn</p>{" "}
-              <p className="cursor-pointer  hover:text-gray-500">YouTube</p>
+
+            {/* Column 3: Social Links */}
+            <div className="flex flex-col gap-3 items-start">
+              <a
+                href="https://x.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-600 hover:text-teal-600 transition-colors"
+              >
+                X (Twitter)
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-600 hover:text-teal-600 transition-colors"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-600 hover:text-teal-600 transition-colors"
+              >
+                YouTube
+              </a>
             </div>
+
+          </div>
+
+        </div>
+
+        {/* Bottom Bar: Copyright & Legal */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-6 text-[11px] text-zinc-400 font-sans">
+          <p>© 2026 Invoice-Gen. All rights reserved.</p>
+
+          <div className="flex items-center gap-4">
+            <Link href="/terms?tab=privacy" className="hover:text-zinc-800 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms?tab=terms" className="hover:text-zinc-800 transition-colors">
+              Terms of Use
+            </Link>
           </div>
         </div>
+
       </div>
 
-      <div className="flex lg:justify-start justify-center gap-4  items-center flex-row  w-full mt-8 text-[8px] px-2 lg:px-14 ">
-        <p>© 2025 Invoice-Gen. All rights reserved.</p>
-        <p>Privacy Policy</p>
-        <p>Terms of Use</p>
+      {/* Large Bottom Faded Brand Watermark */}
+      <div className="w-full flex justify-center pointer-events-none select-none pt-10">
+        <span className="text-[12vw] font-black leading-none text-transparent bg-clip-text bg-gradient-to-b from-zinc-300/30 via-zinc-200/10 to-transparent tracking-tighter">
+          Luen
+        </span>
       </div>
 
-      <div
-        className="w-full  flex justify-center items-center p-4 mt-20 cursor-pointer 
-              xl:text-[200px]  lg:text-[150px] sm:text-[100px] md:text-[120px] text-[80px] font-bold tracking-widest
-                bg-gradient-to-b from-black via-gray-300 to-white
-                bg-clip-text text-transparent text-shadow-xl text-shadow-gray-700
-                "
-      >
-        {"Luen"}
-      </div>
-    </div>
+    </footer>
   );
 }

@@ -9,57 +9,102 @@ import Github from "../Icons/Github";
 
 export default function SignUp() {
   return (
-    <div className="md:p-4 p-3  w-full h-screen   flex  justify-center  items-center ">
-      <div className="flex  rounded-4xl w-full h-full">
+    <div className="w-full h-screen bg-[#FAFAFA] p-3 sm:p-4 flex justify-center items-center font-sans select-none overflow-hidden">
+      <div className="flex justify-center items-center w-full h-full border border-zinc-200/80 rounded-xs bg-white overflow-hidden shadow-2xs">
+        
+        {/* LEFT SIDEBAR */}
         <SignSideBar />
 
-        <div className="w-full flex justify-center items-center relative lg:bg-gray-50 ">
-          <Link
-            href={"/"}
-            className="absolute top-5 left-5 text-gray-700 hover:text-black cursor-pointer flex justify-center items-center group"
-          >
-            <Left />
-            back
-          </Link>
-          <div className="  py-2 px-4 border-gray-50 border-1 shadow-lg lg:shadow-gray-200 rounded-2xl md:w-90 w-100 h-100 md:scale-100 scale-95  backdrop-blur-md  bg-white  flex flex-col items-center justify-center gap-8">
-            <h1 className="text-2xl font-semibold text-gray-700 w-full text-left px-2">
-              Log in
-            </h1>
-            <span className="text-gray-500 text-xs font-extralight">{`Log in to your account to continue.`}</span>
+        {/* RIGHT SIDE: AUTH FORM AREA */}
+        <div className="relative w-full h-full  bg-[#FAFAFA] flex items-center justify-center p-6 sm:p-10">
+          
+          {/* Back Navigation Button (Pinned Top Left) */}
+          <div className="absolute top-6 left-6 sm:top-8 sm:left-8">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-500 hover:text-zinc-900 transition-colors"
+            >
+              <Left />
+              <span>back to home</span>
+            </Link>
+          </div>
 
-            <div className="flex flex-col items-center gap-2 w-full px-4">
+          {/* Centered Auth Card */}
+          <div className="w-full max-w-[360px] bg-white border border-zinc-200/80 p-6 sm:p-8 rounded-xs shadow-2xs space-y-6">
+            
+            {/* Header */}
+            <div className="space-y-1 text-left">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
+                Log in
+              </h1>
+              <p className="text-xs text-zinc-400 font-sans">
+                Log in to your account to continue creating invoices.
+              </p>
+            </div>
+
+            {/* OAuth Provider Buttons */}
+            <div className="space-y-2.5 font-sans">
+              
+              {/* Google Sign-in */}
               <button
-                className="bg-white w-full  hover:border-gray-400 border-1 border-gray-300 active:scale-95 font-semibold text-center rounded-lg cursor-pointer transition-all duration-500 ease-in-out shadow-gray-200  px-4 py-2  text-black text-sm flex justify-center items-center "
+                type="button"
                 onClick={() =>
                   signIn("google", {
                     callbackUrl: "/dashboard",
                     redirect: true,
                   })
                 }
+                className="w-full h-10 px-4 bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200/80 rounded-xs text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
               >
                 <Google />
-                <span className="text-gray-700 font-medium tracking-wide text-sm">{`continue with Google`}</span>
+                <span>Continue with Google</span>
               </button>
+
+              {/* GitHub Sign-in */}
               <button
-                className=" w-full bg-gray-800 hover:bg-gray-700  hover:border-gray-200 border-1 border-gray-200  active:scale-95  font-semibold text-center rounded-lg  cursor-pointer transition-all duration-500 ease-in-out shadow-gray-200  px-4 py-2 text-black text-xs flex justify-center items-center gap-2 "
+                type="button"
                 onClick={() =>
                   signIn("github", {
                     callbackUrl: "/dashboard",
                     redirect: true,
                   })
                 }
+                className="w-full h-10 px-4 bg-zinc-950 hover:bg-black text-white rounded-xs text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
               >
                 <Github />
-                <span className="text-white font-medium tracking-wide text-sm">{`continue with Github`}</span>
+                <span>Continue with GitHub</span>
               </button>
+
             </div>
 
-            <span className="text-xs w-full px-6 text-gray-600 text-center">
-              {`By continuing, you agree to Luen's`}
-              <span className="underline cursor-pointer hover:text-gray-400">{` Terms of Service and Privacy Policy.`}</span>
-            </span>
+            {/* Terms & Privacy Disclaimer */}
+            <p className="text-[11px] text-zinc-400 text-center leading-relaxed font-sans pt-1">
+              {`By continuing, you agree to Luen's{" "}`}
+              <Link
+                href="/terms?tab=terms"
+                className="text-zinc-700 underline underline-offset-2 hover:text-zinc-950 transition-colors"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/terms?tab=privacy"
+                className="text-zinc-700 underline underline-offset-2 hover:text-zinc-950 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+
           </div>
+
+          {/* Footer Copyright (Pinned Bottom Left) */}
+          <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 text-[10px] font-mono text-zinc-400">
+            © 2026 Invoice-Gen. All rights reserved.
+          </div>
+
         </div>
+
       </div>
     </div>
   );

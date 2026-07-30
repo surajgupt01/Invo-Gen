@@ -1,16 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import Plus from "../Icons/Plus";
-import Minus from "../Icons/Minus";
+import React, { useState } from "react";
+
+// Minimal Plus / Minus Animated Icon
+function AccordionIcon({ isOpen }: { isOpen: boolean }) {
+  return (
+    <div className="relative w-3.5 h-3.5 flex items-center justify-center shrink-0 text-zinc-500">
+      {/* Horizontal Line */}
+      <span className="absolute w-3 h-[1.5px] bg-zinc-600 transition-transform duration-300" />
+      {/* Vertical Line (rotates away when open) */}
+      <span
+        className={`absolute w-3 h-[1.5px] bg-zinc-600 transition-transform duration-300 ${
+          isOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
+        }`}
+      />
+    </div>
+  );
+}
 
 export default function FAQ() {
-  const [open, setOpen] = useState<number>();
-  const Questions = [
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const questions = [
     {
       question: "What is this invoice generator and who is it for?",
       answer:
-        "This invoice generator is designed for freelancers, startups, small businesses, and agencies who want to create professional invoices quickly without complex accounting software.",
+        "Luen is designed for freelancers, startups, small businesses, and agencies who want to create professional invoices quickly without complex accounting software.",
     },
     {
       question: "Can I customize my invoice design?",
@@ -22,7 +37,6 @@ export default function FAQ() {
       answer:
         "Yes, there is a free plan that allows you to create and download invoices. Premium plans unlock advanced features like unlimited invoices, PDF branding, and invoice history.",
     },
-
     {
       question: "Is my data safe and secure?",
       answer:
@@ -41,14 +55,13 @@ export default function FAQ() {
     {
       question: "Does it support multiple currencies and taxes?",
       answer:
-        "Yes. The platform supports multiple currencies, tax rates, discounts, and regional formatting to suit global invoicing needs.",
+        "Yes. The platform supports multiple currencies, tax rates (GST/VAT), discounts, and regional formatting to suit global invoicing needs.",
     },
     {
       question: "Can I share invoices directly with my clients?",
       answer:
         "Yes. You can share invoices via downloadable PDFs or secure invoice links that clients can view online.",
     },
-
     {
       question: "Can I edit an invoice after creating it?",
       answer:
@@ -66,57 +79,73 @@ export default function FAQ() {
     },
   ];
 
+  const toggleFAQ = (idx: number) => {
+    setOpenIndex(openIndex === idx ? null : idx);
+  };
+
   return (
-    <div className="mt-30 flex lg:flex-row flex-col justify-around items-center w-full h-auto  md:p-6 p-4">
-      {/* <div className="bg-gray-200 rounded-full text-xs font-semibold text-gray-700 p-4 ">
-        Frequently Asked Questions
-      </div> */}
-      <div className="md:text-4xl text-2xl font-bold text-gray-600 mt-4  tracking-widest text-center w-full lg:w-[40%]">
-        <span>{"All Your Questions, Answered"}</span>
-       <br></br>
-        <span className=" font-normal text-sm">
-          {
-            "Everything you need to know about creating, managing, and sharing invoices with Ledgerly."
-          }
-        </span>
-      </div>
-      <div className="bg-gray-50 rounded-xl md:w-150 w-[95%] h-auto mt-4 p-4">
-        <div className="bg-gray-50 rounded-xl w-full mt-4 md:p-4 p-2 space-y-2">
-          {Questions.map((ele, idx) => {
-            const isOpen = open === idx;
+    <section
+      id="FAQ"
+      className="relative w-full bg-[#FAFAFA] text-zinc-800 font-sans py-14 md:py-20 border-b border-zinc-200/80 select-none overflow-hidden"
+    >
+      <div className="w-[90%] max-w-5xl mx-auto space-y-10">
+        
+        {/* Section Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b border-zinc-200/80">
+          <div className="space-y-2 max-w-xl">
+            <span className="text-[10px] font-mono text-teal-600 uppercase tracking-widest font-semibold">
+              FREQUENTLY ASKED QUESTIONS
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900">
+              All your questions, answered.
+            </h2>
+            <p className="text-xs text-zinc-400 font-sans leading-relaxed">
+              Everything you need to know about creating, managing, and sharing invoices with Luen.
+            </p>
+          </div>
+        </div>
+
+        {/* Accordion List */}
+        <div className="divide-y divide-zinc-200/70 border-b border-zinc-200/70">
+          {questions.map((ele, idx) => {
+            const isOpen = openIndex === idx;
 
             return (
-              <div
-                key={idx}
-                className={`rounded-sm  overflow-hidden bg-gray-50 ${open == idx ? "bg-gray-100 overflow-auto" : ""}`}
-              >
+              <div key={idx} className="transition-colors rounded-2xs">
                 <button
-                  onClick={() => setOpen(isOpen ? -1 : idx)}
-                  className="w-full text-left flex justify-between cursor-pointer items-center md:p-3 p-2 text-sm text-gray-700 font-normal hover:bg-gray-100 transition-all"
+                  type="button"
+                  onClick={() => toggleFAQ(idx)}
+                  className="w-full text-left flex justify-between items-center gap-4 cursor-pointer group py-3 px-2 hover:bg-zinc-100/60 rounded-xs transition-colors"
                 >
-                  <span>{ele.question}</span>
-
-                  <span
-                    className={`transform transition-transform duration-300 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  >
-                    {open == idx ? <Minus /> : <Plus />}
+                  <span className="text-xs sm:text-sm font-medium text-zinc-800 group-hover:text-teal-600 transition-colors leading-snug">
+                    {ele.question}
                   </span>
+
+                  <AccordionIcon isOpen={isOpen} />
                 </button>
 
                 <div
-                  className={`transition-all duration-300 ease-in-out overflow-hidden  ${
-                    isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100 mb-3"
+                      : "grid-rows-[0fr] opacity-0 mb-0"
                   }`}
                 >
-                  <p className="p-3 text-xs text-gray-700">{ele.answer}</p>
+                  <div className="overflow-hidden">
+                    <p className="text-[11px] sm:text-xs text-zinc-400 leading-relaxed font-sans px-2 pt-1 pb-1">
+                      {ele.answer}
+                    </p>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
+
       </div>
-    </div>
+
+      {/* Large Bottom Faded Brand Watermark */}
+
+    </section>
   );
 }

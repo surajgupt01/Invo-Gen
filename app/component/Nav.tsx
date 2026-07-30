@@ -1,55 +1,52 @@
 import Link from "next/link";
-import Logo from "../Icons/Logo";
-import Image from "next/image";
 
 interface NavProp {
-  textColor: string;
+  textColor?: string;
 }
-export function NavLogo({ textColor }: NavProp) {
-  return (
-    <Link href={'/'}>
-    <div className="  w-full cursor-pointer font-bold sm:text-xl tracking-widest text-md flex flex-row items-start ">
-      {/* <Logo textColor = {textColor}/> */}
 
-      <span className={`${textColor}`}>
-        Lu
-        <span className="text-transparent bg-clip-text tracking-widest  bg-gradient-to-r from-green-500 to-blue-400">
-          en
-        </span>{" "}
-      </span>
-      {/* <Image
-        alt="logo"
-        src={"/ChatGPT Image Feb 21, 2026, 03_16_14 PM.png"}
-        width={200}
-        height={200}
-      ></Image> */}
-    </div>
+export function NavLogo({ textColor = "text-zinc-900" }: NavProp) {
+  return (
+    <Link href="/" className="inline-block select-none">
+      <div className="cursor-pointer font-sans font-bold text-lg sm:text-xl tracking-tight flex items-center">
+        <span className={textColor}>
+          Lu<span className="text-teal-500">en</span>
+        </span>
+      </div>
     </Link>
   );
 }
 
 export default function Nav() {
   return (
-    <div className="flex justify-evenly  items-center w-full  p-1 px-4   fixed h-auto      bg-gray-300/10 backdrop-blur-sm  z-100">
-      <NavLogo textColor="text-black" />
-      <div className="flex p-2   w-full justify-end items-center">
-        {/* <li className="cursor-pointer hover:text-gray-700">Home</li> */}
-        <Link
-          href={"#PriceSection"}
-          className="md:text-xs text-xs sm:mr-4 mr-2 hover:bg-gray-200 p-2 rounded-full cursor-pointer text-shadow-xs tracking-wide ease-in-out duration-500 font-semibold flex justify-center items-center"
-        >
-          {`go`}
-          <span className="text-teal-400 ">pro</span>
-        </Link>
-        <div>
+    <header className="sticky top-0 z-50 w-full bg-[#FAFAFA]/80 backdrop-blur-md border-b border-zinc-200/80 font-sans select-none">
+      <div className="w-[90%] max-w-5xl mx-auto h-14 flex items-center justify-between">
+        
+        {/* Brand Logo */}
+        <NavLogo textColor="text-zinc-900" />
+
+        {/* Right Nav Actions */}
+        <div className="flex items-center gap-3">
+          
+          {/* Go Pro CTA */}
           <Link
-            href={"/signin"}
-            className="px-3 w-20 h-9 hover:bg-gray-800 ease-in-out duration-300 cursor-pointer bg-black rounded-full text-xs  shadow-gray-800 text-white font-semibold flex justify-center items-center"
+            href="/#PriceSection"
+            className="text-xs font-medium text-zinc-600 hover:text-zinc-900 px-3 py-1.5 rounded-xs transition-colors flex items-center gap-1 font-mono uppercase"
+          >
+            <span>go</span>
+            <span className="text-teal-600 font-bold">pro</span>
+          </Link>
+
+          {/* Login / Auth CTA */}
+          <Link
+            href="/signin"
+            className="px-4 py-2 text-xs font-medium text-white bg-zinc-950 hover:bg-black rounded-xs shadow-2xs transition-colors cursor-pointer"
           >
             Login
           </Link>
+
         </div>
+
       </div>
-    </div>
+    </header>
   );
 }

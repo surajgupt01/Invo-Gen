@@ -51,36 +51,34 @@ export default function ItemsTable() {
 
   // ── Styles ──────────────────────────────────────────────────────────────────
   const inputCls =
-    "w-full p-1.5 font-light border border-neutral-800 bg-neutral-900 text-xs rounded-sm outline-0 focus:border-neutral-600 text-neutral-200 placeholder-neutral-600";
+    "w-full p-1.5 font-mono border border-zinc-200 bg-white text-zinc-800 text-xs rounded-xs outline-0 focus:border-teal-700 transition placeholder-zinc-400";
   const selectCls =
-    "w-full p-1.5 font-light border border-neutral-800 bg-neutral-900 text-xs rounded-sm outline-0 focus:border-neutral-600 text-neutral-200 cursor-pointer";
+    "w-full p-1.5 font-mono border border-zinc-200 bg-white text-zinc-800 text-xs rounded-xs outline-0 focus:border-teal-700 cursor-pointer transition";
 
   const modeBtnCls = (m: typeof mode) =>
-    `px-3 py-1 text-xs rounded-sm border transition-colors cursor-pointer font-medium ${
+    `px-3 py-1 text-xs rounded-xs border transition-all cursor-pointer font-medium font-sans ${
       mode === m
-        ? "bg-neutral-700 border-neutral-500 text-neutral-100"
-        : "bg-neutral-900 border-neutral-700 text-neutral-500 hover:border-neutral-600 hover:text-neutral-400"
+        ? "bg-zinc-900 border-zinc-900 text-white shadow-2xs"
+        : "bg-white border-zinc-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
     }`;
 
   const txnBtnCls = (t: typeof txnType) =>
-    `px-2.5 py-1 text-xs rounded-sm border transition-colors cursor-pointer ${
+    `px-2.5 py-1 text-xs rounded-xs border transition-all cursor-pointer font-sans ${
       txnType === t
-        ? "bg-teal-900 border-teal-700 text-teal-300"
-        : "bg-neutral-900 border-neutral-700 text-neutral-400 hover:border-neutral-600"
+        ? "bg-teal-50 border-teal-200 text-teal-800 font-semibold"
+        : "bg-white border-zinc-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
     }`;
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="rounded-md border border-neutral-950 bg-neutral-950 overflow-hidden">
+    <div className="rounded-xs border border-zinc-200/80 bg-white overflow-hidden shadow-xs font-mono select-none">
 
       {/* ── Top bar: mode switcher ────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-neutral-800 bg-neutral-900/40">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 bg-zinc-50/50">
         <div className="flex items-center gap-2">
-          {/* <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-neutral-500">
-            <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1" />
-            <path d="M4 5h6M4 7h4M4 9h5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-          </svg>
-          <span className="text-xs font-medium text-neutral-300">Items table</span> */}
+          <span className="text-xs font-semibold text-zinc-900 uppercase tracking-wider font-sans">
+            Tax Engine Mode
+          </span>
         </div>
         <div className="flex gap-1.5">
           <button className={modeBtnCls("india")}         onClick={() => setMode("india")}>India · GST</button>
@@ -90,20 +88,20 @@ export default function ItemsTable() {
 
       {/* ── Sub-bar: India txn type  OR  International tax config ─────────── */}
       {mode === "india" ? (
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-neutral-800">
-          <span className="text-xs text-neutral-500 mr-1">Transaction:</span>
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-zinc-100 bg-white flex-wrap">
+          <span className="text-xs text-zinc-500 mr-1 font-sans">Transaction:</span>
           <button className={txnBtnCls("intra")}  onClick={() => setTxnType("intra")}>Intrastate · CGST+SGST</button>
           <button className={txnBtnCls("inter")}  onClick={() => setTxnType("inter")}>Interstate · IGST</button>
-          <button className={txnBtnCls("export")} onClick={() => setTxnType("export")}>Export / exempt</button>
+          <button className={txnBtnCls("export")} onClick={() => setTxnType("export")}>Export / Exempt</button>
         </div>
       ) : (
-        <div className="flex items-center gap-3 px-4 py-2 border-b border-neutral-800 flex-wrap">
+        <div className="flex items-center gap-3 px-4 py-2 border-b border-zinc-100 bg-white flex-wrap font-sans">
 
           {/* Currency */}
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-neutral-500">Currency:</span>
+            <span className="text-xs text-zinc-500">Currency:</span>
             <select
-              className="p-1 text-xs border border-neutral-800 bg-neutral-900 text-neutral-200 rounded-sm outline-0 focus:border-neutral-600 cursor-pointer"
+              className="p-1 text-xs border border-zinc-200 bg-white text-zinc-800 rounded-xs outline-0 focus:border-teal-700 cursor-pointer font-mono"
               value={currency.code}
               onChange={e => setCurrency(CURRENCIES.find(c => c.code === e.target.value) ?? CURRENCIES[0])}
             >
@@ -113,13 +111,13 @@ export default function ItemsTable() {
             </select>
           </div>
 
-          <div className="h-4 w-px bg-neutral-800" />
+          <div className="h-4 w-px bg-zinc-200" />
 
           {/* Tax name */}
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-neutral-500">Tax name:</span>
+            <span className="text-xs text-zinc-500">Tax name:</span>
             <input
-              className="w-24 p-1 text-xs border border-neutral-800 bg-neutral-900 text-neutral-200 rounded-sm outline-0 focus:border-neutral-600 placeholder-neutral-600"
+              className="w-24 p-1 text-xs border border-zinc-200 bg-white text-zinc-800 rounded-xs outline-0 focus:border-teal-700 placeholder-zinc-400 font-mono"
               placeholder="VAT"
               value={taxConfig.name}
               onChange={e => setTaxConfig({ ...taxConfig, name: e.target.value })}
@@ -128,33 +126,33 @@ export default function ItemsTable() {
 
           {/* Tax rate */}
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-neutral-500">Rate:</span>
-            <div className="flex items-center border border-neutral-800 bg-neutral-900 rounded-sm overflow-hidden">
+            <span className="text-xs text-zinc-500">Rate:</span>
+            <div className="flex items-center border border-zinc-200 bg-white rounded-xs overflow-hidden">
               <input
-                className="w-14 p-1 text-xs bg-transparent text-neutral-200 outline-0 text-right"
+                className="w-14 p-1 text-xs bg-transparent text-zinc-800 outline-0 text-right font-mono"
                 placeholder="0"
                 inputMode="numeric"
                 value={taxConfig.rate}
                 onChange={e => setTaxConfig({ ...taxConfig, rate: e.target.value })}
               />
-              <span className="px-1.5 text-xs text-neutral-500 border-l border-neutral-800">%</span>
+              <span className="px-1.5 text-xs text-zinc-400 border-l border-zinc-200 bg-zinc-50">%</span>
             </div>
           </div>
 
           {/* Presets */}
           <div className="relative">
             <button
-              className="px-2.5 py-1 text-xs rounded-sm border border-neutral-700 bg-neutral-900 text-neutral-400 hover:border-neutral-600 transition-colors cursor-pointer"
+              className="px-2.5 py-1 text-xs rounded-xs border border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors cursor-pointer"
               onClick={() => setShowPresets(v => !v)}
             >
               Presets ▾
             </button>
             {showPresets && (
-              <div className="absolute top-full left-0 mt-1 z-10 bg-neutral-900 border border-neutral-700 rounded-md min-w-[160px] py-1">
+              <div className="absolute top-full left-0 mt-1 z-20 bg-white border border-zinc-200 rounded-xs shadow-md min-w-[160px] py-1">
                 {TAX_PRESETS.map(p => (
                   <button
                     key={p.label}
-                    className="w-full text-left px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 transition-colors cursor-pointer"
+                    className="w-full text-left px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50 transition-colors cursor-pointer"
                     onClick={() => applyPreset(p)}
                   >
                     {p.label}
@@ -167,8 +165,8 @@ export default function ItemsTable() {
           {/* Reverse charge */}
           <div className="ml-auto">
             <label className="flex items-center gap-1.5 cursor-pointer">
-              <input type="checkbox" className="accent-teal-500 cursor-pointer" />
-              <span className="text-xs text-neutral-500">Reverse charge</span>
+              <input type="checkbox" className="accent-teal-600 cursor-pointer" />
+              <span className="text-xs text-zinc-500">Reverse charge</span>
             </label>
           </div>
         </div>
@@ -177,9 +175,9 @@ export default function ItemsTable() {
       {/* ── Table ────────────────────────────────────────────────────────────── */}
       <div className="overflow-auto custom-scrollbar">
         <table className="w-full table-fixed border-separate border-spacing-0 text-sm min-w-[860px]">
-          <thead className="text-neutral-500 text-xs">
-            <tr className="bg-neutral-900/60">
-              <th className="p-2 w-[24%] font-medium text-left">Item / service</th>
+          <thead className="text-zinc-400 font-sans text-[10px] uppercase tracking-wider">
+            <tr className="bg-zinc-50/80">
+              <th className="p-2 w-[24%] font-medium text-left">Item / Service</th>
 
               {mode === "india" && (
                 <th className="p-2 w-[9%] font-medium text-left">HSN / SAC</th>
@@ -195,15 +193,15 @@ export default function ItemsTable() {
                   <th className="p-2 w-[7%] font-medium text-left">GST %</th>
                   {txnType === "intra" && (
                     <>
-                      <th className="p-2 w-[8%] font-medium text-right text-teal-600">CGST (₹)</th>
-                      <th className="p-2 w-[8%] font-medium text-right text-teal-600">SGST (₹)</th>
+                      <th className="p-2 w-[8%] font-medium text-right text-teal-700">CGST (₹)</th>
+                      <th className="p-2 w-[8%] font-medium text-right text-teal-700">SGST (₹)</th>
                     </>
                   )}
                   {txnType === "inter" && (
-                    <th className="p-2 w-[16%] font-medium text-right text-blue-500" colSpan={2}>IGST (₹)</th>
+                    <th className="p-2 w-[16%] font-medium text-right text-blue-600" colSpan={2}>IGST (₹)</th>
                   )}
                   {txnType === "export" && (
-                    <th className="p-2 w-[16%] font-medium text-right text-neutral-500" colSpan={2}>Tax exempt</th>
+                    <th className="p-2 w-[16%] font-medium text-right text-zinc-400" colSpan={2}>Tax Exempt</th>
                   )}
                 </>
               ) : (
@@ -212,17 +210,17 @@ export default function ItemsTable() {
                 </th>
               )}
 
-              <th className="p-2 w-[11%] font-medium text-right text-neutral-300">Amount ({sym})</th>
+              <th className="p-2 w-[11%] font-medium text-right text-zinc-900">Amount ({sym})</th>
               <th className="w-[4%]" />
             </tr>
             <tr>
-              <td colSpan={14} className="border-b border-neutral-800" />
+              <td colSpan={14} className="border-b border-zinc-200/80" />
             </tr>
           </thead>
 
-          <tbody className="text-neutral-400">
+          <tbody className="text-zinc-700">
             {Items.map((item, index) => (
-              <tr key={index} className="hover:bg-neutral-900/40 transition-colors">
+              <tr key={index} className="hover:bg-zinc-50/60 transition-colors">
 
                 <td className="p-1.5">
                   <input className={inputCls} placeholder="Item name" value={item.description}
@@ -271,28 +269,28 @@ export default function ItemsTable() {
                     </td>
                     {txnType === "intra" && (
                       <>
-                        <td className="p-1.5 text-right text-xs text-teal-500 font-medium pr-3">{fmt(item.cgst)}</td>
-                        <td className="p-1.5 text-right text-xs text-teal-500 font-medium pr-3">{fmt(item.sgst)}</td>
+                        <td className="p-1.5 text-right text-xs text-teal-700 font-medium pr-3">{fmt(item.cgst)}</td>
+                        <td className="p-1.5 text-right text-xs text-teal-700 font-medium pr-3">{fmt(item.sgst)}</td>
                       </>
                     )}
                     {txnType === "inter" && (
-                      <td className="p-1.5 text-right text-xs text-blue-400 font-medium pr-3" colSpan={2}>{fmt(item.igst)}</td>
+                      <td className="p-1.5 text-right text-xs text-blue-600 font-medium pr-3" colSpan={2}>{fmt(item.igst)}</td>
                     )}
                     {txnType === "export" && (
-                      <td className="p-1.5 text-right text-xs text-neutral-600 pr-3" colSpan={2}>—</td>
+                      <td className="p-1.5 text-right text-xs text-zinc-400 pr-3" colSpan={2}>—</td>
                     )}
                   </>
                 ) : (
-                  <td className="p-1.5 text-right text-xs text-amber-500 font-medium pr-3">
+                  <td className="p-1.5 text-right text-xs text-amber-600 font-medium pr-3">
                     {parseFloat(taxConfig.rate) > 0 ? fmt(item.taxAmt) : "—"}
                   </td>
                 )}
 
-                <td className="p-1.5 text-right text-xs text-neutral-200 font-medium pr-3">{fmt(item.amt)}</td>
+                <td className="p-1.5 text-right text-xs text-zinc-900 font-semibold pr-3">{fmt(item.amt)}</td>
 
                 <td className="p-1.5 text-center">
                   <button onClick={e => { e.preventDefault(); delRow(index); }}
-                    className="text-neutral-600 hover:text-red-500 transition-colors text-xs px-1">
+                    className="text-zinc-400 hover:text-rose-600 transition-colors text-xs px-1 cursor-pointer">
                     ✕
                   </button>
                 </td>
@@ -302,62 +300,62 @@ export default function ItemsTable() {
         </table>
       </div>
 
-      {/* ── Add row ──────────────────────────────────────────────────────────── */}
-      <div className="px-4 py-2 border-t border-neutral-800/60">
+      {/* ── Add Row ──────────────────────────────────────────────────────────── */}
+      <div className="px-4 py-2 border-t border-zinc-100 bg-zinc-50/30">
         <button onClick={e => { e.preventDefault(); addRow(); }}
-          className="flex items-center gap-1.5 text-xs text-teal-500 hover:text-teal-400 transition-colors">
+          className="flex items-center gap-1.5 text-xs font-sans font-medium text-teal-700 hover:text-teal-800 transition-colors cursor-pointer">
           <span className="text-base leading-none">+</span> Add item
         </button>
       </div>
 
       {/* ── Totals ───────────────────────────────────────────────────────────── */}
-      <div className="border-t border-neutral-800 px-4 py-3 flex justify-end">
+      <div className="border-t border-zinc-200/80 px-4 py-3 flex justify-end bg-white font-sans">
         <div className="w-72 space-y-1.5 text-xs">
 
-          <div className="flex justify-between text-neutral-400">
+          <div className="flex justify-between text-zinc-500 font-mono">
             <span>Subtotal</span>
-            <span className="font-medium text-neutral-300">{sym}{fmt(subTotal)}</span>
+            <span className="font-semibold text-zinc-800">{sym}{fmt(subTotal)}</span>
           </div>
 
           {/* India */}
           {mode === "india" && txnType === "intra" && (
             <>
-              <div className="flex justify-between text-teal-600">
+              <div className="flex justify-between text-teal-700 font-mono">
                 <span>CGST</span>
-                <span className="font-medium">₹{fmt(totalCgst)}</span>
+                <span className="font-semibold">₹{fmt(totalCgst)}</span>
               </div>
-              <div className="flex justify-between text-teal-600">
+              <div className="flex justify-between text-teal-700 font-mono">
                 <span>SGST</span>
-                <span className="font-medium">₹{fmt(totalSgst)}</span>
+                <span className="font-semibold">₹{fmt(totalSgst)}</span>
               </div>
             </>
           )}
           {mode === "india" && txnType === "inter" && (
-            <div className="flex justify-between text-blue-400">
+            <div className="flex justify-between text-blue-600 font-mono">
               <span>IGST</span>
-              <span className="font-medium">₹{fmt(totalIgst)}</span>
+              <span className="font-semibold">₹{fmt(totalIgst)}</span>
             </div>
           )}
           {mode === "india" && txnType === "export" && (
-            <div className="flex justify-between text-neutral-600">
+            <div className="flex justify-between text-zinc-400 font-mono">
               <span>Tax</span><span>Exempt / 0%</span>
             </div>
           )}
 
           {/* International */}
           {mode === "international" && parseFloat(taxConfig.rate) > 0 && (
-            <div className="flex justify-between text-amber-500">
+            <div className="flex justify-between text-amber-600 font-mono">
               <span>{taxConfig.name || "Tax"} ({taxConfig.rate}%)</span>
-              <span className="font-medium">{sym}{fmt(totalTax)}</span>
+              <span className="font-semibold">{sym}{fmt(totalTax)}</span>
             </div>
           )}
           {mode === "international" && parseFloat(taxConfig.rate) === 0 && (
-            <div className="flex justify-between text-neutral-600">
+            <div className="flex justify-between text-zinc-400 font-mono">
               <span>{taxConfig.name || "Tax"}</span><span>Exempt / 0%</span>
             </div>
           )}
 
-          <div className="flex justify-between pt-2 border-t border-neutral-800 text-neutral-200 font-medium text-sm">
+          <div className="flex justify-between pt-2 border-t border-zinc-200 text-zinc-900 font-bold text-sm font-mono">
             <span>Total</span>
             <span>{sym}{fmt(Total)}</span>
           </div>

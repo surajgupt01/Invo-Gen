@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   AreaChart,
   Area,
-  BarChart,
-  Bar,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -19,8 +21,8 @@ import {
   CheckCircle2,
   Plus,
   MoreVertical,
-  Download,
   Calendar,
+  ExternalLink,
 } from "lucide-react";
 
 // Analytics Data
@@ -32,6 +34,12 @@ const monthlyRevenueData = [
   { month: "MAY", revenue: 9200, pending: 1100 },
   { month: "JUN", revenue: 8500, pending: 2400 },
   { month: "JUL", revenue: 11400, pending: 1800 },
+];
+
+const statusDistribution = [
+  { name: "Paid", value: 68, color: "#0D9488" },    // Teal / Emerald
+  { name: "Pending", value: 22, color: "#D97706" }, // Amber
+  { name: "Overdue", value: 10, color: "#E11D48" }, // Rose
 ];
 
 const recentInvoices = [
@@ -53,230 +61,291 @@ const recentInvoices = [
     amount: "₹28,500.00",
     status: "Pending",
   },
-  {
-    id: "INV-2026-003",
-    client: "Vortex Digital",
-    email: "hello@vortex.com",
-    date: "Jul 10, 2026",
-    dueDate: "Jul 24, 2026",
-    amount: "₹12,000.00",
-    status: "Overdue",
-  },
-  {
-    id: "INV-2026-004",
-    client: "Starlight Media",
-    email: "accounts@starlight.com",
-    date: "Jul 01, 2026",
-    dueDate: "Jul 15, 2026",
-    amount: "₹64,200.00",
-    status: "Paid",
-  },
 ];
 
 export default function OverviewDashboard() {
   const [filter, setFilter] = useState("All");
 
   return (
-    <div className="min-h-screen bg-[#090909] text-neutral-200 p-4 space-y-3 font-mono rounded-none border-l border-neutral-800">
+    <div className="w-full h-full bg-[#FAFAFA] text-zinc-800 p-3 sm:p-4 font-sans select-none flex flex-col gap-3 overflow-hidden">
+      
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-neutral-800">
-        <div>
-          <h1 className="text-lg font-bold tracking-tight text-white uppercase flex items-center gap-2">
-            OVERVIEW
+      <div className="flex justify-between items-center pb-2 border-b border-zinc-200/80 shrink-0">
+        <div className="space-y-0.5">
+          <h1 className="text-xs sm:text-sm font-bold tracking-tight text-zinc-900 uppercase flex items-center gap-2 font-mono">
+            <span className="w-1.5 h-3 bg-teal-600 inline-block" />
+            Overview Dashboard
           </h1>
-          <p className="text-[11px] text-neutral-400 font-sans mt-0.5">
-            Real-time financial telemetry & invoice metadata monitoring.
+          <p className="text-[11px] text-zinc-400 font-sans">
+            Real-time telemetry, revenue analytics & invoice collections.
           </p>
         </div>
 
         <div className="flex items-center gap-2 font-sans">
-          <button className="flex items-center gap-2 px-3 py-1 text-xs font-medium bg-[#141414] border border-neutral-800 text-neutral-300 hover:bg-neutral-800 transition rounded-none">
-            <Calendar className="w-3.5 h-3.5 text-neutral-400" />
-            Last 30 Days
+          <button className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-white border border-zinc-200/80 text-zinc-600 hover:text-zinc-900 transition-colors rounded-xs shadow-2xs cursor-pointer">
+            <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="hidden sm:inline">Last 30 Days</span>
           </button>
-          <button className="flex items-center gap-1.5 px-3.5 py-1 text-xs font-semibold bg-[#00D2B5] text-[#090909] hover:bg-[#00b89f] transition rounded-none">
-            <Plus className="w-4 h-4" />
-            Create Invoice
-          </button>
+          
+          <Link href="/dashboard/createInvoice">
+            <button className="flex items-center gap-1 px-3 py-1 text-xs font-medium bg-zinc-950 text-white hover:bg-black transition-colors rounded-xs shadow-2xs cursor-pointer">
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Invoice</span>
+            </button>
+          </Link>
         </div>
       </div>
 
-      {/* Metric Cards Row - Ultra-Boxy Neutral Style */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-        {/* Total Revenue */}
-        <div className="bg-[#121212] border border-neutral-800 p-3.5 rounded-none">
-          <div className="flex justify-between items-start">
-            <span className="text-[11px] font-sans font-medium text-neutral-400 uppercase tracking-wide">Total Revenue</span>
-            <div className="p-1 bg-[#00D2B5]/10 text-[#00D2B5] rounded-none">
-              <TrendingUp className="w-3.5 h-3.5" />
-            </div>
+      {/* Metrics Row (Fixed Shrink) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 shrink-0">
+        
+        {/* Metric 1 */}
+        <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs space-y-1">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">
+              Total Revenue
+            </span>
+            <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
           </div>
-          <div className="mt-2">
-            <h3 className="text-xl font-bold text-white tracking-tight">₹1,21,500.00</h3>
-            <p className="text-[10px] font-sans text-[#00D2B5] mt-1">
-              ↑ 14.2% <span className="text-neutral-500">vs last month</span>
+          <div>
+            <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight font-mono">
+              ₹1,21,500
+            </h3>
+            <p className="text-[10px] font-sans text-teal-700 font-medium">
+              +14.2% <span className="text-zinc-400 font-normal">vs prev</span>
             </p>
           </div>
         </div>
 
-        {/* Pending Cash Flow */}
-        <div className="bg-[#121212] border border-neutral-800 p-3.5 rounded-none">
-          <div className="flex justify-between items-start">
-            <span className="text-[11px] font-sans font-medium text-neutral-400 uppercase tracking-wide">Pending Amount</span>
-            <div className="p-1 bg-neutral-800 text-neutral-300 rounded-none">
-              <Clock className="w-3.5 h-3.5" />
-            </div>
+        {/* Metric 2 */}
+        <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs space-y-1">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">
+              Pending
+            </span>
+            <Clock className="w-3.5 h-3.5 text-amber-600" />
           </div>
-          <div className="mt-2">
-            <h3 className="text-xl font-bold text-white tracking-tight">₹28,500.00</h3>
-            <p className="text-[10px] font-sans text-neutral-500 mt-1">2 invoices awaiting payment</p>
-          </div>
-        </div>
-
-        {/* Overdue */}
-        <div className="bg-[#121212] border border-neutral-800 p-3.5 rounded-none">
-          <div className="flex justify-between items-start">
-            <span className="text-[11px] font-sans font-medium text-neutral-400 uppercase tracking-wide">Overdue Amount</span>
-            <div className="p-1 bg-neutral-800 text-neutral-300 rounded-none">
-              <AlertCircle className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="mt-2">
-            <h3 className="text-xl font-bold text-white tracking-tight">₹12,000.00</h3>
-            <p className="text-[10px] font-sans text-neutral-400 mt-1">1 invoice past due</p>
+          <div>
+            <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight font-mono">
+              ₹28,500
+            </h3>
+            <p className="text-[10px] font-sans text-zinc-400">
+              2 active pending
+            </p>
           </div>
         </div>
 
-        {/* Paid Rate */}
-        <div className="bg-[#121212] border border-neutral-800 p-3.5 rounded-none">
-          <div className="flex justify-between items-start">
-            <span className="text-[11px] font-sans font-medium text-neutral-400 uppercase tracking-wide">Paid Rate</span>
-            <div className="p-1 bg-neutral-800 text-neutral-300 rounded-none">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            </div>
+        {/* Metric 3 */}
+        <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs space-y-1">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">
+              Overdue
+            </span>
+            <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
           </div>
-          <div className="mt-2">
-            <h3 className="text-xl font-bold text-white tracking-tight">88.5%</h3>
-            <p className="text-[10px] font-sans text-neutral-500 mt-1">Avg turnaround: 6 days</p>
+          <div>
+            <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight font-mono">
+              ₹12,000
+            </h3>
+            <p className="text-[10px] font-sans text-zinc-400">
+              1 past due date
+            </p>
           </div>
         </div>
+
+        {/* Metric 4 */}
+        <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs space-y-1">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">
+              Paid Rate
+            </span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight font-mono">
+              88.5%
+            </h3>
+            <p className="text-[10px] font-sans text-zinc-400">
+              Avg 6-day turnaround
+            </p>
+          </div>
+        </div>
+
       </div>
 
-      {/* Visual Analytics Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
-        {/* Main Revenue Chart */}
-        <div className="lg:col-span-2 bg-[#121212] border border-neutral-800 p-3.5 rounded-none flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-3 font-sans">
-            <div>
-              <h2 className="text-xs font-semibold text-white uppercase tracking-wider">Revenue Trend</h2>
-              <p className="text-[10px] text-neutral-500">Collected vs Pending monthly cashflow</p>
-            </div>
-            <div className="flex items-center gap-3 text-[11px]">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-none bg-[#00D2B5]" />
-                <span className="text-neutral-400 text-[10px] uppercase">Collected</span>
+      {/* Analytics Charts Section (Flex-1 expands/contracts to fit space) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 flex-1 min-h-0">
+        
+        {/* Cash Flow Chart */}
+        <div className="lg:col-span-8 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between min-h-0">
+          <div className="flex justify-between items-center font-sans shrink-0 mb-1">
+            <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono">
+              Cash Flow Telemetry
+            </h2>
+
+            <div className="flex items-center gap-3 text-[10px] font-mono">
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-teal-600 rounded-2xs" />
+                <span className="text-zinc-500 uppercase">COLLECTED</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-none bg-neutral-600" />
-                <span className="text-neutral-400 text-[10px] uppercase">Pending</span>
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-zinc-300 rounded-2xs" />
+                <span className="text-zinc-500 uppercase">PENDING</span>
               </div>
             </div>
           </div>
 
-          <div className="h-56 w-full">
+          <div className="w-full flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyRevenueData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+              <AreaChart
+                data={monthlyRevenueData}
+                margin={{ top: 5, right: 5, left: -25, bottom: 0 }}
+              >
                 <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00D2B5" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#00D2B5" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="colorPending" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#525252" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#525252" stopOpacity={0.0} />
+                  <linearGradient id="colorRevenueLight" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#0D9488" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#0D9488" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="1 1" stroke="#262626" vertical={false} />
-                <XAxis dataKey="month" stroke="#525252" fontSize={10} tickLine={false} />
-                <YAxis stroke="#525252" fontSize={10} tickLine={false} />
+                <CartesianGrid strokeDasharray="2 2" stroke="#F1F1F4" vertical={false} />
+                <XAxis dataKey="month" stroke="#A1A1AA" fontSize={9} tickLine={false} />
+                <YAxis stroke="#A1A1AA" fontSize={9} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#171717",
-                    borderColor: "#333333",
-                    borderRadius: "0px",
-                    color: "#F5F5F5",
-                    fontSize: "11px",
+                    backgroundColor: "#FFFFFF",
+                    borderColor: "#E4E4E7",
+                    borderRadius: "2px",
+                    color: "#18181B",
+                    fontSize: "10px",
                     fontFamily: "monospace",
+                    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
                   }}
                 />
-                <Area type="linear" dataKey="revenue" stroke="#00D2B5" strokeWidth={1.5} fillOpacity={1} fill="url(#colorRevenue)" />
-                <Area type="linear" dataKey="pending" stroke="#737373" strokeWidth={1.5} strokeDasharray="3 3" fillOpacity={1} fill="url(#colorPending)" />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#0D9488"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorRevenueLight)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="pending"
+                  stroke="#A1A1AA"
+                  strokeWidth={1.5}
+                  strokeDasharray="3 3"
+                  fill="transparent"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Boxy Volume Chart */}
-        <div className="bg-[#121212] border border-neutral-800 p-3.5 rounded-none flex flex-col justify-between">
-          <div className="font-sans">
-            <h2 className="text-xs font-semibold text-white uppercase tracking-wider">Invoice Volume</h2>
-            <p className="text-[10px] text-neutral-500">Total volume count</p>
-          </div>
+        {/* Status Breakdown Donut Chart */}
+        <div className="lg:col-span-4 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between min-h-0">
+          <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono shrink-0">
+            Status Breakdown
+          </h2>
 
-          <div className="h-56 w-full my-auto">
+          <div className="w-full flex-1 min-h-0 relative flex items-center justify-center my-1">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyRevenueData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="1 1" stroke="#262626" vertical={false} />
-                <XAxis dataKey="month" stroke="#525252" fontSize={10} tickLine={false} />
-                <YAxis stroke="#525252" fontSize={10} tickLine={false} />
+              <PieChart>
+                <Pie
+                  data={statusDistribution}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="50%"
+                  outerRadius="75%"
+                  paddingAngle={3}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {statusDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
                 <Tooltip
-                  cursor={{ fill: "#171717" }}
                   contentStyle={{
-                    backgroundColor: "#171717",
-                    borderColor: "#333333",
-                    borderRadius: "0px",
-                    color: "#F5F5F5",
-                    fontSize: "11px",
-                    fontFamily: "monospace",
+                    backgroundColor: "#FFFFFF",
+                    borderColor: "#E4E4E7",
+                    borderRadius: "2px",
+                    fontSize: "10px",
+                    color: "#18181B",
+                    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
                   }}
                 />
-                <Bar dataKey="revenue" fill="#00D2B5" radius={[0, 0, 0, 0]} barSize={14} />
-              </BarChart>
+              </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Invoices Table Section */}
-      <div className="bg-[#121212] border border-neutral-800 rounded-none p-3.5">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3 font-sans">
-          <div>
-            <h2 className="text-xs font-semibold text-white uppercase tracking-wider">Invoice Registry</h2>
-            <p className="text-[10px] text-neutral-500">Stored metadata logs</p>
+            
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-sm font-bold text-zinc-900 font-mono">88.5%</span>
+              <span className="text-[8px] text-zinc-400 font-mono uppercase">PAID</span>
+            </div>
           </div>
 
-          {/* Boxy Neutral Filter Segmented Control */}
-          <div className="flex items-center bg-[#090909] p-0.5 border border-neutral-800 rounded-none text-xs">
-            {["All", "Paid", "Pending", "Overdue"].map((item) => (
-              <button
-                key={item}
-                onClick={() => setFilter(item)}
-                className={`px-3 py-0.5 text-[10px] font-medium transition rounded-none uppercase ${
-                  filter === item
-                    ? "bg-[#1F1F1F] text-[#00D2B5] border border-neutral-700"
-                    : "text-neutral-400 hover:text-neutral-200"
-                }`}
-              >
-                {item}
-              </button>
+          <div className="flex justify-around pt-2 border-t border-zinc-100 text-[10px] font-mono shrink-0">
+            {statusDistribution.map((item) => (
+              <div key={item.name} className="flex items-center gap-1">
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-zinc-500">{item.name}</span>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Flat Border Table */}
-        <div className="overflow-x-auto border border-neutral-800 rounded-none">
-          <table className="w-full text-left text-xs text-neutral-300">
-            <thead className="bg-[#1A1A1A] text-neutral-400 font-sans uppercase text-[10px] tracking-wider border-b border-neutral-800">
+      </div>
+
+      {/* Invoices Table Section (Fixed Shrink) */}
+      <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs shrink-0 space-y-2">
+        
+        {/* Table Controls */}
+        <div className="flex justify-between items-center gap-2 font-sans">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono">
+              Recent Activity
+            </h2>
+            <span className="text-[10px] text-zinc-400 font-mono hidden sm:inline">
+              (2 latest records)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Filter segmented control */}
+            <div className="flex items-center bg-zinc-100/70 p-0.5 border border-zinc-200/80 rounded-2xs text-[10px] font-mono">
+              {["All", "Paid", "Pending"].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setFilter(item)}
+                  className={`px-2 py-0.5 font-semibold transition-all cursor-pointer uppercase ${
+                    filter === item
+                      ? "bg-white text-zinc-900 border border-zinc-200 shadow-2xs"
+                      : "text-zinc-500 hover:text-zinc-800"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            <Link
+              href="/invoices"
+              className="flex items-center gap-1 text-[11px] text-teal-700 hover:text-teal-800 transition-colors font-medium"
+            >
+              <span className="hidden sm:inline">View All</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto border border-zinc-200/80 rounded-2xs">
+          <table className="w-full text-left text-xs text-zinc-700 font-sans">
+            <thead className="bg-zinc-50 border-b border-zinc-200/80 text-zinc-400 font-mono uppercase text-[9px] tracking-wider">
               <tr>
                 <th className="py-2 px-3">Invoice ID</th>
                 <th className="py-2 px-3">Client</th>
@@ -284,58 +353,72 @@ export default function OverviewDashboard() {
                 <th className="py-2 px-3">Due</th>
                 <th className="py-2 px-3">Amount</th>
                 <th className="py-2 px-3">Status</th>
-                <th className="py-2 px-3 text-right">Actions</th>
+                <th className="py-2 px-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800/80 bg-[#121212]">
+            <tbody className="divide-y divide-zinc-100 bg-white">
               {recentInvoices
                 .filter((inv) => filter === "All" || inv.status === filter)
                 .map((invoice) => (
-                  <tr key={invoice.id} className="hover:bg-neutral-800/40 transition">
-                    <td className="py-2.5 px-3 font-mono text-[11px] text-neutral-300">
+                  <tr
+                    key={invoice.id}
+                    className="hover:bg-zinc-50/80 transition-colors"
+                  >
+                    <td className="py-2 px-3 font-mono text-[11px] text-zinc-500 font-semibold">
                       {invoice.id}
                     </td>
-                    <td className="py-2.5 px-3 font-sans">
-                      <div className="font-medium text-white text-xs">{invoice.client}</div>
-                      <div className="text-[10px] text-neutral-500">{invoice.email}</div>
+                    <td className="py-2 px-3">
+                      <div className="font-medium text-zinc-900 text-xs leading-tight">
+                        {invoice.client}
+                      </div>
+                      <div className="text-[9px] text-zinc-400 font-mono leading-tight">
+                        {invoice.email}
+                      </div>
                     </td>
-                    <td className="py-2.5 px-3 text-neutral-400 text-[11px] font-sans">{invoice.date}</td>
-                    <td className="py-2.5 px-3 text-neutral-400 text-[11px] font-sans">{invoice.dueDate}</td>
-                    <td className="py-2.5 px-3 font-semibold text-white text-xs">{invoice.amount}</td>
-                    <td className="py-2.5 px-3 font-sans">
+                    <td className="py-2 px-3 text-zinc-500 text-[10px] font-mono">
+                      {invoice.date}
+                    </td>
+                    <td className="py-2 px-3 text-zinc-500 text-[10px] font-mono">
+                      {invoice.dueDate}
+                    </td>
+                    <td className="py-2 px-3 font-semibold text-zinc-900 font-mono text-xs">
+                      {invoice.amount}
+                    </td>
+                    <td className="py-2 px-3">
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-semibold uppercase rounded-none border ${
+                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase rounded-2xs border ${
                           invoice.status === "Paid"
-                            ? "bg-[#00D2B5]/10 text-[#00D2B5] border-[#00D2B5]/30"
-                            : invoice.status === "Pending"
-                            ? "bg-neutral-800 text-neutral-300 border-neutral-700"
-                            : "bg-neutral-900 text-neutral-400 border-neutral-700"
+                            ? "bg-teal-50 text-teal-800 border-teal-200/80"
+                            : "bg-amber-50 text-amber-800 border-amber-200/80"
                         }`}
                       >
                         <span
-                          className={`w-1 h-1 rounded-none ${
-                            invoice.status === "Paid" ? "bg-[#00D2B5]" : "bg-neutral-400"
+                          className={`w-1 h-1 rounded-full ${
+                            invoice.status === "Paid"
+                              ? "bg-teal-600"
+                              : "bg-amber-600"
                           }`}
                         />
                         {invoice.status}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-right">
-                      <div className="flex items-center justify-end gap-1.5 text-neutral-400">
-                        <button className="p-1 hover:text-white transition rounded-none" title="Download">
-                          <Download className="w-3.5 h-3.5" />
-                        </button>
-                        <button className="p-1 hover:text-white transition rounded-none" title="Options">
-                          <MoreVertical className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                    <td className="py-2 px-3 text-right">
+                      <button
+                        type="button"
+                        className="p-1 text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer rounded-2xs hover:bg-zinc-100"
+                        title="Manage Invoice"
+                      >
+                        <MoreVertical className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
+
       </div>
+
     </div>
   );
 }

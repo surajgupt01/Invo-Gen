@@ -1,215 +1,222 @@
 "use client";
 
 import { useState } from "react";
-import Tick from "../Icons/Tick";
+import Link from "next/link";
 
-export default function PaymentOptions() {
-  const [billingOption, setOption] = useState("month");
+// Clean Minimal SVG Check Icon
+function CheckIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
-    <div
-      id="PriceSection"
-      className=" flex-col md:text-4xl md:h-auto  sm:text-3xl text-xl w-full flex items-center justify-center mt-30 text-gray-600"
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2.5}
+      stroke="currentColor"
     >
-      <p className="w-full text-center font-medium text-gray-800">
-        Pricing that scales with your business
-      </p>
-
-      <p className="md:w-150 sm:w-120 w-80 font-medium tracking-wider  text-center mt-6  sm:text-lg text-sm">
-        Everything you need to create professional invoices, without complexity.
-      </p>
-
-      <div className="w-full p-2">
-        <div className="w-full rounded-full  flex justify-center items-center mt-10">
-          <div className="w-70 relative rounded-full h-9 flex items-center text-xs border border-gray-300">
-            {/* Month */}
-            <div
-              onClick={() => {
-                if (billingOption !== "month") setOption("month");
-              }}
-              className={`w-1/2  h-full rounded-full z-30 flex justify-center items-center cursor-pointer ${billingOption=='month' && 'text-white'}`}
-            >
-              Monthly
-            </div>
-
-            {/* Year */}
-            <div
-              onClick={() => {
-                if (billingOption !== "year") setOption("year");
-              }}
-              className={`w-1/2 z-30  h-full rounded-full flex justify-center gap-1 p-1 items-center cursor-pointer ${billingOption=='year' && 'text-white'}`}
-            >
-              Yearly <span className="text-blue-400 text-[8px] font-semibold">{"— 2 months free"}</span>
-            </div>
-
-            {/* Sliding Background */}
-            <div
-              className={`absolute bg-black  w-1/2 h-full rounded-full 
-    transition-all duration-300 ease-in-out
-    ${billingOption === "year" ? "translate-x-full" : "translate-x-0"}`}
-            />
-          </div>
-        </div>
-        <div className="w-full flex flex-row h-auto justify-center  my-4 p-2">
-        <div className="xl:w-[90%]   h-auto  grid xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1   gap-2 ">
-          <PayCard
-            Category="Free"
-            mPrice="$0"
-            yPrice="$0"
-            mssg="Your current plan"
-            option={billingOption}
-          ></PayCard>
-          <PayCard Category="Lite" mPrice="$5" yPrice="$49" mssg="Upgrade to Lite" option={billingOption}></PayCard>
-          <PayCard Category="Pro" mPrice="$12" yPrice="$99" mssg="Upgrade to Pro" option={billingOption}></PayCard>
-          <PayCard
-            Category="Enterprise"
-            mPrice="Launching Soon"
-            yPrice="Launching Soon"
-            mssg="Join Waitlist"
-            option={billingOption}
-          ></PayCard>
-        </div>
-        </div>
-      </div>
-    </div>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4.5 12.75l6 6 9-13.5"
+      />
+    </svg>
   );
 }
-function PayCard({
-  Category,
-  mPrice,
-  yPrice,
-  mssg,
-  option
-}: {
-  Category: string;
-  mPrice: string;
-  yPrice?: string;
-  mssg: string;
-  option: string;
-}) {
-  const FreeFeatures = [
-    "Create up to 5 invoices per month",
-    "Download invoice as PDF",
-    "Auto-calculate subtotal, tax & total",
-    "Multi-currency support (USD, GBP, EUR, INR)",
-    "1 clean professional template",
-    "Basic client details (name, email, address)",
-    "InvoiceFlow watermark on PDF",
-    "No signup required",
-    "Data stored locally in browser",
-  ];
 
-  const LiteFeatures = [
-    "Everything in Free",
-    "Secure cloud account & login",
-    "Unlimited invoice creation",
-    "Invoice history (last 15 invoices stored)",
-    "Edit & duplicate invoices",
-    "Save client profiles",
-    "Auto invoice numbering (INV-001, INV-002)",
-    "Manual mark as paid",
-    "Email-ready PDF export",
-  ];
+export default function PaymentOptions() {
+  const [billingOption, setOption] = useState<"month" | "year">("month");
 
-  const ProFeatures = [
-    "Everything in Lite",
-    "Remove InvoiceFlow watermark",
-    "Upload business logo",
-    "Custom brand colors",
-    "3 premium invoice templates",
-    "Advanced GST configuration",
-    "Multi-currency support",
-    "Invoice due date reminders",
-    "Client portal (view invoice online)",
-    "Basic revenue dashboard",
-    "Priority email support",
-  ];
-
-  const BusinessFeatures = [
-    "Everything in Pro",
-    "Stripe Connect (one-click payments)",
-    "Razorpay Connect (UPI / Card support)",
-    "Auto-mark invoice as paid",
-    "Webhook payment tracking",
-    "Full live analytics dashboard",
-    "Revenue by currency",
-    "Outstanding payment tracker",
-    "Payment method breakdown",
-    "Automated payment reminders",
-    "Dedicated onboarding support",
-  ];
   return (
-    <div
-      className={`lg:w-80 w-75 text-xs h-130 rounded-xs p-6 cursor-pointer border hover:border-gray-300 ${Category === "Pro" && "bg-gradient-to-br from-emerald-600 via-emerald-950 to-green-600"} ${Category === "Lite" && "bg-gradient-to-br from-orange-300 via-orange-500 to-amber-300"} ${Category == "Enterprise" && "bg-gradient-to-br from-[#c1446c] via-[#4c1d2f] to-[#e73c3c]"}  hover:scale-101 duration-300 ease-in-out`}
+    <section
+      id="PriceSection"
+      className="relative w-full max-w-5xl bg-[#FAFAFA] text-zinc-800 font-sans select-none py-16 md:py-24 overflow-hidden border-b border-zinc-200/80"
     >
-      <div
-        className={`font-bold text-2xl flex justify-between ${Category == "Free" && "text-gray-700"} ${Category == "Enterprise" && "text-[#250b15] tracking-wide text-shadow-2xs text-shadow-[#9e2e59]"} ${Category == "Pro" && "text-emerald-950"} ${Category == "Lite" && "text-orange-950"}`}
-      >
-        {Category}
-        {Category=='Pro' && <span className="text-[10px]  text-white/90 font-extralight  flex items-center justify-center p-1 rounded-tr-sm rounded-bl-sm">{"# Most Popular"}</span>}
-      </div>
-      <div className="my-4">
-        <span
-          className={`text-3xl text-gray-50 ${Category == "Free" && "text-gray-700"}`}
-        >
-          {option=='month'? mPrice : yPrice}
-          {Category!='Enterprise'&&<span className="text-sm font-light">
-            {option == "year" ? `/year` : `/month`}
-          </span>}
-        </span>
-        <div className="">
-          <button
-            className={`p-2 flex mt-4 items-center justify-center  border border-gray-300  hover:bg-black hover:text-gray-100  text-gray-200 ${
-              Category == "Free" && "hover:border-gray-400 text-gray-800"
-            }
-                ${Category == "Enterprise" && "text-gray-300"}
-                cursor-pointer  text-sm font-normal ease-in-out duration-200`}
-          >
-            {mssg}
-          </button>
+      <div className="w-[90%] max-w-[85vw] mx-auto space-y-12">
+        
+        {/* Header Block matching Landing Page Typography */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-zinc-200/80">
+          <div className="space-y-3 max-w-xl">
+            <span className="text-xs font-mono text-teal-600 uppercase tracking-widest font-semibold">
+              TRANSPARENT PRICING
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900">
+              Simple pricing that scales with your business.
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed">
+              Everything you need to create professional invoices, manage collections, and customize PDF templates.
+            </p>
+          </div>
+
+          {/* Monthly / Yearly Sliding Pill Toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setOption("month")}
+              className={`px-4 py-2 text-xs font-medium rounded-xs transition-colors cursor-pointer ${
+                billingOption === "month"
+                  ? "bg-zinc-950 text-white shadow-2xs"
+                  : "bg-white text-zinc-800 hover:bg-zinc-50 border border-zinc-200"
+              }`}
+            >
+              Monthly
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setOption("year")}
+              className={`px-4 py-2 text-xs font-medium rounded-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
+                billingOption === "year"
+                  ? "bg-zinc-950 text-white shadow-2xs"
+                  : "bg-white text-zinc-800 hover:bg-zinc-50 border border-zinc-200"
+              }`}
+            >
+              <span>Yearly</span>
+              <span
+                className={`text-[10px] font-mono font-bold uppercase ${
+                  billingOption === "year" ? "text-teal-400" : "text-teal-600"
+                }`}
+              >
+                (Save ~30%)
+              </span>
+            </button>
+          </div>
         </div>
+
+        {/* Pricing Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-4 items-start">
+          
+          {/* FREE TIER */}
+          <div className="lg:col-span-6 space-y-6">
+            <div className="flex items-baseline justify-between pb-3 border-b border-zinc-200/80">
+              <h3 className="text-xl font-bold tracking-tight text-zinc-900">
+                Free Tier
+              </h3>
+              <span className="text-xs font-mono text-zinc-400 uppercase">
+                STARTER
+              </span>
+            </div>
+
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-zinc-900 tracking-tight font-mono">
+                  $0
+                </span>
+                <span className="text-xs text-zinc-400 font-mono">
+                  {billingOption === "year" ? "/year" : "/month"}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-1">
+                Free forever, no credit card required.
+              </p>
+            </div>
+
+            <Link href="/dashboard" className="block w-full">
+              <button
+                type="button"
+                className="w-full py-2.5 px-4 text-xs font-medium text-zinc-800 bg-white hover:bg-zinc-50 border border-zinc-200 shadow-2xs rounded-xs transition-colors cursor-pointer"
+              >
+                Current Plan
+              </button>
+            </Link>
+
+            {/* Feature List */}
+            <div className="space-y-3 pt-4">
+              <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider block">
+                Included Features:
+              </span>
+              <ul className="space-y-2.5 text-xs text-zinc-600">
+                {[
+                  "Create up to 5 invoices per month",
+                  "Download clean PDF document",
+                  "Auto-calculate subtotals, tax & total",
+                  "Multi-currency support (USD, EUR, GBP, INR)",
+                  "Standard template selection",
+                  "Local in-browser session storage",
+                ].map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span className="text-teal-600 mt-0.5 shrink-0">
+                      <CheckIcon />
+                    </span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* PRO TIER */}
+          <div className="lg:col-span-6 space-y-6">
+            <div className="flex items-baseline justify-between pb-3 border-b border-zinc-200/80">
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-bold tracking-tight text-zinc-900">
+                  Pro Tier
+                </h3>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200/80 px-2 py-0.5 rounded-2xs">
+                  MOST POPULAR
+                </span>
+              </div>
+              <span className="text-xs font-mono text-zinc-400 uppercase">
+                PRO BILLING
+              </span>
+            </div>
+
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-zinc-900 tracking-tight font-mono">
+                  {billingOption === "month" ? "$12" : "$99"}
+                </span>
+                <span className="text-xs text-zinc-400 font-mono">
+                  {billingOption === "year" ? "/year" : "/month"}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-1">
+                {billingOption === "year"
+                  ? "Billed annually at $99/year."
+                  : "Billed monthly. Cancel anytime."}
+              </p>
+            </div>
+
+            <Link href="/dashboard" className="block w-full">
+              <button
+                type="button"
+                className="w-full py-2.5 px-4 text-xs font-medium text-white bg-zinc-950 hover:bg-black shadow-2xs rounded-xs transition-colors cursor-pointer"
+              >
+                Upgrade to Pro
+              </button>
+            </Link>
+
+            {/* Feature List */}
+            <div className="space-y-3 pt-4">
+              <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider block">
+                Included Features:
+              </span>
+              <ul className="space-y-2.5 text-xs text-zinc-600">
+                {[
+                  "Everything in Free",
+                  "Unlimited invoice generation",
+                  "Remove watermarks from PDFs",
+                  "Upload organization logo & signature",
+                  "All premium invoice template designs",
+                  "Advanced GST & International tax engine",
+                  "Print UPI QR code & bank details",
+                  "Full invoice activity telemetry",
+                ].map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span className="text-teal-600 mt-0.5 shrink-0">
+                      <CheckIcon />
+                    </span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
       </div>
-      <div className="font-light">
-        {Category == "Free" &&
-          FreeFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-400"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-        {Category == "Lite" &&
-          LiteFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs leading-5 font-light mt-2 text-gray-100"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-        {Category == "Pro" &&
-          ProFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-100"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-        {Category == "Enterprise" &&
-          BusinessFeatures.map((e: string, index: number) => (
-            <span
-              key={index}
-              className="flex items-center gap-1 text-xs font-light mt-2 leading-5 text-gray-100"
-            >
-              <Tick />
-              {e}
-            </span>
-          ))}
-      </div>
-    </div>
+
+      {/* Large Bottom Faded Brand Watermark */}
+   
+    </section>
   );
 }

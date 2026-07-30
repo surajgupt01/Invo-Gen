@@ -1,6 +1,6 @@
 "use client";
 
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
 import List from "@/app/Icons/List";
 import OpenArrow from "@/app/Icons/OpenArrow";
@@ -10,6 +10,12 @@ import Preview from "@/app/component/Preview";
 import { useOptionalData } from "@/app/store/OptionalDataStore";
 import { useOwner } from "@/app/store/OwnerDetail";
 import QR from "@/app/Icons/QR";
+import Image from "next/image";
+import ImageAlt from "@/app/Icons/Img";
+import SeePassword from "@/app/Icons/SeePassword";
+import Docs from "@/app/Icons/Doc";
+import Both from "@/app/Icons/Both";
+import ItemsTable from "./Table";
 
 function fileToBase64(file: globalThis.File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -33,62 +39,80 @@ export default function CreateInvoice() {
   const [dispaly, setDisplay] = useState("Form");
 
   return (
-    <div className=" flex flex-col h-full w-full   border-neutral-900 rounded-sm transition-all duration-500 ease-in-out">
-      <div className="bg-neutral-950 border-b border-neutral-900  inset-0 p-2 px-6 flex justify-center items-center">
-        {/* <NavLogo textColor="text-gray-100"/> */}
-        <div className="bg-neutral-900 lg:w-62 w-44 py-1 px-1 gap-2 flex justify-center items-center rounded-md">
+    <div className="flex flex-col h-full w-full bg-[#FAFAFA] border-zinc-200 rounded-sm transition-all duration-500 ease-in-out font-mono">
+      {/* Top View Mode Switcher Header */}
+      <div className="bg-white border-b border-zinc-200 inset-0 p-2 px-6 flex justify-center items-center shrink-0">
+        <div className="bg-zinc-100 lg:w-62 w-44 py-1 px-1 gap-1.5 flex justify-center items-center rounded-md border border-zinc-200/60">
           <button
             onClick={() => setDisplay("Form")}
-            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == "Form" ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""}  lg:flex justify-center items-center gap-0.5 `}
+            className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
+              dispaly === "Form"
+                ? "bg-white shadow-xs text-zinc-900 font-semibold border border-zinc-200/80"
+                : ""
+            } lg:flex justify-center items-center gap-1.5`}
           >
             <Docs />
-            {`Form`}
+            Form
           </button>
           <button
             onClick={() => setDisplay("Both")}
-            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == "Both" ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""} hidden lg:flex justify-center items-center gap-0.5 `}
+            className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
+              dispaly === "Both"
+                ? "bg-white shadow-xs text-zinc-900 font-semibold border border-zinc-200/80"
+                : ""
+            } hidden lg:flex justify-center items-center gap-1.5`}
           >
             <Both />
-            {`Both`}
+            Both
           </button>
           <button
             onClick={() => setDisplay("Preview")}
-            className={`text-neutral-500 text-sm flex hover:text-neutral-400 duration-300 ease-in-out cursor-pointer px-2 py-1 rounded-md ${dispaly == "Preview" ? "bg-neutral-950 shadow-sm shadow-neutral-900 text-neutral-100 font-semibold" : ""}  lg:flex justify-center items-center gap-0.5 `}
+            className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
+              dispaly === "Preview"
+                ? "bg-white shadow-xs text-zinc-900 font-semibold border border-zinc-200/80"
+                : ""
+            } lg:flex justify-center items-center gap-1.5`}
           >
             <SeePassword />
-            {`Preview`}
+            Preview
           </button>
         </div>
       </div>
-      {dispaly == "Both" && (
-        <div className="lg:flex-row flex flex-col overflow-auto w-full relative gap-2 p-2   border-neutral-900  rounded-sm transition-all duration-500 ease-in-out">
+
+      {/* Dynamic Main Body Display Modes */}
+      {dispaly === "Both" && (
+        <div className="lg:flex-row flex flex-col overflow-auto w-full relative gap-3 p-3 transition-all duration-500 ease-in-out flex-1 min-h-0">
           <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out">
             <FormComponent />
           </div>
 
-          <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out">
+          <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out bg-white border border-zinc-200/80 rounded-sm">
             <Preview />
           </div>
         </div>
       )}
-      {dispaly == "Form" && (
-        <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out">
+
+      {dispaly === "Form" && (
+        <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out p-3">
           <FormComponent />
         </div>
       )}
-      {dispaly == "Preview" && (
-        <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out">
-          <Preview />
+
+      {dispaly === "Preview" && (
+        <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out p-3">
+          <div className="h-full bg-white border border-zinc-200/80 rounded-sm p-2">
+            <Preview />
+          </div>
         </div>
       )}
     </div>
   );
 }
+
 function FormComponent() {
   const [expand, setExpand] = useState(false);
 
   const { DetailHandler, Details } = useCustomerStore();
-
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
 
   interface Owner {
@@ -142,12 +166,14 @@ function FormComponent() {
     Currency: string;
     Subject: string;
   };
+
   interface Field {
     label: string;
     name: keyof CustomerDetails;
     type?: string;
     placeholder?: string;
   }
+
   const fields: Field[] = [
     {
       label: "Customer Name",
@@ -181,58 +207,62 @@ function FormComponent() {
     setLogo(base64);
     OwnerDetailHandler("companyLogo", base64);
   };
+
   return (
     <div className="w-full scroll-smooth">
       <form
-        className="w-full  space-y-4  px-2"
+        className="w-full space-y-3 px-1"
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
-        <div className="   p-6 rounded-xs bg-neutral-950 shadow-xs ">
-          <h1 className="text-sm font-semibold mt-2 mb-4 text-gray-400 tracking-wide">
-            {"Organization's Detail"}
+        {/* Organization's Detail Card */}
+        <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
+          <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
+           {` Organization's Detail`}
           </h1>
-          <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-2 gap-3.5 w-full">
             <label htmlFor="logo" className="col-span-2">
-              <div className="w-full border border-dashed border-neutral-700 rounded-sm  group col-span-2 flex-1 px-4 py-8  cursor-pointer  bg-neutral-950 flex flex-col gap-2 items-center justify-center">
+              <div className="w-full border border-dashed border-zinc-300 rounded-sm group col-span-2 flex-1 px-4 py-6 cursor-pointer bg-zinc-50/50 hover:bg-zinc-100/50 transition flex flex-col gap-2 items-center justify-center">
                 <input
                   id="logo"
                   type="file"
-                  placeholder=""
-                  className="z-200 top-10 cursor-pointer   border hidden border-white bg-transparent"
+                  className="hidden"
                   onChange={handleLogo}
-                ></input>
+                />
 
-                <label htmlFor="logo">
-                  <div className=" rounded-xs flex  justify-center items-center cursor-pointer">
-                    {logo != "" ? (
+                <label htmlFor="logo" className="cursor-pointer">
+                  <div className="rounded-xs flex justify-center items-center">
+                    {logo !== "" ? (
                       <Image
-                        alt="QR"
+                        alt="Company Logo"
                         src={logo}
-                        width={140}
-                        height={140}
-                      ></Image>
+                        width={120}
+                        height={120}
+                        className="object-contain"
+                      />
                     ) : (
                       <ImageAlt />
                     )}
                   </div>
                 </label>
-                <p className="text-neutral-700 whitespace-pre-line text-center text-xs">
-                  {" "}
-                  {`drag and drop your saved company's logo \n here, `} or{" "}
-                  <span className="text-teal-700">browse your file</span>{" "}
+                <p className="text-zinc-500 whitespace-pre-line text-center text-xs">
+                  {`Drag and drop your saved company's logo \nhere, or `}
+                  <span className="text-teal-700 font-semibold">
+                    browse your file
+                  </span>
                 </p>
               </div>
             </label>
+
             {OwnerField.map((f, index) => (
               <div key={index} className="flex flex-col gap-1 w-full">
-                <div className="text-neutral-300 tracking-wide text-xs">
+                <div className="text-zinc-600 tracking-wide text-xs">
                   {f.label}
                 </div>
 
                 <input
-                  className="border border-neutral-800 bg-neutral-900 px-4 py-3 rounded-xs text-gray-400 text-xs hover:border-teal-400 focus:outline-teal-700 w-full"
+                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition"
                   name={f.name}
                   placeholder={f.placeholder}
                   value={OwnerDetails[f.name]}
@@ -245,20 +275,22 @@ function FormComponent() {
             ))}
           </div>
         </div>
-        <div className="p-6 rounded-sm shadow-xs bg-neutral-950 ">
-          <h1 className="text-sm font-semibold mt-2 mb-4 text-gray-400">
-            {"Customer's Detail"}
+
+        {/* Customer's Detail Card */}
+        <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
+          <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
+          {`  Customer's Detail`}
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
             {fields.map((f, index) => (
               <div key={index} className="flex flex-col gap-1 w-full">
-                <div className="text-neutral-300 tracking-wide text-xs">
+                <div className="text-zinc-600 tracking-wide text-xs">
                   {f.label}
                 </div>
 
                 <input
-                  className="border border-neutral-800 bg-neutral-900 px-4 py-3 rounded-xs w-full text-gray-400 text-xs hover:border-teal-400 focus:outline-teal-700"
+                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs w-full text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 transition"
                   name={f.name}
                   placeholder={f.placeholder}
                   type={f.type || "text"}
@@ -269,50 +301,47 @@ function FormComponent() {
                 />
               </div>
             ))}
-
-            {/* <div className="flex flex-col gap-1 w-full">
-              <div className="text-xs text-gray-300">Currency</div>
-              <CurrencySelect value={currency} onChange={setCurrency} />
-            </div> */}
           </div>
         </div>
+
+        {/* Collapsible Items Table Section */}
         <div
           className={`${
-            expand ? "max-h-170 overflow-auto " : "max-h-12 overflow-hidden "
-          }  cursor-pointer duration-500 ease-in-out custom-scrollbar border-1 text-xs font-bold px-2 bg-neutral-950   border-neutral-900  shadow-xs py-1 rounded-sm transition-all `}
+            expand ? "max-h-170 overflow-auto" : "max-h-12 overflow-hidden"
+          } cursor-pointer duration-500 ease-in-out custom-scrollbar border text-xs font-bold px-2 bg-white border-zinc-200/80 shadow-xs py-1 rounded-xs transition-all`}
         >
           <div
-            className={` flex items-center duration-300 ease-in-out   justify-between group  p-3  text-gray-400
-                    }`}
+            className="flex items-center duration-300 ease-in-out justify-between group p-2.5 text-zinc-700"
             onClick={() => {
               setExpand(!expand);
             }}
           >
-            <div className="flex items-center gap-1">
-              {" "}
+            <div className="flex items-center gap-2">
               <List />
-              Items Table{" "}
+              <span>Items Table</span>
             </div>
             <div
               className={`${
-                expand ? "rotate-180" : null
-              } duration-500 ease-in-out transition-all group-hover:animate-pulse`}
+                expand ? "rotate-180" : ""
+              } duration-500 ease-in-out transition-all text-zinc-500 group-hover:text-zinc-900`}
             >
-              <OpenArrow></OpenArrow>
+              <OpenArrow />
             </div>
           </div>
+
           <div
-            className={`  rounded-lg py-4  transition-opacity
-      duration-500 ease-in-out ${
-        expand ? " translate-y-0" : "pointer-events-none  opacity-0"
-      } `}
+            className={`rounded-lg py-3 transition-opacity duration-500 ease-in-out ${
+              expand ? "translate-y-0" : "pointer-events-none opacity-0"
+            }`}
           >
             <ItemsTable />
           </div>
         </div>
 
+        {/* Payment Options Section */}
         <PaymentOptions />
 
+        {/* Additional Information Section */}
         <InfoParent />
       </form>
     </div>
@@ -327,14 +356,10 @@ interface AddInfoProps {
 
 function InfoParent() {
   return (
-    <div
-      className="
-                   cursor-pointer overflow-hidden bg-neutral-950 rounded-sm  text-xs font-bold px-2 py-3  shadow-xs  duration-500 ease-in-out transition-all `}
-                "
-    >
-      <div className="flex items-center gap-1 py-2 text-neutral-300">
+    <div className="bg-white border border-zinc-200/80 rounded-xs text-xs font-bold px-3 py-4 shadow-xs duration-500 ease-in-out transition-all">
+      <div className="flex items-center gap-1.5 pb-2 text-zinc-800 border-b border-zinc-100">
         <AddInfo />
-        <span className="tracking-wide text-sm font-semibold text-gray-400">
+        <span className="tracking-wide text-xs font-semibold uppercase">
           Additional Information
         </span>
       </div>
@@ -357,35 +382,29 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
   const { HandleInfo, HandleTerms } = useOptionalData();
 
   return (
-    <div className="px-2 py-1 font-normal mt-2">
-      <span className="text-gray-500 tracking-wide">{Title}</span>{" "}
-      <span className="bg-gray-300 rounded-sm p-1 text-[7px] tracking-wide ">
-        Optional
-      </span>
+    <div className="px-1 py-1 font-normal mt-2.5">
+      <div className="flex items-center gap-2">
+        <span className="text-zinc-600 font-medium text-xs">{Title}</span>
+        <span className="bg-zinc-100 border border-zinc-200 text-zinc-500 rounded-xs px-1.5 py-0.5 text-[8px] uppercase tracking-wide">
+          Optional
+        </span>
+      </div>
       <textarea
         name="note"
-        className="focus:outline-1 bg-neutral-900 text-gray-400 focus:outline-teal-700 focus:border-teal-700 focus:border-1 border border-neutral-800   w-full h-30 resize-none p-2 mt-2 rounded-xs"
+        className="bg-white text-zinc-800 focus:outline-teal-700 border border-zinc-200 w-full h-24 resize-none p-2.5 mt-1.5 rounded-xs text-xs transition"
         placeholder={Placeholder}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          if (Title == "Terms") HandleTerms(e.currentTarget.value);
+          if (Title === "Terms") HandleTerms(e.currentTarget.value);
           else HandleInfo(e.currentTarget.value);
         }}
-      ></textarea>
-      <div className="flex items-center text-xs gap-1 text-gray-500">
-        <Info /> <span className="text-gray-600 text-[10px]">{Message}</span>
+      />
+      <div className="flex items-center text-xs gap-1 mt-1 text-zinc-400">
+        <Info />
+        <span className="text-zinc-500 text-[10px]">{Message}</span>
       </div>
     </div>
   );
 }
-
-import Image from "next/image";
-import ImageAlt from "@/app/Icons/Img";
-
-import SeePassword from "@/app/Icons/SeePassword";
-import Docs from "@/app/Icons/Doc";
-
-import Both from "@/app/Icons/Both";
-import ItemsTable from "./Table";
 
 function PaymentOptions() {
   interface Owner {
@@ -436,12 +455,14 @@ function PaymentOptions() {
     {
       label: "Bank Code",
       name: "BankCode",
-      placeholder: "Bank Code eg : IFCS code",
+      placeholder: "Bank Code eg : IFSC code",
     },
   ];
-  const [option, setOption] = useState("UPI");
 
+  const [option, setOption] = useState("UPI");
   const [url, setUrl] = useState("");
+
+  const { OwnerDetailHandler, OwnerDetails } = useOwner();
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -451,24 +472,22 @@ function PaymentOptions() {
     OwnerDetailHandler("QR", base64);
   };
 
-  const { OwnerDetailHandler, OwnerDetails } = useOwner();
   return (
-    <div
-      className="
-                 bg-neutral-950  overflow-hidden  text-xs font-bold px-2 py-4 mb-2   shadow-xs rounded-xs duration-500 ease-in-out transition-all `}
-                "
-    >
-      <div className="flex items-center gap-1 ">
-        {/* <Logo textColor="white" /> */}
-        <span className="text-neutral-300 tracking-wide font-semibold text-sm">
+    <div className="bg-white border border-zinc-200/80 text-xs font-bold px-3 py-4 shadow-xs rounded-xs duration-500 ease-in-out transition-all">
+      <div className="flex items-center gap-1.5 pb-2 border-b border-zinc-100">
+        <span className="text-zinc-800 tracking-wide font-semibold text-xs uppercase">
           Payment Options
         </span>
       </div>
 
-      <div className="h-full  w-full">
-        <div className="p-2 w-full h-auto flex justify-between items-center gap-2">
+      <div className="h-full w-full mt-2">
+        <div className="p-1 w-full h-auto flex justify-between items-center gap-2 bg-zinc-100 border border-zinc-200/60 rounded-xs">
           <button
-            className={`w-full flex justify-center cursor-pointer hover:bg-neutral-800 p-2 duration-300 ease-in-out text-neutral-400 ${option == "Bank" ? "bg-neutral-700" : ""}`}
+            className={`w-full flex justify-center cursor-pointer p-1.5 duration-200 ease-in-out text-xs font-medium rounded-xs ${
+              option === "Bank"
+                ? "bg-white text-zinc-900 shadow-2xs border border-zinc-200/60"
+                : "text-zinc-500 hover:text-zinc-800"
+            }`}
             onClick={() => {
               setOption("Bank");
               OwnerDetailHandler("paymentMethod", "Bank");
@@ -477,7 +496,11 @@ function PaymentOptions() {
             Bank Transfer
           </button>
           <button
-            className={`w-full flex justify-center cursor-pointer hover:bg-neutral-800 p-2 duration-300 ease-in-out text-neutral-400 ${option == "UPI" ? "bg-neutral-700" : ""} `}
+            className={`w-full flex justify-center cursor-pointer p-1.5 duration-200 ease-in-out text-xs font-medium rounded-xs ${
+              option === "UPI"
+                ? "bg-white text-zinc-900 shadow-2xs border border-zinc-200/60"
+                : "text-zinc-500 hover:text-zinc-800"
+            }`}
             onClick={() => {
               setOption("UPI");
               OwnerDetailHandler("paymentMethod", "UPI");
@@ -487,53 +510,64 @@ function PaymentOptions() {
           </button>
         </div>
       </div>
-      {option == "UPI" && (
-        <label htmlFor="QR">
-          <div className="w-full min-h-70 group border border-dashed border-neutral-700 rounded-sm   p-4 flex-1  cursor-pointer  bg-neutral-950 flex flex-col gap-2 items-center justify-center">
-            <input
-              id="QR"
-              type="file"
-              placeholder=""
-              className="z-200 top-10 cursor-pointer   border hidden border-white bg-transparent"
-              onChange={handleChange}
-            ></input>
 
-            <label htmlFor="QR">
-              <div className=" rounded-xs flex  justify-center items-center cursor-pointer">
-                {url != "" ? (
-                  <Image alt="QR" src={url} width={140} height={140}></Image>
-                ) : (
-                  <QR />
-                )}
-              </div>
-            </label>
-            <p className="text-neutral-700 whitespace-pre-line text-center">
-              {" "}
-              {`drag and drop your saved QR image \n  here, or`}{" "}
-              <span className="text-teal-700"> browse your file</span>{" "}
-            </p>
-            <input
-              className="border border-white/10 rounded-xs px-2 w-60 py-2 text-gray-400 tracking-wide bg-neutral-950 outline-0"
-              placeholder="UPI-ID"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                OwnerDetailHandler("UPIID", e.currentTarget.value);
-              }}
-            ></input>
-          </div>
-        </label>
+      {option === "UPI" && (
+        <div className="mt-3">
+          <label htmlFor="QR" className="block">
+            <div className="w-full min-h-60 group border border-dashed border-zinc-300 rounded-sm p-4 flex-1 cursor-pointer bg-zinc-50/50 hover:bg-zinc-100/50 transition flex flex-col gap-2 items-center justify-center">
+              <input
+                id="QR"
+                type="file"
+                className="hidden"
+                onChange={handleChange}
+              />
+
+              <label htmlFor="QR" className="cursor-pointer">
+                <div className="rounded-xs flex justify-center items-center">
+                  {url !== "" ? (
+                    <Image
+                      alt="QR Code"
+                      src={url}
+                      width={120}
+                      height={120}
+                      className="object-contain"
+                    />
+                  ) : (
+                    <QR />
+                  )}
+                </div>
+              </label>
+
+              <p className="text-zinc-500 whitespace-pre-line text-center text-xs font-normal">
+                {`Drag and drop your saved QR image \nhere, or `}
+                <span className="text-teal-700 font-semibold">
+                  browse your file
+                </span>
+              </p>
+
+              <input
+                className="border border-zinc-200 rounded-xs px-3 py-2 w-64 text-zinc-800 font-normal tracking-wide bg-white outline-none focus:border-teal-700 text-xs transition mt-1"
+                placeholder="UPI-ID (e.g. name@upi)"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  OwnerDetailHandler("UPIID", e.currentTarget.value);
+                }}
+              />
+            </div>
+          </label>
+        </div>
       )}
 
-      {option == "Bank" && (
-        <div className="bg-neutral-950 w-full h-full min-h-70 p-2 duration-300 ease-in-out flex justify-center items-center">
-          <div className="grid grid-cols-2 gap-4 w-full">
+      {option === "Bank" && (
+        <div className="bg-white w-full h-full min-h-60 p-2 mt-2 duration-300 ease-in-out flex justify-center items-center">
+          <div className="grid grid-cols-2 gap-3.5 w-full">
             {OwnerField.map((f, index) => (
               <div key={index} className="flex flex-col gap-1 w-full">
-                <div className="text-neutral-300 tracking-wide text-xs">
+                <div className="text-zinc-600 tracking-wide text-xs font-normal">
                   {f.label}
                 </div>
 
                 <input
-                  className="border border-neutral-800 bg-neutral-900 px-4 py-3 rounded-xs text-gray-400 text-xs hover:border-teal-400 focus:outline-teal-700 w-full"
+                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 font-normal text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition"
                   name={f.name}
                   placeholder={f.placeholder}
                   value={OwnerDetails[f.name]}
