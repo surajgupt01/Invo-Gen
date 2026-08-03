@@ -57,7 +57,7 @@ export default function DashboardLayout({
   const email = data?.user?.email ?? "";
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-[#FAFAFA] text-zinc-800 font-mono select-none selection:bg-teal-100 selection:text-teal-900">
+    <div className="h-screen w-full lg:overflow-hidden overflow-y-auto bg-[#FAFAFA] text-zinc-800 font-mono select-none selection:bg-teal-100 selection:text-teal-900">
       
       {/* ==========================================
           MOBILE TOP NAVBAR (< lg screens)

@@ -67,7 +67,7 @@ export default function OverviewDashboard() {
   const [filter, setFilter] = useState("All");
 
   return (
-    <div className="w-full h-full bg-[#FAFAFA] text-zinc-800 p-3 sm:p-4 font-sans select-none flex flex-col gap-3 overflow-hidden">
+    <div className="w-full h-auto bg-[#FAFAFA] text-zinc-800 p-3 sm:p-4 font-sans select-none flex flex-col gap-3 lg:overflow-hidden overflow-y-auto">
       
       {/* Top Header Bar */}
       <div className="flex justify-between items-center pb-2 border-b border-zinc-200/80 shrink-0">
@@ -174,10 +174,10 @@ export default function OverviewDashboard() {
       </div>
 
       {/* Analytics Charts Section (Flex-1 expands/contracts to fit space) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 flex-1 min-h-85">
         
         {/* Cash Flow Chart */}
-        <div className="lg:col-span-8 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between min-h-0">
+        <div className="lg:col-span-8 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between lg:min-h-full min-h-80">
           <div className="flex justify-between items-center font-sans shrink-0 mb-1">
             <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono">
               Cash Flow Telemetry
@@ -243,7 +243,7 @@ export default function OverviewDashboard() {
         </div>
 
         {/* Status Breakdown Donut Chart */}
-        <div className="lg:col-span-4 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between min-h-0">
+        <div className="lg:col-span-4 bg-white border  border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between lg:min-h-full min-h-60">
           <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono shrink-0">
             Status Breakdown
           </h2>
@@ -255,8 +255,8 @@ export default function OverviewDashboard() {
                   data={statusDistribution}
                   cx="50%"
                   cy="50%"
-                  innerRadius="50%"
-                  outerRadius="75%"
+                  innerRadius="70%"
+                  outerRadius="100%"
                   paddingAngle={3}
                   dataKey="value"
                   stroke="none"

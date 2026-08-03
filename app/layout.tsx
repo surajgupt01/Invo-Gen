@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/dash-Img.png", // Recommended: Use your dashboard preview image for rich social cards
+        url: "/favicon.png", // Recommended: Use your dashboard preview image for rich social cards
         width: 1200,
         height: 630,
         alt: "Luen Dashboard Preview",
