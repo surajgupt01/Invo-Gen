@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import {
   User,
@@ -28,7 +28,7 @@ interface UserData {
 }
 
 export default function Settings() {
-  const { status } = useSession();
+  const { data: session, isPending } = authClient.useSession();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -53,23 +53,33 @@ export default function Settings() {
   const [upiQrUrl, setUpiQrUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status !== "authenticated") return;
+    if (isPending || !session) return;
 
-    async function fetchUser() {
+    // Prefill basic profile info directly from Better Auth session
+    setUser({
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+      image: session.user.image,
+    });
+
+    async function fetchUserSettings() {
       try {
-        const res = await fetch("/api/authenticate", {
+        const res = await fetch("/api/user/settings", {
           credentials: "include",
         });
-        const data = await res.json();
-        setUser(data);
+        if (res.ok) {
+          const data = await res.json();
+          setUser((prev) => ({ ...prev, ...data }));
 
-        if (data?.companyName) setCompanyName(data.companyName);
-        if (data?.taxDetails) setTaxDetails(data.taxDetails);
-        if (data?.logoUrl) setLogoUrl(data.logoUrl);
-        if (data?.upiQrUrl) setUpiQrUrl(data.upiQrUrl);
-        if (data?.paymentMethod) setPaymentMethod(data.paymentMethod);
-        if (data?.paymentDetails) {
-          setPaymentDetails((prev) => ({ ...prev, ...data.paymentDetails }));
+          if (data?.companyName) setCompanyName(data.companyName);
+          if (data?.taxDetails) setTaxDetails(data.taxDetails);
+          if (data?.logoUrl) setLogoUrl(data.logoUrl);
+          if (data?.upiQrUrl) setUpiQrUrl(data.upiQrUrl);
+          if (data?.paymentMethod) setPaymentMethod(data.paymentMethod);
+          if (data?.paymentDetails) {
+            setPaymentDetails((prev) => ({ ...prev, ...data.paymentDetails }));
+          }
         }
       } catch (err) {
         console.error("Failed to fetch user settings:", err);
@@ -78,8 +88,8 @@ export default function Settings() {
       }
     }
 
-    fetchUser();
-  }, [status]);
+    fetchUserSettings();
+  }, [isPending, session]);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -139,7 +149,7 @@ export default function Settings() {
     ? user.name.trim().charAt(0).toUpperCase()
     : "C";
 
-  if (status === "loading" || (status === "authenticated" && loading)) {
+  if (isPending || (session && loading)) {
     return (
       <div className="w-full min-h-screen bg-[#FAFAFA] text-zinc-600 p-6 flex flex-col items-center justify-center font-mono select-none">
         <div className="flex items-center gap-2.5 border border-zinc-200/80 bg-white px-4 py-2.5 shadow-2xs rounded-xs">
@@ -152,7 +162,7 @@ export default function Settings() {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (!session) {
     return (
       <div className="w-full min-h-screen bg-[#FAFAFA] text-zinc-600 p-6 flex flex-col items-center justify-center font-mono select-none">
         <div className="bg-white p-6 border border-zinc-200/80 rounded-xs text-center max-w-sm w-full space-y-3 shadow-2xs">
