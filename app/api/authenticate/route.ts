@@ -18,7 +18,6 @@ export async function GET() {
     select: {
       email: true,
       name: true,
-      phoneNumber: true,
       createdAt: true,
     },
   });
