@@ -176,6 +176,7 @@ export const useItemsStore = create<ItemsStore>((set, get) => ({
   txnType:   "intra",
   currency:  CURRENCIES[0],
   taxConfig: { name: "VAT", rate: "20" },
+  
 
   // ── Initial items + totals ──────────────────────────────────────────────────
   Items: [defaultItem()],

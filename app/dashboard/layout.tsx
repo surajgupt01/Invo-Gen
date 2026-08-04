@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import SideNav from "../component/SideNav";
 import { useState, useEffect } from "react";
 import Menu from "../Icons/Menu";
@@ -14,7 +14,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data, status } = useSession();
+  const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -25,10 +25,10 @@ export default function DashboardLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (!isPending && !session) {
       router.push("/signin");
     }
-  }, [status, router]);
+  }, [isPending, session, router]);
 
   // Automatically close mobile menu on route changes
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function DashboardLayout({
   }, [pathname]);
 
   // Loading State - Light Theme
-  if (status === "loading") {
+  if (isPending) {
     return (
       <div className="h-screen w-full bg-[#FAFAFA] text-zinc-600 flex items-center justify-center font-mono">
         <div className="flex items-center gap-2.5 border border-zinc-200 bg-white px-4 py-2.5 shadow-sm">
@@ -49,12 +49,12 @@ export default function DashboardLayout({
     );
   }
 
-  if (status === "unauthenticated") {
+  if (!session) {
     return null;
   }
 
-  const name = data?.user?.name ?? "";
-  const email = data?.user?.email ?? "";
+  const name = session.user.name ?? "";
+  const email = session.user.email ?? "";
 
   return (
     <div className="h-screen w-full lg:overflow-hidden overflow-y-auto bg-[#FAFAFA] text-zinc-800 font-mono select-none selection:bg-teal-100 selection:text-teal-900">
@@ -75,7 +75,7 @@ export default function DashboardLayout({
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 text-zinc-600 hover:text-zinc-900 bg-white border border-zinc-200 focus:outline-none transition shadow-2xs"
+          className="p-1.5 text-zinc-600 hover:text-zinc-900 bg-white border border-zinc-200 focus:outline-none transition shadow-2xs cursor-pointer"
           aria-label="Toggle Mobile Menu"
         >
           {mobileMenuOpen ? (
@@ -87,7 +87,7 @@ export default function DashboardLayout({
       </header>
 
       {/* ==========================================
-          MOBILE DRAWER USING YOUR SideNav COMPONENT (< lg)
+          MOBILE DRAWER USING SideNav COMPONENT (< lg)
       ========================================== */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
@@ -97,14 +97,14 @@ export default function DashboardLayout({
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Slide-over Container rendering your exact SideNav */}
+          {/* Slide-over Container rendering SideNav */}
           <div className="relative h-full z-50 shadow-xl flex bg-white">
             <SideNav name={name} email={email} menu={true} />
             
             {/* Close Button Header overlay for mobile drawer */}
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-3 right-3 p-1.5 text-zinc-500 hover:text-zinc-900 bg-zinc-50 border border-zinc-200 transition z-50 shadow-2xs"
+              className="absolute top-3 right-3 p-1.5 text-zinc-500 hover:text-zinc-900 bg-zinc-50 border border-zinc-200 transition z-50 shadow-2xs cursor-pointer"
               title="Close Menu"
             >
               <CloseSide />
@@ -132,7 +132,7 @@ export default function DashboardLayout({
           onClick={() => setMenu((e) => !e)}
           className={`${
             menu ? "left-52" : "left-2"
-          } absolute z-40 lg:block hidden p-1.5 text-zinc-500 hover:text-zinc-900 bg-white border border-zinc-200/80 top-2.5 transition-all duration-300 shadow-2xs`}
+          } absolute z-40 lg:block hidden p-1.5 text-zinc-500 hover:text-zinc-900 bg-white border border-zinc-200/80 top-2.5 transition-all duration-300 shadow-2xs cursor-pointer`}
           title={menu ? "Collapse Sidebar" : "Expand Sidebar"}
         >
           {menu ? <CloseSide /> : <Menu />}

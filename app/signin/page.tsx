@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import Google from "../Icons/Google";
 import Left from "../Icons/Left";
@@ -8,6 +8,20 @@ import SignSideBar from "../component/SignSideBar";
 import Github from "../Icons/Github";
 
 export default function SignUp() {
+  const handleGoogleSignIn = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+  };
+
+  const handleGithubSignIn = async () => {
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/dashboard",
+    });
+  };
+
   return (
     <div className="w-full h-screen bg-[#FAFAFA] p-3 sm:p-4 flex justify-center items-center font-sans select-none overflow-hidden">
       <div className="flex justify-center items-center w-full h-full border border-zinc-200/80 rounded-xs bg-white overflow-hidden shadow-2xs">
@@ -16,7 +30,7 @@ export default function SignUp() {
         <SignSideBar />
 
         {/* RIGHT SIDE: AUTH FORM AREA */}
-        <div className="relative w-full h-full  bg-[#FAFAFA] flex items-center justify-center p-6 sm:p-10">
+        <div className="relative w-full h-full bg-[#FAFAFA] flex items-center justify-center p-6 sm:p-10">
           
           {/* Back Navigation Button (Pinned Top Left) */}
           <div className="absolute top-6 left-6 sm:top-8 sm:left-8">
@@ -48,12 +62,7 @@ export default function SignUp() {
               {/* Google Sign-in */}
               <button
                 type="button"
-                onClick={() =>
-                  signIn("google", {
-                    callbackUrl: "/dashboard",
-                    redirect: true,
-                  })
-                }
+                onClick={handleGoogleSignIn}
                 className="w-full h-10 px-4 bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200/80 rounded-xs text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
               >
                 <Google />
@@ -63,12 +72,7 @@ export default function SignUp() {
               {/* GitHub Sign-in */}
               <button
                 type="button"
-                onClick={() =>
-                  signIn("github", {
-                    callbackUrl: "/dashboard",
-                    redirect: true,
-                  })
-                }
+                onClick={handleGithubSignIn}
                 className="w-full h-10 px-4 bg-zinc-950 hover:bg-black text-white rounded-xs text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
               >
                 <Github />
@@ -79,7 +83,7 @@ export default function SignUp() {
 
             {/* Terms & Privacy Disclaimer */}
             <p className="text-[11px] text-zinc-400 text-center leading-relaxed font-sans pt-1">
-              {`By continuing, you agree to Luen's{" "}`}
+             {` By continuing, you agree to Luen's{" "}`}
               <Link
                 href="/terms?tab=terms"
                 className="text-zinc-700 underline underline-offset-2 hover:text-zinc-950 transition-colors"

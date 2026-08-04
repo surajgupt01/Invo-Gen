@@ -1,5 +1,5 @@
 [functions]
-  included_files = [
-    "node_modules/playwright/.local-browsers/**",
-    "node_modules/playwright-core/.local-browsers/**"
-  ]
+  node_bundler = "esbuild"
+  
+[functions."api/generate-pdf"]
+  included_files = []  # chromium is fetched remotely, not bundled
