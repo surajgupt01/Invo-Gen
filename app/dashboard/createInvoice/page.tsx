@@ -25,7 +25,7 @@ function fileToBase64(file: globalThis.File): Promise<string> {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") resolve(reader.result);
-      else reject("Failed to convert file");
+      else reject(new Error("Failed to convert file"));
     };
     reader.onerror = reject;
     reader.readAsDataURL(file as Blob);
@@ -40,7 +40,9 @@ export const CURRENCY_OPTIONS = [
   { code: "AED", symbol: "AED", label: "AED - UAE Dirham" },
 ];
 
-export const INVOICE_STATUS_OPTIONS = [
+export type InvoicePaymentStatus = "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
+
+export const INVOICE_STATUS_OPTIONS: { value: InvoicePaymentStatus; label: string }[] = [
   { value: "DRAFT", label: "Draft" },
   { value: "PENDING", label: "Pending" },
   { value: "PAID", label: "Paid" },
@@ -55,13 +57,10 @@ interface ToastState {
 }
 
 export default function CreateInvoice() {
-  const [display, setDisplay] = useState("Form");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<
-    "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED"
-  >("PENDING");
+  const [display, setDisplay] = useState<string>("Form");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [paymentStatus, setPaymentStatus] = useState<InvoicePaymentStatus>("PENDING");
 
-  // Custom Toast Notification State
   const [toast, setToast] = useState<ToastState>({
     show: false,
     message: "",
@@ -125,16 +124,18 @@ export default function CreateInvoice() {
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string; message?: string };
 
       if (!response.ok) {
         throw new Error(result.error || result.message || "Failed to save invoice");
       }
 
       showToast(`Invoice successfully created with status: ${finalStatus}!`, "success");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to submit invoice:", error);
-      showToast(error.message || "Something went wrong while saving the invoice.", "error");
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong while saving the invoice.";
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -158,6 +159,7 @@ export default function CreateInvoice() {
           )}
           <span>{toast.message}</span>
           <button
+            type="button"
             onClick={() => setToast((prev) => ({ ...prev, show: false }))}
             className="ml-2 hover:opacity-75 transition cursor-pointer"
           >
@@ -174,6 +176,7 @@ export default function CreateInvoice() {
 
         <div className="bg-zinc-100 lg:w-62 w-44 py-1 px-1 gap-1.5 flex justify-center items-center rounded-md border border-zinc-200/60">
           <button
+            type="button"
             onClick={() => setDisplay("Form")}
             className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
               display === "Form"
@@ -185,6 +188,7 @@ export default function CreateInvoice() {
             Form
           </button>
           <button
+            type="button"
             onClick={() => setDisplay("Both")}
             className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
               display === "Both"
@@ -196,6 +200,7 @@ export default function CreateInvoice() {
             Both
           </button>
           <button
+            type="button"
             onClick={() => setDisplay("Preview")}
             className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
               display === "Preview"
@@ -257,10 +262,10 @@ function FormComponent({
 }: {
   onSubmit: (status?: "DRAFT" | "PENDING") => void;
   isSubmitting: boolean;
-  paymentStatus: "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
-  setPaymentStatus: (status: "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED") => void;
+  paymentStatus: InvoicePaymentStatus;
+  setPaymentStatus: (status: InvoicePaymentStatus) => void;
 }) {
-  const [expand, setExpand] = useState(true);
+  const [expand, setExpand] = useState<boolean>(true);
 
   const { DetailHandler, Details } = useCustomerStore();
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
@@ -319,15 +324,19 @@ function FormComponent({
     { label: "Due Date", name: "DueDate", type: "date" },
   ];
 
-  const [logo, setLogo] = useState("");
+  const [logo, setLogo] = useState<string>("");
 
   const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
     if (!file) return;
 
-    const base64 = await fileToBase64(file);
-    setLogo(base64);
-    OwnerDetailHandler("companyLogo", base64);
+    try {
+      const base64 = await fileToBase64(file);
+      setLogo(base64);
+      OwnerDetailHandler("companyLogo", base64);
+    } catch (err) {
+      console.error("Failed to load logo image:", err);
+    }
   };
 
   return (
@@ -336,7 +345,7 @@ function FormComponent({
         {/* Organization's Detail Card */}
         <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
           <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
-            {`Organization's Detail`}
+            Organization&apos;s Detail
           </h1>
           <div className="grid grid-cols-2 gap-3.5 w-full">
             <div className="col-span-2">
@@ -352,7 +361,7 @@ function FormComponent({
                   </div>
                 </label>
                 <p className="text-zinc-500 whitespace-pre-line text-center text-xs">
-                  {`Drag and drop your company logo here, or `}
+                  Drag and drop your company logo here, or{" "}
                   <span className="text-teal-700 font-semibold">browse file</span>
                 </p>
               </div>
@@ -377,7 +386,7 @@ function FormComponent({
         {/* Customer's Detail Card */}
         <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
           <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
-            {`Customer's Detail`}
+            Customer&apos;s Detail
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
@@ -417,7 +426,7 @@ function FormComponent({
               <select
                 className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs font-semibold hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer"
                 value={paymentStatus}
-                onChange={(e) => setPaymentStatus(e.target.value as any)}
+                onChange={(e) => setPaymentStatus(e.target.value as InvoicePaymentStatus)}
               >
                 {INVOICE_STATUS_OPTIONS.map((status) => (
                   <option key={status.value} value={status.value}>
@@ -578,16 +587,20 @@ function PaymentOptions() {
     { label: "Bank Code / IFSC / SWIFT", name: "BankCode", placeholder: "e.g., SBIN0001234 or SWIFT code" },
   ];
 
-  const [option, setOption] = useState("UPI");
-  const [url, setUrl] = useState("");
+  const [option, setOption] = useState<string>("UPI");
+  const [url, setUrl] = useState<string>("");
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const base64 = await fileToBase64(file);
-    setUrl(base64);
-    OwnerDetailHandler("QR", base64);
+    try {
+      const base64 = await fileToBase64(file);
+      setUrl(base64);
+      OwnerDetailHandler("QR", base64);
+    } catch (err) {
+      console.error("Failed to convert QR code file:", err);
+    }
   };
 
   return (
@@ -643,7 +656,7 @@ function PaymentOptions() {
               </div>
             </label>
             <p className="text-zinc-500 whitespace-pre-line text-center text-xs font-normal">
-              {`Drag and drop your saved QR image here, or `}
+              Drag and drop your saved QR image here, or{" "}
               <span className="text-teal-700 font-semibold">browse file</span>
             </p>
             <input
