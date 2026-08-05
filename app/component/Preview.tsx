@@ -11,6 +11,7 @@ import { useOptionalData } from "../store/OptionalDataStore";
 import { useOwner } from "../store/OwnerDetail";
 import InvoicePdfDocument, { type InvoicePdfData } from "./InvoicePdfDocument";
 import { Loader2, FileText, ExternalLink } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 function useDebouncedValue<T>(value: T, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -106,19 +107,30 @@ export default function Preview() {
       OwnerDetails,
       AdditionalInfo,
       TermsConditions,
-    ]
+    ],
   );
+
+  const userID = authClient.useSession().data?.user.id;
+
+  
 
   const viewerPdfData = useDebouncedValue(pdfData, 600);
 
   const invoiceDocument = useMemo(
-    () => <InvoicePdfDocument data={pdfData} templateName={activeTemplateName} />,
-    [pdfData, activeTemplateName]
+    () => (
+      <InvoicePdfDocument data={pdfData} templateName={activeTemplateName} />
+    ),
+    [pdfData, activeTemplateName],
   );
 
   const viewerDocument = useMemo(
-    () => <InvoicePdfDocument data={viewerPdfData} templateName={activeTemplateName} />,
-    [viewerPdfData, activeTemplateName]
+    () => (
+      <InvoicePdfDocument
+        data={viewerPdfData}
+        templateName={activeTemplateName}
+      />
+    ),
+    [viewerPdfData, activeTemplateName],
   );
 
   async function handleDownload() {
@@ -132,6 +144,35 @@ export default function Preview() {
       a.download = `invoice-${Details.InvoiceNo || "draft"}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+
+      const response = await fetch("/api/invoice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          CustomerName: Details.CustomerName,
+          CustomerAddress: Details.CustomerAddress,
+          DueDate: Details.DueDate,
+          IssueDate: Details.IssueDate,
+          Currency: currency,
+
+          subtotal: subTotal,
+          tax:   totalTax,
+          // discount: ,
+          total: pdfData.total,
+
+          paymentStatus: false,
+          Subject: Details.Subject,
+
+          userId: userID, // from your authenticated user/session
+        }),
+
+      });
+
+      const data = await response.json()
+      console.log(data)
+
     } catch (err) {
       console.error(err);
       alert("Failed to download PDF");
@@ -142,10 +183,8 @@ export default function Preview() {
 
   return (
     <div className="h-full w-full bg-[#FAFAFA] flex flex-col items-center p-2.5 space-y-2.5 font-mono select-none">
-      
       {/* --- TOP CONTROL BAR --- */}
       <div className="w-full bg-white border border-zinc-200/80 p-2.5 px-4 flex justify-between items-center rounded-xs shadow-xs font-sans">
-        
         {/* Live Indicator */}
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 relative">
@@ -165,7 +204,7 @@ export default function Preview() {
           <button
             onClick={handleDownload}
             disabled={loading}
-            className="px-3.5 py-1.5 bg-zinc-900 text-white font-semibold text-xs uppercase tracking-wider hover:bg-zinc-800 transition rounded-xs flex items-center gap-1.5 disabled:opacity-50 font-sans shadow-xs cursor-pointer"
+            className="px-3.5 py-1.5 bg-zinc-900 text-white  text-[9px]  font-semibold uppercase tracking-wider hover:bg-zinc-700 active:scale-95 transition rounded-sm flex items-center gap-1.5 disabled:opacity-50 font-sans shadow-xs cursor-pointer"
           >
             {loading ? (
               <>
@@ -180,10 +219,10 @@ export default function Preview() {
             )}
           </button>
 
-          <button className="px-3.5 py-1.5 bg-white border border-zinc-200 text-zinc-700 font-medium text-xs uppercase tracking-wider hover:text-zinc-900 hover:bg-zinc-50 transition rounded-xs flex items-center gap-1.5 font-sans cursor-pointer shadow-2xs">
+          {/* <button className="px-3.5 py-1.5 bg-white border border-zinc-200 text-zinc-700 font-medium text-xs uppercase tracking-wider hover:text-zinc-900 hover:bg-zinc-50 transition rounded-xs flex items-center gap-1.5 font-sans cursor-pointer shadow-2xs">
             <Draft />
             Save Draft
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -205,7 +244,9 @@ export default function Preview() {
                 return (
                   <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center p-6 text-center text-xs text-zinc-500 font-mono bg-zinc-50/50">
                     <FileText className="w-8 h-8 text-zinc-300 mb-2" />
-                    <span className="font-semibold text-zinc-800">Inline PDF preview is limited on mobile browsers.</span>
+                    <span className="font-semibold text-zinc-800">
+                      Inline PDF preview is limited on mobile browsers.
+                    </span>
                     <span className="text-[10px] text-zinc-400 mt-1">
                       {`Use the "Download PDF" button above to view your document.`}
                     </span>
@@ -234,12 +275,14 @@ export default function Preview() {
             }}
           </BlobProvider>
         ) : (
-          <PDFViewer showToolbar className="w-full h-full border-0 rounded-none bg-zinc-100">
+          <PDFViewer
+            showToolbar
+            className="w-full h-full border-0 rounded-none bg-zinc-100 "
+          >
             {viewerDocument}
           </PDFViewer>
         )}
       </div>
-
     </div>
   );
 }

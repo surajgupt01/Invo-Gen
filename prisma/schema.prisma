@@ -75,24 +75,45 @@ model Verification {
   @@map("verification")
 }
 
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
 model Invoice {
-  InvoiceId       String   @id @default(cuid())
+  InvoiceId       String        @id @default(cuid())
+  invoiceNumber   String        @unique // Unique e.g. "INV-2026-001"
+  
+  // Customer Details
   CustomerName    String?
+  CustomerEmail   String?
   CustomerAddress String?
-  DueDate         String
-  IssueDate       String
-  Currency        String
-
-  subtotal        String
-  tax             String
-  discount        String?
-  total           String
-
-  paymentStatus   Boolean  @default(false)
   Subject         String?
   
+  // Dates
+  IssueDate       DateTime
+  DueDate         DateTime
+  
+  // Financial Amounts
+  Currency        String        @default("INR")
+  subtotal        Decimal       @default(0.0)
+  tax             Decimal       @default(0.0)
+  discount        Decimal?      @default(0.0)
+  total           Decimal       @default(0.0)
+  
+  // Granular Payment Status
+  paymentStatus   InvoiceStatus @default(PENDING)
+  
+  // User Relation
   userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Audit Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@map("invoice")
 }
