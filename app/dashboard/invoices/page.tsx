@@ -81,7 +81,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-export function useDebounce<T>(value: T, delay: number = 300): T {
+ function useDebounce<T>(value: T, delay: number = 300): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
