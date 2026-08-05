@@ -32,7 +32,7 @@ function fileToBase64(file: globalThis.File): Promise<string> {
   });
 }
 
-export const CURRENCY_OPTIONS = [
+ const CURRENCY_OPTIONS = [
   { code: "INR", symbol: "₹", label: "INR (₹) - Indian Rupee" },
   { code: "USD", symbol: "$", label: "USD ($) - US Dollar" },
   { code: "EUR", symbol: "€", label: "EUR (€) - Euro" },
@@ -42,7 +42,7 @@ export const CURRENCY_OPTIONS = [
 
 export type InvoicePaymentStatus = "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
 
-export const INVOICE_STATUS_OPTIONS: { value: InvoicePaymentStatus; label: string }[] = [
+ const INVOICE_STATUS_OPTIONS: { value: InvoicePaymentStatus; label: string }[] = [
   { value: "DRAFT", label: "Draft" },
   { value: "PENDING", label: "Pending" },
   { value: "PAID", label: "Paid" },
