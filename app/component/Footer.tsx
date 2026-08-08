@@ -31,7 +31,7 @@ export default function Footer() {
             {/* CTA Buttons */}
             <div className="flex items-center gap-2 pt-2">
               <a
-                href="mailto:support@luen.app"
+                href="mailto:support@luen.in"
                 className="px-4 py-2 text-xs font-medium text-zinc-800 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xs shadow-2xs transition-colors cursor-pointer"
               >
                 Contact Sales
@@ -61,7 +61,7 @@ export default function Footer() {
               <Link href="/#PriceSection" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 Pricing
               </Link>
-              <a href="mailto:support@luen.app" className="text-zinc-600 hover:text-teal-600 transition-colors">
+              <a href="mailto:support@luen.in" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 Contact
               </a>
               <Link href="/blog" className="text-zinc-600 hover:text-teal-600 transition-colors">
@@ -77,7 +77,7 @@ export default function Footer() {
               <Link href="/#FAQ" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 FAQ
               </Link>
-              <a href="mailto:support@luen.app" className="text-zinc-600 hover:text-teal-600 transition-colors">
+              <a href="mailto:support@luen.in" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 Support
               </a>
             </div>

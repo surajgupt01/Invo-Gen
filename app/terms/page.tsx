@@ -77,8 +77,8 @@ function LegalPageContent() {
             </div>
             <div>
               <span className="text-zinc-800 font-semibold">Questions?</span> Contact{" "}
-              <a href="mailto:support@luen.app" className="text-zinc-800 underline hover:text-teal-600 transition">
-                support@luen.app
+              <a href="mailto:support@luen.in" className="text-zinc-800 underline hover:text-teal-600 transition">
+                support@luen.in
               </a>
             </div>
           </div>

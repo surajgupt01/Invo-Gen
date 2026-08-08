@@ -1,28 +1,40 @@
-// // auth.d.ts
+// types/razorpay.d.ts
 
-// export {}
-// import { DefaultSession } from "next-auth";
+export interface RazorpaySuccessResponse {
+  razorpay_payment_id: string;
+  razorpay_subscription_id?: string;
+  razorpay_signature: string;
+}
 
-// declare module "next-auth" {
-//   interface User {
-//     id: string;
-//     phone: string;
-//     apiToken: string;
-//   }
+export interface RazorpayOptions {
+  key: string;
+  subscription_id?: string;
+  name: string;
+  description: string;
+  prefill?: {
+    email?: string;
+    name?: string;
+  };
+  handler: (response: RazorpaySuccessResponse) => void | Promise<void>;
+  theme?: {
+    color?: string;
+  };
+  modal?: {
+    ondismiss?: () => void;
+  };
+}
 
-//   interface Session {
-//     user: {
-//       id: string;
-//       phone: string;
-//       apiToken: string;
-//     } & DefaultSession["user"];
-//   }
-// }
+export interface RazorpayInstance {
+  open: () => void;
+  close: () => void;
+}
 
-// declare module "next-auth/jwt" {
-//   interface JWT {
-//     id: string;
-//     phone: string;
-//     apiToken: string;
-//   }
-// }
+export interface RazorpayConstructor {
+  new (options: RazorpayOptions): RazorpayInstance;
+}
+
+declare global {
+  interface Window {
+    Razorpay?: RazorpayConstructor;
+  }
+}

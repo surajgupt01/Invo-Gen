@@ -33,6 +33,7 @@
     "pg": "^8.18.0",
     "playwright-core": "^1.49.0",
     "puppeteer-core": "^25.0.4",
+    "razorpay": "^2.9.8",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-international-phone": "^4.6.0",

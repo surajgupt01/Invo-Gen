@@ -7,28 +7,86 @@ datasource db {
 
 }
 
+enum Plan {
+  FREE
+  PRO
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+}
+
+
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
+  id                     String             @id @default(cuid())
+  name                   String?
+  email                  String             @unique
+  emailVerified          Boolean            @default(false)
+  image                  String?
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  // Organization Fields
+  companyName            String?
+  taxDetails             String?
 
-  sessions      Session[]
-  accounts      Account[]
-  invoices      Invoice[]
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
 
-  //custom application fields
-  subscription  Boolean   @default(false)
-  Downloads     Int?      @default(0)
-  Storage       Int?      @default(0)
+  sessions               Session[]
+  accounts               Account[]
+  invoices               Invoice[]
+
+  // Subscription & Plan Fields
+  plan                   Plan               @default(FREE)
+  billingCycle           BillingCycle?
+  subscriptionStatus     SubscriptionStatus @default(INACTIVE)
+  razorpayCustomerId     String?
+  razorpaySubscriptionId String?            @unique
+  subscriptionPeriodEnd  DateTime?
+
+  // Usage Telemetry
+  downloads              Int                @default(0)
+  storage                Int                @default(0)
+
+  // Relation to Payout & Branding Profile (1-to-1)
+  payoutProfile          PayoutProfile?
 
   @@map("user")
 }
 
+model PayoutProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Branding Fields
+  companyLogoUrl String?
+
+  // Bank Transfer Fields (Matches UI)
+  ownerName      String?
+  phoneNumber    String?
+  bankName       String?
+  accountNumber  String?
+  bankAddress    String?
+  bankCode       String?  // IFSC / SWIFT
+
+  // UPI / VPA Details
+  upiId          String?  // e.g. user@okaxis
+  upiQrImageUrl  String?  // Uploaded or generated QR code image URL
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("payout_profile")
+}
 model Session {
   id        String   @id @default(cuid())
   userId    String
