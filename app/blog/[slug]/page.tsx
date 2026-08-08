@@ -5,10 +5,11 @@ import Nav from "../../component/Nav";
 import Footer from "../../component/Footer";
 import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
 
+// 1. Update Props interface so params is a Promise
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -17,8 +18,10 @@ export async function generateStaticParams() {
   }));
 }
 
+// 2. Await params inside generateMetadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   if (!post) return {};
 
   return {
@@ -27,8 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const post = getPostBySlug(params.slug);
+// 3. Make the page component async and await params
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   if (!post) {
     notFound();
