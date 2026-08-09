@@ -305,7 +305,7 @@ export default function InvoicePreview5() {
                 {AdditionalInfo || "Thank you for partnering with us for your creative solutions."}
               </p>
               <p className="pt-2 text-slate-300 uppercase tracking-wider font-mono text-[8px]">
-                Generated via VokaPay • Official Record
+                Generated via luen.in • Official Record
               </p>
             </div>
           </div>

@@ -671,7 +671,7 @@ export default function SassyPdf({ data }: PdfTemplateProps) {
                   {optional.additionalInfo || "Thank you for your partnership!"}
                 </Text>
                 <Text style={styles.footerBranding}>
-                  Generated via VokaPay • {owner.CompanyName || "Invoice"}
+                  Generated via luen.in • {owner.CompanyName || "Invoice"}
                 </Text>
               </View>
             </View>

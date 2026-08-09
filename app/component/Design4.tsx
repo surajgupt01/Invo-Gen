@@ -295,7 +295,7 @@ export default function InvoicePreview4() {
                 {AdditionalInfo || "Thank you for your partnership!"}
               </p>
               <p className="pt-2 text-slate-300 uppercase tracking-wider font-mono text-[8px]">
-                Generated via VokaPay • {OwnerDetails.CompanyName}
+                Generated via luen.in • {OwnerDetails.CompanyName}
               </p>
             </div>
           </div>

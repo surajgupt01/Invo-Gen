@@ -319,7 +319,7 @@ export default function InvoicePreview3() {
         {/* System Watermark / Branding */}
         <div className="mt-6 text-center">
           <p className="text-[9px] text-slate-300 font-mono uppercase tracking-[0.2em]">
-            Computer Generated Invoice • Powered by VokaPay
+            Computer Generated Invoice • Powered by luen.in
           </p>
         </div>
 
