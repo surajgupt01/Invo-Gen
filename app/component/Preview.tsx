@@ -1,9 +1,8 @@
 "use client";
 
-import { BlobProvider, PDFViewer, pdf } from "@react-pdf/renderer";
+import { BlobProvider, pdf } from "@react-pdf/renderer";
 import { useEffect, useMemo, useState } from "react";
 import Download from "../Icons/Download";
-import Draft from "../Icons/Draft";
 import { useCustomerStore } from "../store/CustomerDetail";
 import { useInvoiceSelect } from "../store/InvoiceSelected";
 import { useItemsStore } from "../store/InvoiceTabel";
@@ -73,46 +72,51 @@ export default function Preview() {
   const { AdditionalInfo, TermsConditions } = useOptionalData();
   const { OwnerDetails } = useOwner();
 
+  // Matched to the exact nested shape required by InvoicePdfData
   const pdfData = useMemo<InvoicePdfData>(
     () => ({
+      owner: OwnerDetails,
+      customer: Details,
+      optional: {
+        additionalInfo: AdditionalInfo,
+        termsConditions: TermsConditions,
+      },
       items: Items,
-      total: Total,
-      subTotal,
-      totalCgst,
-      totalSgst,
-      totalIgst,
-      totalTax,
-      mode,
-      txnType,
-      taxConfig,
-      currency,
-      details: Details,
-      ownerDetails: OwnerDetails,
-      additionalInfo: AdditionalInfo,
-      termsConditions: TermsConditions,
+      config: {
+        mode,
+        txnType,
+        currency,
+        taxConfig,
+      },
+      totals: {
+        subTotal,
+        totalCgst,
+        totalSgst,
+        totalIgst,
+        totalTax,
+        Total,
+      },
     }),
     [
+      OwnerDetails,
+      Details,
+      AdditionalInfo,
+      TermsConditions,
       Items,
-      Total,
+      mode,
+      txnType,
+      currency,
+      taxConfig,
       subTotal,
       totalCgst,
       totalSgst,
       totalIgst,
       totalTax,
-      mode,
-      txnType,
-      taxConfig,
-      currency,
-      Details,
-      OwnerDetails,
-      AdditionalInfo,
-      TermsConditions,
+      Total,
     ],
   );
 
   const userID = authClient.useSession().data?.user.id;
-
-  
 
   const viewerPdfData = useDebouncedValue(pdfData, 600);
 
@@ -158,25 +162,22 @@ export default function Preview() {
           Currency: currency,
 
           subtotal: subTotal,
-          tax:   totalTax,
-          // discount: ,
-          total: pdfData.total,
+          tax: totalTax,
+          total: pdfData.totals.Total,
 
           paymentStatus: false,
           Subject: Details.Subject,
 
-          userId: userID, // from your authenticated user/session
+          userId: userID,
         }),
-
       });
 
-      const data = await response.json()
-      console.log(data)
-
+      const data = await response.json();
+      console.log(data);
     } catch (err) {
       console.error(err);
       alert("Failed to download PDF");
-    } finally {
+    }  finally {
       setLoading(false);
     }
   }
@@ -204,7 +205,7 @@ export default function Preview() {
           <button
             onClick={handleDownload}
             disabled={loading}
-            className="px-3.5 py-1.5 bg-zinc-900 text-white  text-[9px]  font-semibold uppercase tracking-wider hover:bg-zinc-700 active:scale-95 transition rounded-sm flex items-center gap-1.5 disabled:opacity-50 font-sans shadow-xs cursor-pointer"
+            className="px-3.5 py-1.5 bg-zinc-900 text-white text-[9px] font-semibold uppercase tracking-wider hover:bg-zinc-700 active:scale-95 transition rounded-sm flex items-center gap-1.5 disabled:opacity-50 font-sans shadow-xs cursor-pointer"
           >
             {loading ? (
               <>
@@ -218,49 +219,51 @@ export default function Preview() {
               </>
             )}
           </button>
-
-          {/* <button className="px-3.5 py-1.5 bg-white border border-zinc-200 text-zinc-700 font-medium text-xs uppercase tracking-wider hover:text-zinc-900 hover:bg-zinc-50 transition rounded-xs flex items-center gap-1.5 font-sans cursor-pointer shadow-2xs">
-            <Draft />
-            Save Draft
-          </button> */}
         </div>
       </div>
 
       {/* --- PDF VIEWPORT --- */}
       <div className="relative w-full flex-1 min-h-[70dvh] bg-white border border-zinc-200/80 rounded-xs shadow-xs overflow-hidden">
-        {isMobile ? (
-          <BlobProvider document={viewerDocument}>
-            {({ url, loading: previewLoading, error }) => {
-              if (previewLoading) {
-                return (
-                  <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center gap-2 text-xs text-zinc-500 font-mono bg-zinc-50/50">
-                    <Loader2 className="w-5 h-5 text-teal-700 animate-spin" />
-                    <span>Rendering mobile PDF document...</span>
-                  </div>
-                );
-              }
-
-              if (error || !url) {
-                return (
-                  <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center p-6 text-center text-xs text-zinc-500 font-mono bg-zinc-50/50">
-                    <FileText className="w-8 h-8 text-zinc-300 mb-2" />
-                    <span className="font-semibold text-zinc-800">
-                      Inline PDF preview is limited on mobile browsers.
-                    </span>
-                    <span className="text-[10px] text-zinc-400 mt-1">
-                      {`Use the "Download PDF" button above to view your document.`}
-                    </span>
-                  </div>
-                );
-              }
-
+        <BlobProvider document={viewerDocument}>
+          {({ url, loading: previewLoading, error }) => {
+            if (previewLoading) {
               return (
-                <div className="relative h-full min-h-[70dvh] bg-zinc-100">
-                  <iframe
-                    title="Invoice PDF preview"
-                    src={url}
-                    className="h-full min-h-[70dvh] w-full border-0 bg-white"
-                  />
+                <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center gap-2 text-xs text-zinc-500 font-mono bg-zinc-50/50">
+                  <Loader2 className="w-5 h-5 text-teal-700 animate-spin" />
+                  <span>
+                    {isMobile
+                      ? "Rendering mobile PDF document..."
+                      : "Rendering PDF preview..."}
+                  </span>
+                </div>
+              );
+            }
+
+            if (error || !url) {
+              return (
+                <div className="h-full min-h-[70dvh] flex flex-col items-center justify-center p-6 text-center text-xs text-zinc-500 font-mono bg-zinc-50/50">
+                  <FileText className="w-8 h-8 text-zinc-300 mb-2" />
+                  <span className="font-semibold text-zinc-800">
+                    Inline PDF preview is limited on mobile browsers.
+                  </span>
+                  <span className="text-[10px] text-zinc-400 mt-1">
+                    {`Use the "Download PDF" button above to view your document.`}
+                  </span>
+                </div>
+              );
+            }
+
+            // Append parameters to suppress browser toolbar and force 47% default zoom
+            const previewUrl = `${url}#toolbar=0&navpanes=0&zoom=50`;
+
+            return (
+              <div className="relative h-full min-h-[70dvh] bg-zinc-100">
+                <iframe
+                  title="Invoice PDF preview"
+                  src={previewUrl}
+                  className="h-full min-h-[70dvh] w-full border-0 bg-zinc-100"
+                />
+                {isMobile && (
                   <a
                     href={url}
                     target="_blank"
@@ -270,18 +273,11 @@ export default function Preview() {
                     Open PDF
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
-                </div>
-              );
-            }}
-          </BlobProvider>
-        ) : (
-          <PDFViewer
-            showToolbar
-            className="w-full h-full border-0 rounded-none bg-zinc-100 "
-          >
-            {viewerDocument}
-          </PDFViewer>
-        )}
+                )}
+              </div>
+            );
+          }}
+        </BlobProvider>
       </div>
     </div>
   );

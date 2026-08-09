@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
 import { useOptionalData } from "@/app/store/OptionalDataStore";
 import { useOwner } from "@/app/store/OwnerDetail";
-import { useItemsStore } from "@/app/store/InvoiceTabel";
+import { useItemsStore, CURRENCIES, type Currency } from "@/app/store/InvoiceTabel";
 import List from "@/app/Icons/List";
 import OpenArrow from "@/app/Icons/OpenArrow";
 import AddInfo from "@/app/Icons/AddInfo";
@@ -32,17 +32,9 @@ function fileToBase64(file: globalThis.File): Promise<string> {
   });
 }
 
- const CURRENCY_OPTIONS = [
-  { code: "INR", symbol: "₹", label: "INR (₹) - Indian Rupee" },
-  { code: "USD", symbol: "$", label: "USD ($) - US Dollar" },
-  { code: "EUR", symbol: "€", label: "EUR (€) - Euro" },
-  { code: "GBP", symbol: "£", label: "GBP (£) - British Pound" },
-  { code: "AED", symbol: "AED", label: "AED - UAE Dirham" },
-];
-
 export type InvoicePaymentStatus = "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
 
- const INVOICE_STATUS_OPTIONS: { value: InvoicePaymentStatus; label: string }[] = [
+const INVOICE_STATUS_OPTIONS: { value: InvoicePaymentStatus; label: string }[] = [
   { value: "DRAFT", label: "Draft" },
   { value: "PENDING", label: "Pending" },
   { value: "PAID", label: "Paid" },
@@ -269,6 +261,7 @@ function FormComponent({
 
   const { DetailHandler, Details } = useCustomerStore();
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
+  const { setCurrency, setMode, currency } = useItemsStore();
 
   interface Owner {
     CompanyName: string;
@@ -336,6 +329,21 @@ function FormComponent({
       OwnerDetailHandler("companyLogo", base64);
     } catch (err) {
       console.error("Failed to load logo image:", err);
+    }
+  };
+
+  // Synchronize currency selections across both CustomerStore and ItemsStore
+  const handleCurrencyChange = (code: string) => {
+    DetailHandler("Currency", code);
+    const selectedCurrency = CURRENCIES.find((c: Currency) => c.code === code);
+    if (selectedCurrency) {
+      setCurrency(selectedCurrency);
+      // Auto-toggle mode between India GST and International tax calculation
+      if (code === "INR") {
+        setMode("india");
+      } else {
+        setMode("international");
+      }
     }
   };
 
@@ -409,12 +417,12 @@ function FormComponent({
               <div className="text-zinc-600 tracking-wide text-xs">Currency</div>
               <select
                 className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer"
-                value={Details.Currency || "INR"}
-                onChange={(e) => DetailHandler("Currency", e.target.value)}
+                value={currency?.code || Details.Currency || "INR"}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
               >
-                {CURRENCY_OPTIONS.map((c) => (
+                {CURRENCIES.map((c: Currency) => (
                   <option key={c.code} value={c.code}>
-                    {c.label}
+                    {c.code} ({c.symbol}) - {c.locale}
                   </option>
                 ))}
               </select>

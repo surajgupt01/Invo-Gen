@@ -62,7 +62,7 @@ export interface ItemsStore {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-export const UNITS = ["pcs", "kg", "hr", "ltr", "mtr", "box", "set", "doz"];
+export const UNITS = ["pcs", "bag", "kg", "hr", "ltr", "mtr", "box", "set", "doz"];
 
 export const GST_RATES = ["0", "5", "12", "18", "28"];
 
