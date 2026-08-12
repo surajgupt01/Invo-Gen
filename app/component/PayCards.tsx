@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-// Clean Minimal SVG Check Icon
+interface PaymentOptionsProps {
+  userId?: string;
+}
+
+type BillingInterval = "month" | "year";
+
 function CheckIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
     <svg
@@ -22,17 +28,26 @@ function CheckIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   );
 }
 
-export default function PaymentOptions() {
-  const [billingOption, setOption] = useState<"month" | "year">("month");
+export default function PaymentOptions({ userId = "" }: PaymentOptionsProps) {
+  const router = useRouter();
+  const [billingOption, setOption] = useState<BillingInterval>("month");
+
+  const handleSubscribeClick = () => {
+    if (!userId) {
+      const returnUrl = encodeURIComponent(`/pricing?billing=${billingOption}`);
+      router.push(`/signin?redirect=${returnUrl}`);
+    } else {
+      router.push("/dashboard/pricing");
+    }
+  };
 
   return (
     <section
       id="PriceSection"
-      className="relative w-full max-w-5xl bg-[#FAFAFA] text-zinc-800 font-sans select-none py-16 md:py-24 overflow-hidden border-b border-zinc-200/80"
+      className="relative w-full max-w-5xl bg-[#FAFAFA] text-zinc-800 font-sans select-none py-16 md:py-24 border-b border-zinc-200/80 mx-auto px-4 sm:px-6"
     >
-      <div className="w-[90%] max-w-[85vw] mx-auto space-y-12">
-        
-        {/* Header Block matching Landing Page Typography */}
+      <div className="w-full max-w-4xl mx-auto space-y-12">
+        {/* Header Block */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-zinc-200/80">
           <div className="space-y-3 max-w-xl">
             <span className="text-xs font-mono text-teal-600 uppercase tracking-widest font-semibold">
@@ -41,20 +56,20 @@ export default function PaymentOptions() {
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900">
               Simple pricing that scales with your business.
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-500 font-sans leading-relaxed">
               Everything you need to create professional invoices, manage collections, and customize PDF templates.
             </p>
           </div>
 
-          {/* Monthly / Yearly Sliding Pill Toggle */}
-          <div className="flex items-center gap-2">
+          {/* Billing Interval Toggle Switch */}
+          <div className="flex items-center gap-1.5 bg-zinc-200/60 p-1 rounded-2xs">
             <button
               type="button"
               onClick={() => setOption("month")}
-              className={`px-4 py-2 text-xs font-medium rounded-xs transition-colors cursor-pointer ${
+              className={`px-3.5 py-1.5 text-xs font-medium rounded-2xs transition-all cursor-pointer ${
                 billingOption === "month"
                   ? "bg-zinc-950 text-white shadow-2xs"
-                  : "bg-white text-zinc-800 hover:bg-zinc-50 border border-zinc-200"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               Monthly
@@ -63,10 +78,10 @@ export default function PaymentOptions() {
             <button
               type="button"
               onClick={() => setOption("year")}
-              className={`px-4 py-2 text-xs font-medium rounded-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 text-xs font-medium rounded-2xs transition-all cursor-pointer flex items-center gap-1.5 ${
                 billingOption === "year"
                   ? "bg-zinc-950 text-white shadow-2xs"
-                  : "bg-white text-zinc-800 hover:bg-zinc-50 border border-zinc-200"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               <span>Yearly</span>
@@ -82,10 +97,10 @@ export default function PaymentOptions() {
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* FREE TIER */}
-          <div className="lg:col-span-6 space-y-6">
+          {/* FREE TIER CARD */}
+          <div className="lg:col-span-6 space-y-6 bg-white p-6 sm:p-8 rounded-2xs border border-zinc-200/80 shadow-2xs">
             <div className="flex items-baseline justify-between pb-3 border-b border-zinc-200/80">
               <h3 className="text-xl font-bold tracking-tight text-zinc-900">
                 Free Tier
@@ -104,22 +119,21 @@ export default function PaymentOptions() {
                   {billingOption === "year" ? "/year" : "/month"}
                 </span>
               </div>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-zinc-500 mt-1">
                 Free forever, no credit card required.
               </p>
             </div>
 
-            <Link href="/dashboard" className="block w-full">
+            <Link href={userId ? "/dashboard" : "/signin"} className="block w-full">
               <button
                 type="button"
-                className="w-full py-2.5 px-4 text-xs font-medium text-zinc-800 bg-white hover:bg-zinc-50 border border-zinc-200 shadow-2xs rounded-xs transition-colors cursor-pointer"
+                className="w-full py-2.5 px-4 text-xs font-medium text-zinc-800 bg-white hover:bg-zinc-50 border border-zinc-200 shadow-2xs rounded-2xs transition-colors cursor-pointer"
               >
-                Current Plan
+                {userId ? "Go to Dashboard" : "Get Started Free"}
               </button>
             </Link>
 
-            {/* Feature List */}
-            <div className="space-y-3 pt-4">
+            <div className="space-y-3 pt-2">
               <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider block">
                 Included Features:
               </span>
@@ -143,8 +157,8 @@ export default function PaymentOptions() {
             </div>
           </div>
 
-          {/* PRO TIER */}
-          <div className="lg:col-span-6 space-y-6">
+          {/* PRO TIER CARD */}
+          <div className="lg:col-span-6 space-y-6 bg-white p-6 sm:p-8 rounded-2xs border border-teal-600/30 shadow-2xs relative">
             <div className="flex items-baseline justify-between pb-3 border-b border-zinc-200/80">
               <div className="flex items-center gap-2">
                 <h3 className="text-xl font-bold tracking-tight text-zinc-900">
@@ -168,24 +182,22 @@ export default function PaymentOptions() {
                   {billingOption === "year" ? "/year" : "/month"}
                 </span>
               </div>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-zinc-500 mt-1">
                 {billingOption === "year"
                   ? "Billed annually at $99/year."
                   : "Billed monthly. Cancel anytime."}
               </p>
             </div>
 
-            <Link href="/dashboard" className="block w-full">
-              <button
-                type="button"
-                className="w-full py-2.5 px-4 text-xs font-medium text-white bg-zinc-950 hover:bg-black shadow-2xs rounded-xs transition-colors cursor-pointer"
-              >
-                Upgrade to Pro
-              </button>
-            </Link>
+            <button
+              type="button"
+              onClick={handleSubscribeClick}
+              className="w-full py-2.5 px-4 text-xs font-medium text-white bg-zinc-950 hover:bg-black active:bg-zinc-900 shadow-2xs rounded-2xs transition-all cursor-pointer"
+            >
+              {userId ? "Upgrade to Pro" : "Log in to Subscribe"}
+            </button>
 
-            {/* Feature List */}
-            <div className="space-y-3 pt-4">
+            <div className="space-y-3 pt-2">
               <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider block">
                 Included Features:
               </span>
@@ -212,11 +224,7 @@ export default function PaymentOptions() {
           </div>
 
         </div>
-
       </div>
-
-      {/* Large Bottom Faded Brand Watermark */}
-   
     </section>
   );
 }

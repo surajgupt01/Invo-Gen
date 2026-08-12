@@ -5,8 +5,10 @@ import HeroFeatureSection from "./component/HeroFeatures";
 import FAQ from "./component/FAQ";
 import Footer from "./component/Footer";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
 
 export default function Home() {
+
   return (
     <div className="w-full h-full selection:bg-blue-300 scroll-smooth tracking-wide">
       <div className="flex flex-col items-center scroll-smooth">
@@ -16,7 +18,7 @@ export default function Home() {
 
         <DashboardPreview />
 
-        <PaymentOptions />
+        <PaymentOptions/>
 
         <HeroFeatureSection />
 

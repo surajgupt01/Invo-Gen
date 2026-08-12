@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
 import { useOptionalData } from "@/app/store/OptionalDataStore";
 import { useOwner } from "@/app/store/OwnerDetail";
@@ -17,7 +17,7 @@ import SeePassword from "@/app/Icons/SeePassword";
 import Docs from "@/app/Icons/Doc";
 import Both from "@/app/Icons/Both";
 import ItemsTable from "./Table";
-import { Save, Send, CheckCircle2, AlertCircle, X } from "lucide-react";
+import { Save, Send, CheckCircle2, AlertCircle, X, Sparkles, RotateCcw } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 function fileToBase64(file: globalThis.File): Promise<string> {
@@ -30,6 +30,13 @@ function fileToBase64(file: globalThis.File): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(file as Blob);
   });
+}
+
+// Helper to sanitize input strings (converts empty or whitespace-only strings to null)
+function sanitizeString(value: unknown): string | null {
+  if (!value || typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 export type InvoicePaymentStatus = "DRAFT" | "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
@@ -59,18 +66,18 @@ export default function CreateInvoice() {
     type: "success",
   });
 
-  const showToast = (message: string, type: "success" | "error" = "error") => {
+  const showToast = useCallback((message: string, type: "success" | "error" = "error") => {
     setToast({ show: true, message, type });
     setTimeout(() => {
       setToast((prev) => ({ ...prev, show: false }));
-    }, 15000);
-  };
+    }, 5000);
+  }, []);
 
   const session = authClient.useSession();
   const userID = session.data?.user?.id;
 
   const { Details } = useCustomerStore();
-  const { mode, txnType, subTotal, totalCgst, totalSgst, totalIgst, totalTax, Total } =
+  const { mode, txnType, subTotal, totalCgst, totalSgst, totalIgst, totalTax, Total, Items } =
     useItemsStore();
 
   const handleSubmit = async (overrideStatus?: "DRAFT" | "PENDING") => {
@@ -79,8 +86,29 @@ export default function CreateInvoice() {
       return;
     }
 
-    setIsSubmitting(true);
     const finalStatus = overrideStatus || paymentStatus;
+
+    // ─── VALIDATION ──────────────────────────────────────────────────────────
+    // 1. Ensure at least one line item exists when issuing non-draft invoices
+    if (finalStatus !== "DRAFT" && (!Items || Items.length === 0)) {
+      showToast("Please add at least one line item before issuing an invoice.", "error");
+      return;
+    }
+
+    // 2. Validate Customer Name for non-drafts
+    const cleanCustomerName = sanitizeString(Details.CustomerName);
+    if (finalStatus !== "DRAFT" && !cleanCustomerName) {
+      showToast("Customer Name is required to issue an invoice.", "error");
+      return;
+    }
+
+    // 3. Ensure dates are provided
+    if (!Details.IssueDate || !Details.DueDate) {
+      showToast("Please provide valid Issue and Due dates.", "error");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     let computedTax = 0;
     if (mode === "india") {
@@ -91,20 +119,21 @@ export default function CreateInvoice() {
     }
 
     try {
+      // Sanitize payload fields to prevent blank/whitespace data from being stored
       const payload = {
-        invoiceNumber: Details.InvoiceNo || `INV-${Date.now()}`,
-        CustomerName: Details.CustomerName || null,
-        CustomerEmail: Details.CustomerEmail || null,
-        CustomerAddress: Details.CustomerAddress || null,
-        Subject: Details.Subject || null,
-        IssueDate: Details.IssueDate ? new Date(Details.IssueDate).toISOString() : new Date().toISOString(),
-        DueDate: Details.DueDate ? new Date(Details.DueDate).toISOString() : new Date().toISOString(),
-        Currency: Details.Currency || "INR",
+        invoiceNumber: sanitizeString(`INV-${Details.InvoiceNo}`) || `INV-${Date.now()}`,
+        CustomerName: cleanCustomerName,
+        CustomerEmail: sanitizeString(Details.CustomerEmail),
+        CustomerAddress: sanitizeString(Details.CustomerAddress),
+        Subject: sanitizeString(Details.Subject),
+        IssueDate: new Date(Details.IssueDate).toISOString(),
+        DueDate: new Date(Details.DueDate).toISOString(),
+        Currency: sanitizeString(Details.Currency) || "INR",
 
-        subtotal: subTotal,
-        tax: computedTax,
+        subtotal: subTotal || 0,
+        tax: computedTax || 0,
         discount: 0.0,
-        total: Total,
+        total: Total || 0,
 
         paymentStatus: finalStatus,
         userId: userID,
@@ -215,6 +244,7 @@ export default function CreateInvoice() {
               isSubmitting={isSubmitting}
               paymentStatus={paymentStatus}
               setPaymentStatus={setPaymentStatus}
+              showToast={showToast}
             />
           </div>
 
@@ -231,6 +261,7 @@ export default function CreateInvoice() {
             isSubmitting={isSubmitting}
             paymentStatus={paymentStatus}
             setPaymentStatus={setPaymentStatus}
+            showToast={showToast}
           />
         </div>
       )}
@@ -251,17 +282,103 @@ function FormComponent({
   isSubmitting,
   paymentStatus,
   setPaymentStatus,
+  showToast,
 }: {
   onSubmit: (status?: "DRAFT" | "PENDING") => void;
   isSubmitting: boolean;
   paymentStatus: InvoicePaymentStatus;
   setPaymentStatus: (status: InvoicePaymentStatus) => void;
+  showToast: (message: string, type?: "success" | "error") => void;
 }) {
   const [expand, setExpand] = useState<boolean>(true);
+  const [autoPrefill, setAutoPrefill] = useState<boolean>(true);
+  const [isPrefilling, setIsPrefilling] = useState<boolean>(false);
 
   const { DetailHandler, Details } = useCustomerStore();
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
+  const { HandleInfo, HandleTerms, AdditionalInfo, TermsConditions } = useOptionalData();
   const { setCurrency, setMode, currency } = useItemsStore();
+
+  const [logo, setLogo] = useState<string>("");
+
+  // Function to load saved defaults from /api/settings
+  const loadProfileDefaults = useCallback(async () => {
+    setIsPrefilling(true);
+    try {
+      const res = await fetch("/api/settings", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        const dbUser = data?.user || {};
+        const p = data?.payoutProfile || dbUser?.payoutProfile || {};
+
+        // 1. Organization & Owner Defaults
+        if (dbUser.companyName) OwnerDetailHandler("CompanyName", dbUser.companyName);
+        if (dbUser.taxDetails) OwnerDetailHandler("TaxDetail", dbUser.taxDetails);
+
+        if (p.companyLogoUrl) {
+          setLogo(p.companyLogoUrl);
+          OwnerDetailHandler("companyLogo", p.companyLogoUrl);
+        }
+
+        if (p.ownerName) OwnerDetailHandler("OwnerName", p.ownerName);
+        if (p.phoneNumber) OwnerDetailHandler("PhNo", p.phoneNumber);
+        if (p.bankName) OwnerDetailHandler("BankName", p.bankName);
+        if (p.accountNumber) OwnerDetailHandler("AccountNumber", p.accountNumber);
+        if (p.bankAddress) OwnerDetailHandler("BankAddress", p.bankAddress);
+        if (p.bankCode) OwnerDetailHandler("BankCode", p.bankCode);
+        if (p.upiId) OwnerDetailHandler("UPIID", p.upiId);
+        if (p.upiQrImageUrl) OwnerDetailHandler("QR", p.upiQrImageUrl);
+
+        // 2. Additional Info & Terms Defaults
+        if (dbUser.additionalInfo) HandleInfo(dbUser.additionalInfo);
+        if (dbUser.termsAndConditions) HandleTerms(dbUser.termsAndConditions);
+
+        showToast("Profile defaults pre-filled successfully!", "success");
+      }
+    } catch (err) {
+      console.error("Failed to load prefill settings:", err);
+      showToast("Failed to fetch settings defaults.", "error");
+    } finally {
+      setIsPrefilling(false);
+    }
+  }, [OwnerDetailHandler, HandleInfo, HandleTerms, showToast]);
+
+  // Function to clear prefilled values when autoPrefill is toggled off
+  const clearProfileDefaults = useCallback(() => {
+    OwnerDetailHandler("CompanyName", "");
+    OwnerDetailHandler("TaxDetail", "");
+    OwnerDetailHandler("companyLogo", "");
+    setLogo("");
+
+    OwnerDetailHandler("OwnerName", "");
+    OwnerDetailHandler("PhNo", "");
+    OwnerDetailHandler("BankName", "");
+    OwnerDetailHandler("AccountNumber", "");
+    OwnerDetailHandler("BankAddress", "");
+    OwnerDetailHandler("BankCode", "");
+    OwnerDetailHandler("UPIID", "");
+    OwnerDetailHandler("QR", "");
+
+    HandleInfo("");
+    HandleTerms("");
+
+    showToast("Cleared profile defaults from form.", "success");
+  }, [OwnerDetailHandler, HandleInfo, HandleTerms, showToast]);
+
+  useEffect(() => {
+    if (autoPrefill) {
+      loadProfileDefaults();
+    }
+  }, []); // Run once on mount
+
+  const handleTogglePrefill = (checked: boolean) => {
+    setAutoPrefill(checked);
+    if (checked) {
+      loadProfileDefaults();
+    } else {
+      clearProfileDefaults();
+    }
+  };
 
   interface Owner {
     CompanyName: string;
@@ -312,12 +429,10 @@ function FormComponent({
     { label: "Customer Email", name: "CustomerEmail", placeholder: "client@example.com", type: "email" },
     { label: "Customer Address", name: "CustomerAddress", placeholder: "Billing address" },
     { label: "Subject", name: "Subject", placeholder: "Invoice subject or Project", type: "text" },
-    { label: "Invoice Serial #", name: "InvoiceNo", placeholder: "INV-2026-001", type: "text" },
+    { label: "Invoice Serial #", name: "InvoiceNo", placeholder: "2026-001", type: "text" },
     { label: "Issue Date", name: "IssueDate", type: "date" },
     { label: "Due Date", name: "DueDate", type: "date" },
   ];
-
-  const [logo, setLogo] = useState<string>("");
 
   const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
@@ -332,13 +447,11 @@ function FormComponent({
     }
   };
 
-  // Synchronize currency selections across both CustomerStore and ItemsStore
   const handleCurrencyChange = (code: string) => {
     DetailHandler("Currency", code);
     const selectedCurrency = CURRENCIES.find((c: Currency) => c.code === code);
     if (selectedCurrency) {
       setCurrency(selectedCurrency);
-      // Auto-toggle mode between India GST and International tax calculation
       if (code === "INR") {
         setMode("india");
       } else {
@@ -350,6 +463,44 @@ function FormComponent({
   return (
     <div className="w-full scroll-smooth pb-12">
       <form className="w-full space-y-3 px-1" onSubmit={(e) => e.preventDefault()}>
+        {/* PREFILL TOGGLE & QUICK SYNC BAR */}
+        <div className="p-3 rounded-xs bg-white border border-teal-600/30 flex items-center justify-between shadow-2xs">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-teal-600 shrink-0" />
+            <div>
+              <span className="text-xs font-bold uppercase text-zinc-900 tracking-wider flex items-center gap-1.5 font-mono">
+                Prefill Profile Defaults
+              </span>
+              <span className="text-[10px] text-zinc-400 font-sans block">
+                Automatically loads organization, notes, terms, and payout defaults saved in Settings.
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              disabled={isPrefilling}
+              onClick={loadProfileDefaults}
+              className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono font-bold uppercase bg-teal-50 hover:bg-teal-100/80 border border-teal-200 text-teal-800 rounded-2xs transition cursor-pointer disabled:opacity-50"
+              title="Refetch profile defaults"
+            >
+              <RotateCcw className={`w-3 h-3 ${isPrefilling ? "animate-spin" : ""}`} />
+              <span>{isPrefilling ? "Syncing..." : "Sync Settings"}</span>
+            </button>
+
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={autoPrefill}
+                onChange={(e) => handleTogglePrefill(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-7 h-4 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-teal-600"></div>
+            </label>
+          </div>
+        </div>
+
         {/* Organization's Detail Card */}
         <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
           <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
@@ -482,7 +633,7 @@ function FormComponent({
         <PaymentOptions />
 
         {/* Additional Info Section */}
-        <InfoParent />
+        <InfoParent info={AdditionalInfo} terms={TermsConditions} HandleInfo={HandleInfo} HandleTerms={HandleTerms} />
 
         {/* Bottom Submission Toolbar */}
         <div className="flex items-center justify-end gap-2 pt-3">
@@ -510,13 +661,17 @@ function FormComponent({
   );
 }
 
-interface AddInfoProps {
-  Title: string;
-  Message: string;
-  Placeholder: string;
-}
-
-function InfoParent() {
+function InfoParent({
+  info,
+  terms,
+  HandleInfo,
+  HandleTerms,
+}: {
+  info: string;
+  terms: string;
+  HandleInfo: (val: string) => void;
+  HandleTerms: (val: string) => void;
+}) {
   return (
     <div className="bg-white border border-zinc-200/80 rounded-xs text-xs font-bold px-3 py-4 shadow-xs duration-500 ease-in-out transition-all">
       <div className="flex items-center gap-1.5 pb-2 text-zinc-800 border-b border-zinc-100">
@@ -528,19 +683,29 @@ function InfoParent() {
         Title="Additional Information"
         Placeholder="Note - Add a message or special instructions for your customer"
         Message="Additional notes for the invoice"
+        value={info}
+        onChange={HandleInfo}
       />
       <AddInfoComponent
         Title="Terms"
         Placeholder="Terms & Conditions - Enter payment terms, late fees, or other conditions"
         Message="Terms & Conditions for the invoice"
+        value={terms}
+        onChange={HandleTerms}
       />
     </div>
   );
 }
 
-function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
-  const { HandleInfo, HandleTerms } = useOptionalData();
+interface AddInfoProps {
+  Title: string;
+  Message: string;
+  Placeholder: string;
+  value: string;
+  onChange: (val: string) => void;
+}
 
+function AddInfoComponent({ Title, Message, Placeholder, value, onChange }: AddInfoProps) {
   return (
     <div className="px-1 py-1 font-normal mt-2.5">
       <div className="flex items-center gap-2">
@@ -551,12 +716,10 @@ function AddInfoComponent({ Title, Message, Placeholder }: AddInfoProps) {
       </div>
       <textarea
         name="note"
+        value={value || ""}
         className="bg-white text-zinc-800 focus:outline-teal-700 border border-zinc-200 w-full h-24 resize-none p-2.5 mt-1.5 rounded-xs text-xs transition"
         placeholder={Placeholder}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          if (Title === "Terms") HandleTerms(e.currentTarget.value);
-          else HandleInfo(e.currentTarget.value);
-        }}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.currentTarget.value)}
       />
       <div className="flex items-center text-xs gap-1 mt-1 text-zinc-400">
         <Info />
@@ -598,6 +761,15 @@ function PaymentOptions() {
   const [option, setOption] = useState<string>("UPI");
   const [url, setUrl] = useState<string>("");
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
+
+  // Keep local image preview in sync with store
+  useEffect(() => {
+    if (OwnerDetails.QR) {
+      setUrl(OwnerDetails.QR);
+    } else {
+      setUrl("");
+    }
+  }, [OwnerDetails.QR]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -670,6 +842,7 @@ function PaymentOptions() {
             <input
               className="border border-zinc-200 rounded-xs px-3 py-2 w-64 text-zinc-800 font-normal tracking-wide bg-white outline-none focus:border-teal-700 text-xs transition mt-1"
               placeholder="UPI-ID (e.g. name@upi or VPA)"
+              value={OwnerDetails.UPIID || ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => OwnerDetailHandler("UPIID", e.currentTarget.value)}
             />
           </div>

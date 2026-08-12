@@ -32,10 +32,18 @@ model User {
   email                  String             @unique
   emailVerified          Boolean            @default(false)
   image                  String?
+  signature              String?
 
   // Organization Fields
   companyName            String?
   taxDetails             String?
+
+  // Prefill & Preferences (Text fields for Invoice generation)
+  additionalInfo         String?            @map("additional_info") @db.Text
+  termsAndConditions     String?            @map("terms_and_conditions") @db.Text
+
+  // Activity Tracking
+  lastLoginAt            DateTime?          @map("last_login_at")
 
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
@@ -43,10 +51,11 @@ model User {
   sessions               Session[]
   accounts               Account[]
   invoices               Invoice[]
+  invoiceSummary         InvoiceSummary?
 
   // Subscription & Plan Fields
   plan                   Plan               @default(FREE)
-  billingCycle           BillingCycle?
+  billingCycle           BillingCycle?      @map("plan_billing_cycle")
   subscriptionStatus     SubscriptionStatus @default(INACTIVE)
   razorpayCustomerId     String?
   razorpaySubscriptionId String?            @unique
@@ -60,6 +69,22 @@ model User {
   payoutProfile          PayoutProfile?
 
   @@map("user")
+}
+
+model InvoiceSummary {
+  userId        String   @id @map("user_id")
+  totalPaid     Decimal  @default(0.00) @map("total_paid") @db.Decimal(12, 2)
+  totalOverdue  Decimal  @default(0.00) @map("total_overdue") @db.Decimal(12, 2)
+  totalPending  Decimal  @default(0.00) @map("total_pending") @db.Decimal(12, 2)
+  totalCount    Int      @default(0) @map("total_count")
+  paidCount     Int      @default(0) @map("paid_count")
+  overdueCount  Int      @default(0) @map("overdue_count")
+  pendingCount  Int      @default(0) @map("pending_count")
+  lastUpdatedAt DateTime @default(now()) @updatedAt @map("last_updated_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_summaries")
 }
 
 model PayoutProfile {
@@ -78,9 +103,11 @@ model PayoutProfile {
   bankAddress    String?
   bankCode       String?  // IFSC / SWIFT
 
+
   // UPI / VPA Details
   upiId          String?  // e.g. user@okaxis
   upiQrImageUrl  String?  // Uploaded or generated QR code image URL
+  upiName        String?
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -175,3 +202,4 @@ model Invoice {
 
   @@map("invoice")
 }
+

@@ -38,7 +38,7 @@ export default function FeatureHighlightBanner() {
           {/* Frosted Pill Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/80 backdrop-blur-xl border border-zinc-200/80 text-zinc-700 text-xs font-mono rounded-full shadow-xs hover:border-teal-500/40 transition-colors">
             <Sparkles className="w-3.5 h-3.5 text-teal-600 animate-pulse" />
-            <span className="font-medium">Vokapay Billing Engine v2.0</span>
+            <span className="font-medium">luen.in Billing Engine v2.0</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-zinc-900 leading-[1.1]">
