@@ -209,7 +209,7 @@ export async function PUT(req: NextRequest) {
         subscriptionStatus: updatedUser.subscriptionStatus,
         subscriptionPeriodEnd: updatedUser.subscriptionPeriodEnd,
         razorpaySubscriptionId: updatedUser.razorpaySubscriptionId ?? null,
-        lastLogin: updatedUser.lastLogin ? updatedUser.lastLogin.toISOString() : null,
+        lastLogin: updatedUser.lastLoginAt ? updatedUser.lastLoginAt.toISOString() : null,
         companyMail: updatedUser.companyMail ?? "",
         companyAddress: updatedUser.companyAddress ?? "",
         downloads: updatedUser.downloads ?? 0,
