@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth"; // Adjust to your Better Auth instance path
 import { prisma } from "@/prisma/prisma";
+import { Plan } from "@prisma/client";
 
 // Type definitions for Payout Profile payload
 interface PayoutProfileInput {
@@ -24,11 +25,13 @@ interface UpdateSettingsPayload {
   additionalInfo?: string | null;
   termsAndConditions?: string | null;
   payoutProfile?: PayoutProfileInput;
+  companyMail?: string | null;
+  companyAddress?: string | null;
 }
 
 /**
  * GET /api/settings
- * Fetches user profile, plan telemetry, organization defaults, and payout profile directly from DB.
+ * Fetches user profile, plan telemetry, download limits, organization defaults, and payout profile.
  */
 export async function GET(req: NextRequest) {
   try {
@@ -45,7 +48,7 @@ export async function GET(req: NextRequest) {
 
     const userId = session.user.id;
 
-    // Fetch user details including additionalInfo and termsAndConditions directly from `user` table
+    // Fetch user details including downloads and relations
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -58,6 +61,23 @@ export async function GET(req: NextRequest) {
         { success: false, message: "User profile not found." },
         { status: 404 }
       );
+    }
+
+    // Auto-reset monthly download quota on the 1st of a new month for FREE users
+    const now = new Date();
+    const lastUpdate = new Date(user.updatedAt);
+    const isNewMonth =
+      now.getMonth() !== lastUpdate.getMonth() ||
+      now.getFullYear() !== lastUpdate.getFullYear();
+
+    let currentDownloads = user.downloads ?? 0;
+
+    if (isNewMonth && user.plan === Plan.FREE && currentDownloads > 0) {
+      const updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { downloads: 0 },
+      });
+      currentDownloads = updatedUser.downloads;
     }
 
     return NextResponse.json({
@@ -74,6 +94,10 @@ export async function GET(req: NextRequest) {
         billingCycle: user.billingCycle,
         subscriptionStatus: user.subscriptionStatus,
         subscriptionPeriodEnd: user.subscriptionPeriodEnd,
+        razorpaySubscriptionId: user.razorpaySubscriptionId ?? null, // <-- ADDED
+        companyMail: user.companyMail,
+        companyAddress: user.companyAddress,
+        downloads: currentDownloads,
       },
       payoutProfile: user.payoutProfile,
     });
@@ -91,7 +115,7 @@ export async function GET(req: NextRequest) {
 
 /**
  * PUT /api/settings
- * Updates organization metadata, text prefill defaults (additionalInfo, termsAndConditions), and upserts payout profile details.
+ * Updates organization metadata, text prefill defaults, and upserts payout profile details.
  */
 export async function PUT(req: NextRequest) {
   try {
@@ -108,9 +132,17 @@ export async function PUT(req: NextRequest) {
 
     const userId = session.user.id;
     const body = (await req.json()) as UpdateSettingsPayload;
-    const { companyName, taxDetails, additionalInfo, termsAndConditions, payoutProfile } = body;
+    const {
+      companyName,
+      taxDetails,
+      additionalInfo,
+      termsAndConditions,
+      payoutProfile,
+      companyMail,
+      companyAddress,
+    } = body;
 
-    // 1. Update User Organization Metadata & Prefill Text Defaults in `user` table
+    // 1. Update User Organization Metadata & Prefill Text Defaults
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -118,10 +150,12 @@ export async function PUT(req: NextRequest) {
         taxDetails: taxDetails?.trim() || null,
         additionalInfo: additionalInfo?.trim() || null,
         termsAndConditions: termsAndConditions?.trim() || null,
+        companyMail: companyMail?.trim() || null,
+        companyAddress: companyAddress?.trim() || null,
       },
     });
 
-    // 2. Upsert Payout Profile (Bank Transfer / UPI / UPI Name / QR / Logo)
+    // 2. Upsert Payout Profile
     let savedPayoutProfile = null;
     if (payoutProfile) {
       savedPayoutProfile = await prisma.payoutProfile.upsert({
@@ -136,7 +170,9 @@ export async function PUT(req: NextRequest) {
           bankAddress: payoutProfile.bankAddress || null,
           bankCode: payoutProfile.bankCode || null,
           upiId: payoutProfile.upiId || null,
-          ...(payoutProfile.upiName !== undefined && { upiName: payoutProfile.upiName || null }),
+          ...(payoutProfile.upiName !== undefined && {
+            upiName: payoutProfile.upiName || null,
+          }),
         },
         create: {
           userId: userId,
@@ -149,7 +185,9 @@ export async function PUT(req: NextRequest) {
           bankAddress: payoutProfile.bankAddress || null,
           bankCode: payoutProfile.bankCode || null,
           upiId: payoutProfile.upiId || null,
-          ...(payoutProfile.upiName !== undefined && { upiName: payoutProfile.upiName || null }),
+          ...(payoutProfile.upiName !== undefined && {
+            upiName: payoutProfile.upiName || null,
+          }),
         },
       });
     }
@@ -169,6 +207,10 @@ export async function PUT(req: NextRequest) {
         billingCycle: updatedUser.billingCycle,
         subscriptionStatus: updatedUser.subscriptionStatus,
         subscriptionPeriodEnd: updatedUser.subscriptionPeriodEnd,
+        razorpaySubscriptionId: updatedUser.razorpaySubscriptionId ?? null, // <-- ADDED
+        companyMail: updatedUser.companyMail,
+        companyAddress: updatedUser.companyAddress,
+        downloads: updatedUser.downloads ?? 0,
       },
       payoutProfile: savedPayoutProfile,
     });

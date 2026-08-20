@@ -25,6 +25,8 @@ import {
   FileCheck2,
   CheckCircle2,
   AlertCircle,
+  MapPin,
+  AlertTriangle,
 } from "lucide-react";
 
 interface UserData {
@@ -36,6 +38,7 @@ interface UserData {
   billingCycle?: "monthly" | "yearly" | null;
   subscriptionStatus?: "ACTIVE" | "INACTIVE" | "CANCELLED" | "PAST_DUE";
   subscriptionPeriodEnd?: string | null;
+  razorpaySubscriptionId?: string | null;
   additionalInfo?: string | null;
   termsAndConditions?: string | null;
   [key: string]: unknown;
@@ -54,22 +57,31 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // --- CUSTOM TOAST STATE ---
+  // Cancellation Modal States
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  // Toast Notification
   const [toast, setToast] = useState<ToastState>({
     show: false,
     message: "",
     type: "success",
   });
 
-  const showToast = useCallback((message: string, type: "success" | "error" = "error") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast((prev) => ({ ...prev, show: false }));
-    }, 5000);
-  }, []);
+  const showToast = useCallback(
+    (message: string, type: "success" | "error" = "error") => {
+      setToast({ show: true, message, type });
+      setTimeout(() => {
+        setToast((prev) => ({ ...prev, show: false }));
+      }, 5000);
+    },
+    [],
+  );
 
-  // --- FORM STATE ---
+  // Form State
   const [companyName, setCompanyName] = useState("");
+  const [companyMail, setCompanyMail] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
   const [taxDetails, setTaxDetails] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [termsAndConditions, setTermsAndConditions] = useState("");
@@ -115,24 +127,27 @@ export default function Settings() {
             ...prev,
             ...dbUser,
             plan: dbUser.plan || "FREE",
-            billingCycle: dbUser.billingCycle || (dbUser.plan === "PRO" ? "monthly" : null),
+            billingCycle:
+              dbUser.billingCycle || (dbUser.plan === "PRO" ? "monthly" : null),
             subscriptionStatus: dbUser.subscriptionStatus || "INACTIVE",
             subscriptionPeriodEnd: dbUser.subscriptionPeriodEnd || null,
+            razorpaySubscriptionId: dbUser.razorpaySubscriptionId || null,
             additionalInfo: dbUser.additionalInfo || "",
             termsAndConditions: dbUser.termsAndConditions || "",
           }));
 
-          // Hydrate Organization & Prefill Text from User Table
+          // Hydrate Organization & Defaults
           setCompanyName(dbUser.companyName || "");
+          setCompanyMail(dbUser.companyMail || "");
+          setCompanyAddress(dbUser.companyAddress || "");
           setTaxDetails(dbUser.taxDetails || "");
           setAdditionalInfo(dbUser.additionalInfo || "");
           setTermsAndConditions(dbUser.termsAndConditions || "");
 
-          // Hydrate Payout Profile Images
+          // Hydrate Images & Payout Info
           setLogoUrl(p.companyLogoUrl || null);
           setUpiQrUrl(p.upiQrImageUrl || null);
 
-          // Hydrate Payout Profile Details
           setPaymentDetails({
             ownerName: p.ownerName || "",
             phoneNumber: p.phoneNumber || "",
@@ -144,7 +159,6 @@ export default function Settings() {
             upiName: p.upiName || p.ownerName || "",
           });
 
-          // Auto-select payout tab
           if (p.upiId || p.upiName || p.upiQrImageUrl) {
             setPaymentMethod("upi");
           } else {
@@ -164,6 +178,7 @@ export default function Settings() {
     fetchUserSettings();
   }, [isPending, session, showToast]);
 
+  // Persist images as Base64 Data URLs so they persist reliably
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -171,9 +186,12 @@ export default function Settings() {
         showToast("Logo image size exceeds 2MB limit.", "error");
         return;
       }
-      const url = URL.createObjectURL(file);
-      setLogoUrl(url);
-      showToast("Logo attached. Save changes to persist.", "success");
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoUrl(reader.result as string);
+        showToast("Logo attached. Click 'Save Changes' to apply.", "success");
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -184,9 +202,12 @@ export default function Settings() {
         showToast("QR Code image size exceeds 2MB limit.", "error");
         return;
       }
-      const url = URL.createObjectURL(file);
-      setUpiQrUrl(url);
-      showToast("UPI QR Code attached. Save changes to persist.", "success");
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUpiQrUrl(reader.result as string);
+        showToast("UPI QR Code attached. Click 'Save Changes' to apply.", "success");
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -201,6 +222,8 @@ export default function Settings() {
 
     const payload = {
       companyName,
+      companyMail,
+      companyAddress,
       taxDetails,
       additionalInfo,
       termsAndConditions,
@@ -232,7 +255,10 @@ export default function Settings() {
         showToast("Account settings updated successfully!", "success");
         setTimeout(() => setSaveSuccess(false), 3000);
       } else {
-        showToast(responseData.message || "Failed to update settings.", "error");
+        showToast(
+          responseData.message || "Failed to update settings.",
+          "error",
+        );
       }
     } catch (err) {
       console.error("Failed to update settings:", err);
@@ -242,11 +268,47 @@ export default function Settings() {
     }
   };
 
+  // Handle Recurring Subscription Auto-Renewal Cancellation
+  const handleCancelSubscription = async () => {
+    if (!user?.razorpaySubscriptionId) {
+      showToast("No active subscription reference found to cancel.", "error");
+      return;
+    }
+
+    setIsCancelling(true);
+    try {
+      const res = await fetch(
+        `/api/subscription?subscriptionId=${user.razorpaySubscriptionId}&cancelAtCycleEnd=true`,
+        { method: "DELETE" }
+      );
+
+      const result = await res.json();
+      if (res.ok && result.success) {
+        setUser((prev) => ({
+          ...prev,
+          subscriptionStatus: "CANCELLED",
+        }));
+        setShowCancelModal(false);
+        showToast(
+          "Auto-renewal cancelled. You will retain PRO features until the current billing cycle finishes.",
+          "success"
+        );
+      } else {
+        showToast(result.message || "Failed to cancel auto-renewal.", "error");
+      }
+    } catch (err) {
+      console.error("Cancellation request error:", err);
+      showToast("Network error while cancelling subscription.", "error");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   const companyInitial = companyName.trim()
     ? companyName.trim().charAt(0).toUpperCase()
     : user?.name?.trim()
-    ? user.name.trim().charAt(0).toUpperCase()
-    : "C";
+      ? user.name.trim().charAt(0).toUpperCase()
+      : "C";
 
   if (isPending || (session && loading)) {
     return (
@@ -281,6 +343,9 @@ export default function Settings() {
     );
   }
 
+  const isPro = user?.plan === "PRO";
+  const isCancelled = user?.subscriptionStatus === "CANCELLED";
+
   return (
     <div className="w-full min-h-screen bg-[#FAFAFA] text-zinc-800 p-4 sm:p-6 space-y-5 font-sans select-none relative">
       {/* Toast Notification Bar */}
@@ -308,6 +373,56 @@ export default function Settings() {
         </div>
       )}
 
+      {/* CANCEL SUBSCRIPTION CONFIRMATION MODAL */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans select-none">
+          <div className="bg-white border border-zinc-200/90 rounded-2xs p-5 max-w-sm w-full shadow-lg space-y-4">
+            <div className="flex items-center gap-2 text-amber-600">
+              <AlertTriangle className="w-5 h-5" />
+              <h2 className="text-xs font-bold uppercase tracking-wider font-mono text-zinc-900">
+                Cancel Subscription Renewal?
+              </h2>
+            </div>
+
+            <p className="text-xs text-zinc-600 leading-relaxed font-sans">
+              Your subscription will remain active with full PRO benefits until{" "}
+              <span className="font-bold text-zinc-900">
+                {user?.subscriptionPeriodEnd
+                  ? new Date(user.subscriptionPeriodEnd).toLocaleDateString()
+                  : "the end of the current billing cycle"}
+              </span>
+              . After that date, your account will downgrade to the Free Starter plan.
+            </p>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowCancelModal(false)}
+                disabled={isCancelling}
+                className="w-1/2 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-mono font-bold uppercase rounded-2xs transition-colors cursor-pointer"
+              >
+                Keep Active
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelSubscription}
+                disabled={isCancelling}
+                className="w-1/2 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-mono font-bold uppercase rounded-2xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                {isCancelling ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Cancelling...</span>
+                  </>
+                ) : (
+                  <span>Confirm Cancel</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSaveSettings} className="space-y-5">
         {/* Top Header Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200/80">
@@ -317,7 +432,8 @@ export default function Settings() {
               Account & Business Settings
             </h1>
             <p className="text-xs text-zinc-400 font-sans">
-              Manage organization profiles, tax identifiers, defaults, and payout channels.
+              Manage organization profiles, tax identifiers, defaults, and
+              payout channels.
             </p>
           </div>
 
@@ -358,24 +474,32 @@ export default function Settings() {
                 </span>
                 <span
                   className={`text-[9px] px-2 py-0.5 font-mono font-bold uppercase border ${
-                    user?.plan === "PRO"
-                      ? "text-teal-700 bg-teal-50 border-teal-200/80"
+                    isPro
+                      ? isCancelled
+                        ? "text-amber-700 bg-amber-50 border-amber-200/80"
+                        : "text-teal-700 bg-teal-50 border-teal-200/80"
                       : "text-zinc-600 bg-zinc-100 border-zinc-200"
                   }`}
                 >
-                  {user?.plan || "FREE"} TIER
+                  {isCancelled ? "PRO (EXPIRING)" : `${user?.plan || "FREE"} TIER`}
                 </span>
               </div>
 
               <div className="space-y-2.5 font-mono text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-400 text-[10px] uppercase">Status</span>
-                  <span className="font-bold text-zinc-900 uppercase">
+                  <span className="text-zinc-400 text-[10px] uppercase">
+                    Status
+                  </span>
+                  <span
+                    className={`font-bold uppercase ${
+                      isCancelled ? "text-amber-600" : "text-zinc-900"
+                    }`}
+                  >
                     {user?.subscriptionStatus || "INACTIVE"}
                   </span>
                 </div>
 
-                {user?.plan === "PRO" && (
+                {isPro && (
                   <div className="flex justify-between items-center text-[10px]">
                     <span className="text-zinc-400 uppercase flex items-center gap-1">
                       <Clock className="w-3 h-3 text-teal-600" />
@@ -391,15 +515,18 @@ export default function Settings() {
                   <div className="flex justify-between items-center text-[10px]">
                     <span className="text-zinc-400 uppercase flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-teal-600" />
-                      Renews / Expires
+                      {isCancelled ? "Access Expires On" : "Renews / Valid Until"}
                     </span>
                     <span className="text-zinc-800 font-bold">
-                      {new Date(user.subscriptionPeriodEnd).toLocaleDateString()}
+                      {new Date(
+                        user.subscriptionPeriodEnd,
+                      ).toLocaleDateString()}
                     </span>
                   </div>
                 )}
 
-                {user?.plan !== "PRO" ? (
+                {/* Plan CTAs & Cancellation Actions */}
+                {!isPro ? (
                   <Link href="/dashboard/pricing" className="block pt-1">
                     <button
                       type="button"
@@ -408,18 +535,40 @@ export default function Settings() {
                       Upgrade to Pro
                     </button>
                   </Link>
-                ) : user?.billingCycle === "monthly" ? (
-                  <Link href="/dashboard/pricing" className="block pt-1">
+                ) : user?.billingCycle === "monthly" && !isCancelled ? (
+                  <div className="space-y-2 pt-1">
+                    <Link href="/dashboard/pricing" className="block">
+                      <button
+                        type="button"
+                        className="w-full py-2 bg-zinc-950 hover:bg-black text-white text-xs font-mono font-bold uppercase rounded-2xs transition-colors cursor-pointer shadow-2xs"
+                      >
+                        Switch to Yearly (-30%)
+                      </button>
+                    </Link>
                     <button
                       type="button"
-                      className="w-full py-2 bg-zinc-950 hover:bg-black text-white text-xs font-mono font-bold uppercase rounded-2xs transition-colors cursor-pointer shadow-2xs"
+                      onClick={() => setShowCancelModal(true)}
+                      className="w-full py-1.5 bg-zinc-50 hover:bg-red-50 text-zinc-500 hover:text-red-700 text-[10px] font-mono font-semibold uppercase rounded-2xs transition-colors cursor-pointer border border-zinc-200/70 hover:border-red-200"
                     >
-                      Switch to Yearly (-30%)
+                      Cancel Auto-Renewal
                     </button>
-                  </Link>
+                  </div>
+                ) : !isCancelled ? (
+                  <div className="space-y-2 pt-1">
+                    <div className="text-[10px] text-teal-700 font-mono text-center bg-teal-50/50 border border-teal-200/50 p-1.5 rounded-2xs">
+                      ✓ Maximum Tier Active (Yearly Pro)
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowCancelModal(true)}
+                      className="w-full py-1.5 bg-zinc-50 hover:bg-red-50 text-zinc-500 hover:text-red-700 text-[10px] font-mono font-semibold uppercase rounded-2xs transition-colors cursor-pointer border border-zinc-200/70 hover:border-red-200"
+                    >
+                      Cancel Auto-Renewal
+                    </button>
+                  </div>
                 ) : (
-                  <div className="pt-1 text-[10px] text-teal-700 font-mono text-center bg-teal-50/50 border border-teal-200/50 p-1.5 rounded-2xs">
-                    ✓ Maximum Tier Active (Yearly Pro)
+                  <div className="pt-1 text-[10px] text-amber-700 font-mono text-center bg-amber-50/60 border border-amber-200/60 p-2 rounded-2xs">
+                    Subscription auto-renewal is turned off. Access remains until cycle expiration.
                   </div>
                 )}
               </div>
@@ -472,7 +621,8 @@ export default function Settings() {
                 </span>
               </div>
               <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                Saved organization details, notes, terms, and payout profiles automatically populate inside the invoice generator.
+                Saved organization details, notes, terms, and payout profiles
+                automatically populate inside the invoice generator.
               </p>
             </div>
           </div>
@@ -512,7 +662,7 @@ export default function Settings() {
                         className="absolute top-1 right-1 bg-white text-zinc-500 hover:text-zinc-900 p-1 border border-zinc-200/80 transition-opacity opacity-0 group-hover:opacity-100 shadow-2xs cursor-pointer rounded-2xs"
                         title="Remove Logo"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </>
                   ) : (
@@ -563,6 +713,33 @@ export default function Settings() {
                 </div>
 
                 <div>
+                  <label className="block text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest mb-1">
+                    Company Email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="billing@company.com"
+                    value={companyMail}
+                    onChange={(e) => setCompanyMail(e.target.value)}
+                    className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-teal-600" />
+                    Company Address
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Street, City, State, Zip, Country"
+                    value={companyAddress}
+                    onChange={(e) => setCompanyAddress(e.target.value)}
+                    className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs p-3 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono leading-relaxed resize-y"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
                   <label className="block text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest mb-1">
                     Tax Details / GSTIN
                   </label>
@@ -675,7 +852,9 @@ export default function Settings() {
                       type="text"
                       placeholder="Account Owner Name"
                       value={paymentDetails.ownerName}
-                      onChange={(e) => handleInputChange("ownerName", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("ownerName", e.target.value)
+                      }
                       className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
                     />
                   </div>
@@ -688,7 +867,9 @@ export default function Settings() {
                       type="text"
                       placeholder="+91 00000 00000"
                       value={paymentDetails.phoneNumber}
-                      onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phoneNumber", e.target.value)
+                      }
                       className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
                     />
                   </div>
@@ -701,7 +882,9 @@ export default function Settings() {
                       type="text"
                       placeholder="e.g. HDFC / Chase Bank"
                       value={paymentDetails.bankName}
-                      onChange={(e) => handleInputChange("bankName", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("bankName", e.target.value)
+                      }
                       className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
                     />
                   </div>
@@ -714,7 +897,9 @@ export default function Settings() {
                       type="text"
                       placeholder="Account Number"
                       value={paymentDetails.accountNumber}
-                      onChange={(e) => handleInputChange("accountNumber", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("accountNumber", e.target.value)
+                      }
                       className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
                     />
                   </div>
@@ -727,7 +912,9 @@ export default function Settings() {
                       type="text"
                       placeholder="Branch / City Address"
                       value={paymentDetails.bankAddress}
-                      onChange={(e) => handleInputChange("bankAddress", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("bankAddress", e.target.value)
+                      }
                       className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
                     />
                   </div>
@@ -740,7 +927,9 @@ export default function Settings() {
                       type="text"
                       placeholder="e.g. HDFC0001234"
                       value={paymentDetails.bankCode}
-                      onChange={(e) => handleInputChange("bankCode", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("bankCode", e.target.value)
+                      }
                       className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono uppercase"
                     />
                   </div>
@@ -756,7 +945,9 @@ export default function Settings() {
                         type="text"
                         placeholder="username@upi / username@okaxis"
                         value={paymentDetails.upiId}
-                        onChange={(e) => handleInputChange("upiId", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("upiId", e.target.value)
+                        }
                         className="w-full bg-white border border-zinc-200/80 text-zinc-900 text-xs px-3 py-2 rounded-2xs focus:outline-none focus:border-teal-600 transition-colors placeholder:text-zinc-400 font-mono"
                       />
                     </div>
@@ -768,7 +959,9 @@ export default function Settings() {
                       <input
                         type="text"
                         placeholder="Name linked to UPI"
-                        value={paymentDetails.upiName || paymentDetails.ownerName}
+                        value={
+                          paymentDetails.upiName || paymentDetails.ownerName
+                        }
                         onChange={(e) => {
                           handleInputChange("upiName", e.target.value);
                           handleInputChange("ownerName", e.target.value);
@@ -802,7 +995,7 @@ export default function Settings() {
                               className="absolute top-1 right-1 bg-white text-zinc-500 hover:text-zinc-900 p-1 border border-zinc-200/80 transition-opacity opacity-0 group-hover:opacity-100 shadow-2xs cursor-pointer rounded-2xs"
                               title="Remove QR Code"
                             >
-                              <X className="w-3 h-3" />
+                              <X className="w-3.5 h-3.5" />
                             </button>
                           </>
                         ) : (

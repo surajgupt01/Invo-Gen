@@ -9,7 +9,7 @@ import Profile from "../Icons/Profile";
 import Link from "next/link";
 import User from "../Icons/User";
 import LogoutButton from "./LogoutButton";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 // --- Inline Icons ---
@@ -96,6 +96,8 @@ export default function SideNav({
   const pathname = usePathname();
   const [route, setRoute] = useState("");
   const [plan, setPlan] = useState<"FREE" | "PRO">("FREE");
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (pathname) {
@@ -122,6 +124,20 @@ export default function SideNav({
     }
 
     fetchPlanStatus();
+  }, []);
+
+  // Close profile popup when clicking outside (essential for mobile tap toggles)
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const isPro = plan === "PRO";
@@ -208,14 +224,14 @@ export default function SideNav({
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`group relative flex items-center gap-2.5 py-2 px-2.5 rounded-2xs transition-all duration-150 text-xs font-medium ${
+                      className={`group relative flex items-center gap-2.5 py-2 px-2.5 rounded-2xs transition-all duration-200 ease-out text-xs font-medium ${
                         isActive
                           ? "bg-teal-50/80 text-teal-900 font-semibold border-l-2 border-teal-600 shadow-2xs"
                           : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50"
                       } ${!menu ? "justify-center px-0" : ""}`}
                     >
                       <div
-                        className={`text-sm shrink-0 transition-colors ${
+                        className={`text-sm shrink-0 transition-colors duration-200 ${
                           isActive
                             ? "text-teal-700"
                             : "text-zinc-400 group-hover:text-zinc-800"
@@ -230,7 +246,7 @@ export default function SideNav({
                         </span>
                       ) : (
                         /* Tooltip on Collapsed Mode */
-                        <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-lg opacity-0 -translate-x-1 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50">
                           {item.label}
                         </div>
                       )}
@@ -249,11 +265,11 @@ export default function SideNav({
         {!isPro ? (
           <Link
             href="/dashboard/pricing"
-            className={`group relative flex items-center gap-2 py-2 px-2.5 rounded-2xs text-xs font-medium text-teal-950 bg-teal-50/90 border border-teal-200/80 hover:bg-teal-100/80 hover:border-teal-300 transition-all shadow-2xs ${
+            className={`group relative flex items-center gap-2 py-2 px-2.5 rounded-2xs text-xs font-medium text-teal-950 bg-teal-50/90 border border-teal-200/80 hover:bg-teal-100/80 hover:border-teal-300 transition-all duration-200 shadow-2xs ${
               !menu ? "justify-center px-0" : ""
             }`}
           >
-            <div className="text-teal-600 shrink-0">
+            <div className="text-teal-600 shrink-0 transition-transform duration-200 group-hover:scale-110">
               <SparklesIcon />
             </div>
             {menu ? (
@@ -264,7 +280,7 @@ export default function SideNav({
                 </span>
               </div>
             ) : (
-              <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+              <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-lg opacity-0 -translate-x-1 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50">
                 Upgrade to Pro
               </div>
             )}
@@ -288,17 +304,17 @@ export default function SideNav({
                 </span>
               </div>
             ) : (
-              <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+              <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-lg opacity-0 -translate-x-1 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50">
                 Pro Active
               </div>
             )}
           </div>
         )}
 
-        {/* Help & Support (Headphones Icon) */}
+        {/* Help & Support */}
         <Link
           href="/dashboard/support"
-          className={`group relative flex items-center gap-2.5 py-2 px-2.5 rounded-2xs transition-all duration-150 text-xs font-medium ${
+          className={`group relative flex items-center gap-2.5 py-2 px-2.5 rounded-2xs transition-all duration-200 ease-out text-xs font-medium ${
             route === "support"
               ? "bg-teal-50/70 text-teal-900 font-semibold border-l-2 border-teal-600 shadow-2xs"
               : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50"
@@ -312,17 +328,18 @@ export default function SideNav({
               Help & Support
             </span>
           ) : (
-            <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+            <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-950 text-white text-[10px] font-mono uppercase tracking-wider rounded-2xs shadow-lg opacity-0 -translate-x-1 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50">
               Help & Support
             </div>
           )}
         </Link>
 
-        {/* User Profile Popover */}
-        <div className="border-t border-zinc-100 pt-2.5">
+        {/* User Profile Popover with Mobile Click & Desktop Hover support */}
+        <div className="border-t border-zinc-100 pt-2.5" ref={profileRef}>
           <div className="relative group">
             <div
-              className={`flex items-center gap-2.5 p-1.5 rounded-2xs hover:bg-zinc-50 cursor-pointer transition-colors ${
+              onClick={() => setIsProfileOpen((prev) => !prev)}
+              className={`flex items-center gap-2.5 p-1.5 rounded-2xs hover:bg-zinc-50 cursor-pointer transition-colors duration-150 ${
                 !menu ? "justify-center" : ""
               }`}
             >
@@ -342,23 +359,44 @@ export default function SideNav({
               )}
             </div>
 
-            {/* Hover Menu */}
+            {/* Popover Menu - triggers via desktop group-hover OR mobile click state */}
             <div
               className={`absolute bottom-full mb-2 ${
-                menu ? "left-0 w-full" : "left-12 w-44"
-              } bg-white border border-zinc-200/80 rounded-2xs shadow-md p-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50`}
+                menu ? "left-0 w-full" : "left-12 w-48"
+              } bg-white border border-zinc-200/80 rounded-2xs shadow-xl p-1.5 transition-all duration-200 ease-out z-50 ${
+                isProfileOpen
+                  ? "opacity-100 visible translate-y-0"
+                  : "opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0"
+              }`}
             >
               <Link
                 href="/dashboard/settings"
+                onClick={() => setIsProfileOpen(false)}
                 className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 rounded-2xs transition-colors font-sans"
               >
                 <User />
                 <span>My Account</span>
               </Link>
 
+              <Link
+                href="/dashboard/pricing"
+                onClick={() => setIsProfileOpen(false)}
+                className="flex items-center justify-between px-2.5 py-1.5 text-xs text-teal-800 hover:bg-teal-50/70 hover:text-teal-950 rounded-2xs transition-colors font-sans"
+              >
+                <div className="flex items-center gap-2">
+                  <SparklesIcon className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Subscription & Plans</span>
+                </div>
+                {!isPro && (
+                  <span className="text-[9px] font-mono font-bold bg-teal-100 text-teal-800 px-1 rounded-2xs">
+                    PRO
+                  </span>
+                )}
+              </Link>
+
               <div className="border-t border-zinc-100 my-1" />
 
-              <div className="px-0.5">
+              <div className="px-0.5" onClick={() => setIsProfileOpen(false)}>
                 <LogoutButton />
               </div>
             </div>

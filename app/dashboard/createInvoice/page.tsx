@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useCustomerStore } from "@/app/store/CustomerDetail";
 import { useOptionalData } from "@/app/store/OptionalDataStore";
 import { useOwner } from "@/app/store/OwnerDetail";
@@ -17,7 +18,7 @@ import SeePassword from "@/app/Icons/SeePassword";
 import Docs from "@/app/Icons/Doc";
 import Both from "@/app/Icons/Both";
 import ItemsTable from "./Table";
-import { Save, Send, CheckCircle2, AlertCircle, X, Sparkles, RotateCcw } from "lucide-react";
+import { Save, Send, CheckCircle2, AlertCircle, X, Sparkles, RotateCcw, Zap, ArrowUpRight } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 function fileToBase64(file: globalThis.File): Promise<string> {
@@ -32,7 +33,6 @@ function fileToBase64(file: globalThis.File): Promise<string> {
   });
 }
 
-// Helper to sanitize input strings (converts empty or whitespace-only strings to null)
 function sanitizeString(value: unknown): string | null {
   if (!value || typeof value !== "string") return null;
   const trimmed = value.trim();
@@ -60,6 +60,11 @@ export default function CreateInvoice() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [paymentStatus, setPaymentStatus] = useState<InvoicePaymentStatus>("PENDING");
 
+  // User Plan & Downloads Telemetry State
+  const [userPlan, setUserPlan] = useState<"FREE" | "PRO">("FREE");
+  const [downloadsUsed, setDownloadsUsed] = useState<number>(0);
+  const MONTHLY_LIMIT = 5;
+
   const [toast, setToast] = useState<ToastState>({
     show: false,
     message: "",
@@ -80,6 +85,27 @@ export default function CreateInvoice() {
   const { mode, txnType, subTotal, totalCgst, totalSgst, totalIgst, totalTax, Total, Items } =
     useItemsStore();
 
+  // Fetch initial telemetry for current user plan and quota
+  useEffect(() => {
+    async function fetchUserTelemetry() {
+      try {
+        const res = await fetch("/api/settings", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          const dbUser = data?.user || {};
+          if (dbUser.plan) setUserPlan(dbUser.plan);
+          if (typeof dbUser.downloads === "number") setDownloadsUsed(dbUser.downloads);
+        }
+      } catch (err) {
+        console.error("Failed to load user quota telemetry:", err);
+      }
+    }
+    fetchUserTelemetry();
+  }, []);
+
+  const isPro = userPlan === "PRO";
+  const downloadsRemaining = Math.max(0, MONTHLY_LIMIT - downloadsUsed);
+
   const handleSubmit = async (overrideStatus?: "DRAFT" | "PENDING") => {
     if (!userID) {
       showToast("Authentication required. Please sign in to create an invoice.", "error");
@@ -88,21 +114,17 @@ export default function CreateInvoice() {
 
     const finalStatus = overrideStatus || paymentStatus;
 
-    // ─── VALIDATION ──────────────────────────────────────────────────────────
-    // 1. Ensure at least one line item exists when issuing non-draft invoices
     if (finalStatus !== "DRAFT" && (!Items || Items.length === 0)) {
       showToast("Please add at least one line item before issuing an invoice.", "error");
       return;
     }
 
-    // 2. Validate Customer Name for non-drafts
     const cleanCustomerName = sanitizeString(Details.CustomerName);
     if (finalStatus !== "DRAFT" && !cleanCustomerName) {
       showToast("Customer Name is required to issue an invoice.", "error");
       return;
     }
 
-    // 3. Ensure dates are provided
     if (!Details.IssueDate || !Details.DueDate) {
       showToast("Please provide valid Issue and Due dates.", "error");
       return;
@@ -119,7 +141,6 @@ export default function CreateInvoice() {
     }
 
     try {
-      // Sanitize payload fields to prevent blank/whitespace data from being stored
       const payload = {
         invoiceNumber: sanitizeString(`INV-${Details.InvoiceNo}`) || `INV-${Date.now()}`,
         CustomerName: cleanCustomerName,
@@ -189,10 +210,31 @@ export default function CreateInvoice() {
         </div>
       )}
 
-      {/* Top View Switcher Header */}
-      <div className="bg-white border-b border-zinc-200 inset-0 p-2 px-6 flex justify-between items-center shrink-0">
-        <div className="text-xs font-bold uppercase text-zinc-800 tracking-wider">
-          New Invoice
+      {/* Top Telemetry & View Switcher Header */}
+      <div className="bg-white border-b border-zinc-200 inset-0 p-2 px-4 sm:px-6 flex flex-wrap justify-between items-center shrink-0 gap-2">
+        <div className="flex items-center gap-3">
+          <div className="text-xs font-bold uppercase text-zinc-800 tracking-wider">
+            New Invoice
+          </div>
+
+          {/* Download Quota Badge */}
+          {isPro ? (
+            <div className="flex items-center gap-1 text-[10px] font-mono text-teal-700 bg-teal-50 border border-teal-200/80 px-2 py-0.5 rounded-2xs font-bold">
+              <Zap className="w-3 h-3 text-teal-600" />
+              <span>PRO UNLIMITED</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 text-[10px] font-mono bg-zinc-100 border border-zinc-200 px-2 py-0.5 rounded-2xs text-zinc-600">
+              <span>QUOTA:</span>
+              <span className={`font-bold ${downloadsRemaining === 0 ? "text-red-600" : "text-zinc-900"}`}>
+                {downloadsUsed}/{MONTHLY_LIMIT}
+              </span>
+              <span className="text-zinc-400 font-sans">({downloadsRemaining} left)</span>
+              <Link href="/dashboard/pricing" className="text-teal-700 hover:underline font-bold ml-1 flex items-center">
+                Upgrade <ArrowUpRight className="w-2.5 h-2.5" />
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="bg-zinc-100 lg:w-62 w-44 py-1 px-1 gap-1.5 flex justify-center items-center rounded-md border border-zinc-200/60">
@@ -245,6 +287,10 @@ export default function CreateInvoice() {
               paymentStatus={paymentStatus}
               setPaymentStatus={setPaymentStatus}
               showToast={showToast}
+              onTelemetryUpdate={(plan, downloads) => {
+                setUserPlan(plan);
+                setDownloadsUsed(downloads);
+              }}
             />
           </div>
 
@@ -262,6 +308,10 @@ export default function CreateInvoice() {
             paymentStatus={paymentStatus}
             setPaymentStatus={setPaymentStatus}
             showToast={showToast}
+            onTelemetryUpdate={(plan, downloads) => {
+              setUserPlan(plan);
+              setDownloadsUsed(downloads);
+            }}
           />
         </div>
       )}
@@ -283,12 +333,14 @@ function FormComponent({
   paymentStatus,
   setPaymentStatus,
   showToast,
+  onTelemetryUpdate,
 }: {
   onSubmit: (status?: "DRAFT" | "PENDING") => void;
   isSubmitting: boolean;
   paymentStatus: InvoicePaymentStatus;
   setPaymentStatus: (status: InvoicePaymentStatus) => void;
   showToast: (message: string, type?: "success" | "error") => void;
+  onTelemetryUpdate: (plan: "FREE" | "PRO", downloads: number) => void;
 }) {
   const [expand, setExpand] = useState<boolean>(true);
   const [autoPrefill, setAutoPrefill] = useState<boolean>(true);
@@ -301,7 +353,6 @@ function FormComponent({
 
   const [logo, setLogo] = useState<string>("");
 
-  // Function to load saved defaults from /api/settings
   const loadProfileDefaults = useCallback(async () => {
     setIsPrefilling(true);
     try {
@@ -311,9 +362,15 @@ function FormComponent({
         const dbUser = data?.user || {};
         const p = data?.payoutProfile || dbUser?.payoutProfile || {};
 
+        if (dbUser.plan) {
+          onTelemetryUpdate(dbUser.plan, dbUser.downloads ?? 0);
+        }
+
         // 1. Organization & Owner Defaults
         if (dbUser.companyName) OwnerDetailHandler("CompanyName", dbUser.companyName);
         if (dbUser.taxDetails) OwnerDetailHandler("TaxDetail", dbUser.taxDetails);
+        if (dbUser.companyMail) OwnerDetailHandler("CompanyMail", dbUser.companyMail);
+        if (dbUser.companyAddress) OwnerDetailHandler("CompanyAddress", dbUser.companyAddress);
 
         if (p.companyLogoUrl) {
           setLogo(p.companyLogoUrl);
@@ -341,13 +398,14 @@ function FormComponent({
     } finally {
       setIsPrefilling(false);
     }
-  }, [OwnerDetailHandler, HandleInfo, HandleTerms, showToast]);
+  }, [OwnerDetailHandler, HandleInfo, HandleTerms, showToast, onTelemetryUpdate]);
 
-  // Function to clear prefilled values when autoPrefill is toggled off
   const clearProfileDefaults = useCallback(() => {
     OwnerDetailHandler("CompanyName", "");
     OwnerDetailHandler("TaxDetail", "");
     OwnerDetailHandler("companyLogo", "");
+    OwnerDetailHandler("CompanyMail", "");
+    OwnerDetailHandler("CompanyAddress", "");
     setLogo("");
 
     OwnerDetailHandler("OwnerName", "");
@@ -369,7 +427,7 @@ function FormComponent({
     if (autoPrefill) {
       loadProfileDefaults();
     }
-  }, []); // Run once on mount
+  }, []);
 
   const handleTogglePrefill = (checked: boolean) => {
     setAutoPrefill(checked);
@@ -401,9 +459,9 @@ function FormComponent({
 
   const OwnerFieldList: OwnerField[] = [
     { label: "Company Name", name: "CompanyName", placeholder: "Company name" },
+    { label: "Company Mail", name: "CompanyMail", placeholder: "billing@company.com" },
     { label: "Company Address", name: "CompanyAddress", placeholder: "Company Address" },
     { label: "Tax Details", name: "TaxDetail", placeholder: "Tax Details (e.g., GSTIN / VAT)" },
-    { label: "Company Mail", name: "CompanyMail", placeholder: "billing@company.com" },
   ];
 
   type CustomerDetails = {
@@ -530,7 +588,7 @@ function FormComponent({
               <div key={index} className="flex flex-col gap-1 w-full">
                 <div className="text-zinc-600 tracking-wide text-xs">{f.label}</div>
                 <input
-                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition"
+                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition font-mono"
                   name={f.name}
                   placeholder={f.placeholder}
                   value={OwnerDetails[f.name] || ""}
@@ -553,7 +611,7 @@ function FormComponent({
               <div key={index} className="flex flex-col gap-1 w-full">
                 <div className="text-zinc-600 tracking-wide text-xs">{f.label}</div>
                 <input
-                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs w-full text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 transition"
+                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs w-full text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 transition font-mono"
                   name={f.name}
                   placeholder={f.placeholder}
                   type={f.type || "text"}
@@ -567,7 +625,7 @@ function FormComponent({
             <div className="flex flex-col gap-1 w-full">
               <div className="text-zinc-600 tracking-wide text-xs">Currency</div>
               <select
-                className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer"
+                className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer font-mono"
                 value={currency?.code || Details.Currency || "INR"}
                 onChange={(e) => handleCurrencyChange(e.target.value)}
               >
@@ -579,11 +637,11 @@ function FormComponent({
               </select>
             </div>
 
-            {/* Payment / Invoice Status Selector UI */}
+            {/* Payment / Invoice Status Selector */}
             <div className="flex flex-col gap-1 w-full">
               <div className="text-zinc-600 tracking-wide text-xs">Invoice Status</div>
               <select
-                className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs font-semibold hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer"
+                className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs font-semibold hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer font-mono"
                 value={paymentStatus}
                 onChange={(e) => setPaymentStatus(e.target.value as InvoicePaymentStatus)}
               >
@@ -717,7 +775,7 @@ function AddInfoComponent({ Title, Message, Placeholder, value, onChange }: AddI
       <textarea
         name="note"
         value={value || ""}
-        className="bg-white text-zinc-800 focus:outline-teal-700 border border-zinc-200 w-full h-24 resize-none p-2.5 mt-1.5 rounded-xs text-xs transition"
+        className="bg-white text-zinc-800 focus:outline-teal-700 border border-zinc-200 w-full h-24 resize-none p-2.5 mt-1.5 rounded-xs text-xs transition font-mono leading-relaxed"
         placeholder={Placeholder}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.currentTarget.value)}
       />
@@ -762,7 +820,6 @@ function PaymentOptions() {
   const [url, setUrl] = useState<string>("");
   const { OwnerDetailHandler, OwnerDetails } = useOwner();
 
-  // Keep local image preview in sync with store
   useEffect(() => {
     if (OwnerDetails.QR) {
       setUrl(OwnerDetails.QR);
@@ -790,7 +847,7 @@ function PaymentOptions() {
       </div>
 
       <div className="h-full w-full mt-2">
-        <div className="p-1 w-full h-auto flex justify-between items-center gap-2 bg-zinc-100 border border-zinc-200/60 rounded-xs">
+        <div className="p-1 w-full h-auto flex justify-between items-center gap-2 bg-zinc-100 border border-zinc-200/60 rounded-xs font-mono">
           <button
             type="button"
             className={`w-full flex justify-center cursor-pointer p-1.5 duration-200 ease-in-out text-xs font-medium rounded-xs ${
@@ -840,7 +897,7 @@ function PaymentOptions() {
               <span className="text-teal-700 font-semibold">browse file</span>
             </p>
             <input
-              className="border border-zinc-200 rounded-xs px-3 py-2 w-64 text-zinc-800 font-normal tracking-wide bg-white outline-none focus:border-teal-700 text-xs transition mt-1"
+              className="border border-zinc-200 rounded-xs px-3 py-2 w-64 text-zinc-800 font-normal tracking-wide bg-white outline-none focus:border-teal-700 text-xs transition mt-1 font-mono"
               placeholder="UPI-ID (e.g. name@upi or VPA)"
               value={OwnerDetails.UPIID || ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => OwnerDetailHandler("UPIID", e.currentTarget.value)}
@@ -851,7 +908,7 @@ function PaymentOptions() {
 
       {option === "Bank" && (
         <div className="bg-white w-full h-full min-h-60 p-2 mt-2 duration-300 ease-in-out flex justify-center items-center">
-          <div className="grid grid-cols-2 gap-3.5 w-full">
+          <div className="grid grid-cols-2 gap-3.5 w-full font-mono">
             {bankFields.map((f, index) => (
               <div key={index} className="flex flex-col gap-1 w-full">
                 <div className="text-zinc-600 tracking-wide text-xs font-normal">{f.label}</div>

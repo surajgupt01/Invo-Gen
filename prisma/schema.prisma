@@ -37,6 +37,8 @@ model User {
   // Organization Fields
   companyName            String?
   taxDetails             String?
+  companyMail            String?
+  companyAddress         String?
 
   // Prefill & Preferences (Text fields for Invoice generation)
   additionalInfo         String?            @map("additional_info") @db.Text
