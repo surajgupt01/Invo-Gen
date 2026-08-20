@@ -47,7 +47,7 @@ export const auth = betterAuth({
               await prisma.user.update({
                 where: { id: session.userId },
                 data: {
-                  lastLogin: new Date(),
+                  lastLoginAt: new Date(),
                 },
               });
             }
