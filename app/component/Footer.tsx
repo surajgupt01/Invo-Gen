@@ -77,7 +77,7 @@ export default function Footer() {
               <Link href="/#FAQ" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 FAQ
               </Link>
-              <a href="mailto:support@luen.in" className="text-zinc-600 hover:text-teal-600 transition-colors">
+              <a href="/support" className="text-zinc-600 hover:text-teal-600 transition-colors">
                 Support
               </a>
             </div>

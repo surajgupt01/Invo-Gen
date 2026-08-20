@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth"; // Adjust to your Better Auth instance path
+import { auth } from "@/lib/auth";
 import { prisma } from "@/prisma/prisma";
 import { Plan } from "@prisma/client";
 
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
 
     const userId = session.user.id;
 
-    // Fetch user details including downloads and relations
+    // Fetch user details including downloads, lastLogin, and relations
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -94,9 +94,10 @@ export async function GET(req: NextRequest) {
         billingCycle: user.billingCycle,
         subscriptionStatus: user.subscriptionStatus,
         subscriptionPeriodEnd: user.subscriptionPeriodEnd,
-        razorpaySubscriptionId: user.razorpaySubscriptionId ?? null, // <-- ADDED
-        companyMail: user.companyMail,
-        companyAddress: user.companyAddress,
+        razorpaySubscriptionId: user.razorpaySubscriptionId ?? null,
+        lastLogin: user.lastLoginAt ? user.lastLoginAt.toISOString() : null,
+        companyMail: user.companyMail ?? "",
+        companyAddress: user.companyAddress ?? "",
         downloads: currentDownloads,
       },
       payoutProfile: user.payoutProfile,
@@ -207,9 +208,10 @@ export async function PUT(req: NextRequest) {
         billingCycle: updatedUser.billingCycle,
         subscriptionStatus: updatedUser.subscriptionStatus,
         subscriptionPeriodEnd: updatedUser.subscriptionPeriodEnd,
-        razorpaySubscriptionId: updatedUser.razorpaySubscriptionId ?? null, // <-- ADDED
-        companyMail: updatedUser.companyMail,
-        companyAddress: updatedUser.companyAddress,
+        razorpaySubscriptionId: updatedUser.razorpaySubscriptionId ?? null,
+        lastLogin: updatedUser.lastLogin ? updatedUser.lastLogin.toISOString() : null,
+        companyMail: updatedUser.companyMail ?? "",
+        companyAddress: updatedUser.companyAddress ?? "",
         downloads: updatedUser.downloads ?? 0,
       },
       payoutProfile: savedPayoutProfile,
