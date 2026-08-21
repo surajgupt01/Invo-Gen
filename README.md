@@ -29,7 +29,7 @@
 
 Built with a focus on **performance, scalability, and clean UI/UX**, the platform enables users to generate invoices in real time and export them as high-quality PDFs — all while maintaining complete client-side privacy.
 
-🔗 **Live Demo:** https://www.Lune.in/  
+🔗 **Live Demo:** https://www.Luen.in/  
 📦 **Repository:** https://github.com/surajgupt01/Invo-Gen  
 
 ---
