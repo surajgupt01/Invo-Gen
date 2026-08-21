@@ -16,7 +16,7 @@ export default function Home() {
 
         <HeroSection />
 
-        <DashboardPreview />
+        {/* <DashboardPreview /> */}
 
         <PaymentOptions/>
 

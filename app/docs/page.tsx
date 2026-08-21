@@ -46,7 +46,7 @@ export default function DocsPage() {
       url: "https://luen.in",
       logo: {
         "@type": "ImageObject",
-        url: "https://luen.in/logo.png",
+        url: "https://luen.in/favicon.png",
       },
     },
     about: [
@@ -60,12 +60,12 @@ export default function DocsPage() {
   };
 
   return (
-    <>
+    <div className="w-full min-h-screen bg-white text-zinc-950 font-sans selection:bg-teal-100 selection:text-teal-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <DocsClient />
-    </>
+    </div>
   );
 }

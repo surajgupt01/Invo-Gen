@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import Nav from "../../component/Nav";
 import Footer from "../../component/Footer";
 import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
+import { ArrowLeft, Clock, Calendar, User } from "lucide-react";
 
-// 1. Update Props interface so params is a Promise
 interface Props {
   params: Promise<{
     slug: string;
@@ -18,7 +18,6 @@ export async function generateStaticParams() {
   }));
 }
 
-// 2. Await params inside generateMetadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
@@ -30,7 +29,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// 3. Make the page component async and await params
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
@@ -58,65 +56,74 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: jsonStringify(jsonLd) }}
       />
 
-      <div className="w-full min-h-screen bg-[#FAFAFA] text-zinc-800 font-sans selection:bg-teal-100 selection:text-teal-900 scroll-smooth">
+      <div className="w-full min-h-screen bg-white text-zinc-950 font-sans selection:bg-teal-100 selection:text-teal-900 scroll-smooth">
         <Nav />
 
-        <main className="w-[90%] max-w-5xl mx-auto pt-8 md:pt-10 pb-12">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-20 space-y-10">
           
           {/* Header Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-6 border-b border-zinc-200/80">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 border-b border-zinc-200">
             
-            <div className="lg:col-span-8 space-y-3">
-              <div className="inline-block text-[11px] font-mono text-teal-600 uppercase tracking-widest">
-                {post.category}
+            <div className="lg:col-span-8 space-y-4">
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-950 transition-colors font-medium group"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                  <span>Back to all articles</span>
+                </Link>
+
+                <span className="text-zinc-300">•</span>
+
+                <span className="text-[10px] font-mono font-semibold text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                  {post.category}
+                </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 leading-snug">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-zinc-950 leading-[1.15]">
                 {post.title}
               </h1>
 
-              <p className="text-xs text-zinc-500 max-w-xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-zinc-500 max-w-2xl leading-relaxed">
                 {post.description}
               </p>
-
-              <div className="pt-1">
-                <Link
-                  href="/blog"
-                  className="inline-block px-2.5 py-1 text-[11px] font-medium bg-white text-zinc-700 hover:bg-zinc-50 border border-zinc-200 rounded-xs transition-colors"
-                >
-                  ← Back to all articles
-                </Link>
-              </div>
             </div>
 
-            <div className="lg:col-span-4 flex flex-col justify-end text-[11px] font-sans text-zinc-500 space-y-1 lg:text-right">
-              <div>
-                <span className="text-zinc-800 font-semibold">Published:</span> {post.publishedDate}
+            <div className="lg:col-span-4 flex flex-col justify-end text-xs font-mono text-zinc-400 space-y-2 lg:text-right">
+              <div className="flex lg:justify-end items-center gap-2">
+                <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="text-zinc-600 font-medium">Published:</span>
+                <span>{post.publishedDate}</span>
               </div>
-              <div>
-                <span className="text-zinc-800 font-semibold">Read Time:</span> {post.readTime}
+              <div className="flex lg:justify-end items-center gap-2">
+                <Clock className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="text-zinc-600 font-medium">Read Time:</span>
+                <span>{post.readTime}</span>
               </div>
-              <div>
-                <span className="text-zinc-800 font-semibold">Author:</span> {post.author}
+              <div className="flex lg:justify-end items-center gap-2">
+                <User className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="text-zinc-600 font-medium">Author:</span>
+                <span>{post.author}</span>
               </div>
             </div>
 
           </div>
 
           {/* Article Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Table of Contents Sidebar */}
-            <aside className="lg:col-span-4 space-y-2.5 text-xs font-sans lg:sticky lg:top-8 bg-white p-4 rounded-xs border border-zinc-200/80 shadow-2xs">
-              <span className="text-[10px] text-zinc-400 font-mono uppercase tracking-wider block mb-2 border-b border-zinc-100 pb-1.5">
-                On this page
+            <aside className="lg:col-span-4 space-y-3 font-sans lg:sticky lg:top-20 bg-white p-5 rounded-xl border border-zinc-200 shadow-xs">
+              <span className="text-[11px] text-zinc-400 font-mono font-medium uppercase tracking-wider block border-b border-zinc-100 pb-2">
+                On This Page
               </span>
-              <nav className="space-y-2">
+              <nav className="space-y-1.5">
                 {post.content.map((section) => (
                   <a
                     key={section.id}
                     href={`#${section.id}`}
-                    className="block text-zinc-600 hover:text-zinc-950 transition font-medium text-[11px] sm:text-xs leading-normal"
+                    className="block text-zinc-600 hover:text-zinc-950 transition-colors text-xs leading-relaxed py-1"
                   >
                     {section.title}
                   </a>
@@ -124,22 +131,26 @@ export default async function BlogPostPage({ params }: Props) {
               </nav>
             </aside>
 
-            {/* Article Body */}
-            <article className="lg:col-span-8 text-xs sm:text-sm text-zinc-600 font-sans leading-relaxed space-y-8">
+            {/* Article Content */}
+            <article className="lg:col-span-8 text-xs sm:text-sm text-zinc-600 font-sans leading-relaxed space-y-10">
               {post.content.map((section) => (
-                <section key={section.id} id={section.id} className="scroll-mt-8 space-y-2.5">
-                  <h2 className="text-sm sm:text-base font-bold text-zinc-900 tracking-tight">
+                <section key={section.id} id={section.id} className="scroll-mt-24 space-y-3">
+                  <h2 className="text-lg sm:text-xl font-medium text-zinc-950 tracking-tight">
                     {section.title}
                   </h2>
 
                   {section.paragraphs.map((p, idx) => (
-                    <p key={idx} className="leading-relaxed">{p}</p>
+                    <p key={idx} className="leading-relaxed text-zinc-500">
+                      {p}
+                    </p>
                   ))}
 
                   {section.bulletPoints && (
-                    <ul className="space-y-1.5 pt-1 pl-4 list-disc marker:text-zinc-400">
+                    <ul className="space-y-2 pt-1 pl-4 list-disc marker:text-zinc-400 text-zinc-500">
                       {section.bulletPoints.map((bullet, idx) => (
-                        <li key={idx} className="leading-relaxed">{bullet}</li>
+                        <li key={idx} className="leading-relaxed">
+                          {bullet}
+                        </li>
                       ))}
                     </ul>
                   )}

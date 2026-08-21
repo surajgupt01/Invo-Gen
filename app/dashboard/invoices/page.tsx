@@ -18,6 +18,7 @@ import {
   Clock,
   XCircle,
   FileEdit,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -55,7 +56,7 @@ const STATUS_CONFIG: Record<
   { badge: string; dot: string; icon: React.ElementType }
 > = {
   DRAFT: {
-    badge: "bg-zinc-100 text-zinc-700 border-zinc-300",
+    badge: "bg-zinc-100 text-zinc-700 border-zinc-300/80",
     dot: "bg-zinc-500",
     icon: FileEdit,
   },
@@ -75,13 +76,13 @@ const STATUS_CONFIG: Record<
     icon: AlertCircle,
   },
   CANCELLED: {
-    badge: "bg-zinc-200/70 text-zinc-500 border-zinc-300",
+    badge: "bg-zinc-100 text-zinc-500 border-zinc-300/80",
     dot: "bg-zinc-400",
     icon: XCircle,
   },
 };
 
- function useDebounce<T>(value: T, delay: number = 300): T {
+function useDebounce<T>(value: T, delay: number = 300): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
@@ -105,7 +106,6 @@ export default function InvoicesDashboard() {
   const [page, setPage] = useState(1);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
-  // Set page limit to 8 items so content fits without viewport scrolling
   const limit = 8;
   const debouncedSearch = useDebounce(searchTerm, 350);
 
@@ -160,6 +160,7 @@ export default function InvoicesDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-summary"] });
       setActiveMenuId(null);
     },
   });
@@ -175,286 +176,307 @@ export default function InvoicesDashboard() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#FAFAFA] font-mono text-xs text-zinc-800 p-3 sm:p-5 overflow-hidden">
-      {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-white p-3.5 px-5 rounded-xs border border-zinc-200/80 shadow-2xs shrink-0">
-        <div>
-          <h1 className="text-xs font-bold uppercase tracking-wider text-zinc-900 flex items-center gap-2">
-            <span className="w-1.5 h-3 bg-teal-600 inline-block" />
-            Invoice Register
-          </h1>
-          <p className="text-[11px] text-zinc-400 font-sans mt-0.5">
-            Manage, update status, and track customer invoice telemetry.
-          </p>
-        </div>
-
-        <Link
-          href="/dashboard/createInvoice"
-          className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-zinc-950 text-white hover:bg-black rounded-xs shadow-2xs transition shrink-0"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Create Invoice
-        </Link>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 my-3 shrink-0">
-        {/* Search Input */}
-        <div className="md:col-span-5 relative flex items-center">
-          <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 pointer-events-none" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search invoice #, customer name, email..."
-            className="w-full bg-white border border-zinc-200/80 pl-9 pr-3 py-1.5 rounded-xs text-xs text-zinc-800 placeholder:text-zinc-400 focus:outline-teal-700 transition"
-          />
-        </div>
-
-        {/* Status Filter */}
-        <div className="md:col-span-3 flex items-center gap-1.5 bg-white border border-zinc-200/80 px-2.5 py-1 rounded-xs">
-          <Filter className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-          <span className="text-[10px] uppercase font-bold text-zinc-400 shrink-0">Status:</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="w-full bg-transparent text-xs text-zinc-800 focus:outline-none cursor-pointer font-semibold"
-          >
-            <option value="ALL">All Statuses</option>
-            <option value="DRAFT">Draft</option>
-            <option value="PENDING">Pending</option>
-            <option value="PAID">Paid</option>
-            <option value="OVERDUE">Overdue</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
-        </div>
-
-        {/* Sort Selector */}
-        <div className="md:col-span-4 flex items-center gap-1.5 bg-white border border-zinc-200/80 px-2.5 py-1 rounded-xs">
-          <ArrowUpDown className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-          <span className="text-[10px] uppercase font-bold text-zinc-400 shrink-0">Sort By:</span>
-          <select
-            value={`${sortBy}-${sortOrder}`}
-            onChange={(e) => {
-              const [field, order] = e.target.value.split("-");
-              setSortBy(field);
-              setSortOrder(order as "asc" | "desc");
-              setPage(1);
-            }}
-            className="w-full bg-transparent text-xs text-zinc-800 focus:outline-none cursor-pointer font-semibold"
-          >
-            <option value="createdAt-desc">Newest First</option>
-            <option value="createdAt-asc">Oldest First</option>
-            <option value="total-desc">Amount: High to Low</option>
-            <option value="total-asc">Amount: Low to High</option>
-            <option value="DueDate-asc">Due Date: Nearest First</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Table Container - Fits exact viewport height */}
-      <div className="bg-white border border-zinc-200/80 rounded-xs shadow-2xs flex-1 flex flex-col min-h-0 overflow-hidden relative">
-        {isLoading ? (
-          <div className="flex-1 flex flex-col justify-center items-center p-8 text-zinc-400">
-            <Loader2 className="w-6 h-6 animate-spin mb-2 text-teal-700" />
-            <span className="text-xs">Fetching records...</span>
-          </div>
-        ) : isError ? (
-          <div className="flex-1 flex flex-col justify-center items-center p-8 text-rose-600">
-            <span className="text-xs font-bold mb-1">Failed to load invoices</span>
-            <span className="text-[11px] text-zinc-500">{error?.message}</span>
-          </div>
-        ) : !data?.invoices || data.invoices.length === 0 ? (
-          <div className="flex-1 flex flex-col justify-center items-center p-8 text-zinc-400">
-            <FileText className="w-8 h-8 stroke-1 mb-2 text-zinc-300" />
-            <span className="text-xs font-semibold text-zinc-600">No invoices found</span>
-            <span className="text-[11px] text-zinc-400 mt-0.5">
-              Try adjusting your query filters or create a new invoice.
-            </span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto flex-1">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-zinc-50 border-b border-zinc-200/80 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                  <th
-                    className="py-2.5 px-3.5 cursor-pointer hover:text-zinc-800 transition"
-                    onClick={() => handleSortChange("invoiceNumber")}
-                  >
-                    <div className="flex items-center gap-1">
-                      Invoice #
-                      <ArrowUpDown className="w-2.5 h-2.5" />
-                    </div>
-                  </th>
-                  <th className="py-2.5 px-3.5">Customer</th>
-                  <th
-                    className="py-2.5 px-3.5 cursor-pointer hover:text-zinc-800 transition"
-                    onClick={() => handleSortChange("IssueDate")}
-                  >
-                    Issue Date
-                  </th>
-                  <th
-                    className="py-2.5 px-3.5 cursor-pointer hover:text-zinc-800 transition"
-                    onClick={() => handleSortChange("DueDate")}
-                  >
-                    Due Date
-                  </th>
-                  <th
-                    className="py-2.5 px-3.5 text-right cursor-pointer hover:text-zinc-800 transition"
-                    onClick={() => handleSortChange("total")}
-                  >
-                    Amount
-                  </th>
-                  <th className="py-2.5 px-3.5 text-center">Status</th>
-                  <th className="py-2.5 px-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 text-xs">
-                {data.invoices.map((inv) => {
-                  const statusInfo = STATUS_CONFIG[inv.paymentStatus] || STATUS_CONFIG.PENDING;
-
-                  return (
-                    <tr
-                      key={inv.InvoiceId}
-                      className="hover:bg-zinc-50/80 transition duration-150 group"
-                    >
-                      {/* Invoice Serial */}
-                      <td className="py-2.5 px-3.5 font-semibold text-zinc-900 group-hover:text-teal-700 transition">
-                        {inv.invoiceNumber}
-                      </td>
-
-                      {/* Customer Information */}
-                      <td className="py-2.5 px-3.5">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-zinc-800 leading-tight">
-                            {inv.CustomerName || "Unassigned Client"}
-                          </span>
-                          <span className="text-[10px] text-zinc-400 leading-tight">
-                            {inv.CustomerEmail || "No email attached"}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Issue Date */}
-                      <td className="py-2.5 px-3.5 text-zinc-500 font-normal">
-                        {new Date(inv.IssueDate).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </td>
-
-                      {/* Due Date */}
-                      <td className="py-2.5 px-3.5 text-zinc-500 font-normal">
-                        {new Date(inv.DueDate).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </td>
-
-                      {/* Amount */}
-                      <td className="py-2.5 px-3.5 text-right font-semibold text-zinc-900">
-                        {inv.Currency} {Number(inv.total).toFixed(2)}
-                      </td>
-
-                      {/* Status Badge */}
-                      <td className="py-2.5 px-3.5 text-center">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide rounded-2xs border ${statusInfo.badge}`}
-                        >
-                          <span className={`w-1 h-1 rounded-full ${statusInfo.dot}`} />
-                          {inv.paymentStatus}
-                        </span>
-                      </td>
-
-                      {/* 3-Dot Action Menu */}
-                      <td className="py-2.5 px-3.5 text-right relative">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setActiveMenuId(
-                              activeMenuId === inv.InvoiceId ? null : inv.InvoiceId
-                            )
-                          }
-                          className="p-1 text-zinc-400 hover:text-zinc-800 transition cursor-pointer rounded-2xs hover:bg-zinc-100"
-                        >
-                          <MoreVertical className="w-3.5 h-3.5" />
-                        </button>
-
-                        {/* Interactive Status Popover */}
-                        {activeMenuId === inv.InvoiceId && (
-                          <StatusMenuPopover
-                            currentStatus={inv.paymentStatus}
-                            onSelect={(newStatus) =>
-                              updateStatusMutation.mutate({
-                                invoiceId: inv.InvoiceId,
-                                newStatus,
-                              })
-                            }
-                            onClose={() => setActiveMenuId(null)}
-                            isPending={updateStatusMutation.isPending}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Clean Footer Pagination */}
-        {data?.meta && (
-          <div className="bg-zinc-50 border-t border-zinc-200/80 p-2.5 px-4 flex items-center justify-between text-xs text-zinc-500 shrink-0">
+    <div className="w-full min-h-screen bg-white text-zinc-950 font-sans select-none pb-16">
+      {/* Top Banner / Header Area */}
+      <div className="border-b border-zinc-200 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              Showing <span className="font-bold text-zinc-800">{(page - 1) * limit + 1}</span> to{" "}
-              <span className="font-bold text-zinc-800">
-                {Math.min(page * limit, data.meta.totalCount)}
-              </span>{" "}
-              of <span className="font-bold text-zinc-800">{data.meta.totalCount}</span> records
+              <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-medium mb-1">
+                Records & Status History
+              </p>
+              <h1 className="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-950">
+                Invoice Register
+              </h1>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <button
-                disabled={page === 1 || isFetching}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="p-1 border border-zinc-200/80 rounded-2xs bg-white text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 transition cursor-pointer"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <span className="px-2 font-semibold text-zinc-800 text-xs">
-                {page} / {data.meta.totalPages || 1}
-              </span>
-              <button
-                disabled={page >= data.meta.totalPages || isFetching}
-                onClick={() => setPage((p) => p + 1)}
-                className="p-1 border border-zinc-200/80 rounded-2xs bg-white text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 transition cursor-pointer"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            <Link
+              href="/dashboard/createInvoice"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-zinc-950 hover:bg-zinc-800 rounded-md transition-colors shadow-xs shrink-0 self-start sm:self-auto"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Create Invoice</span>
+            </Link>
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* Main Container */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
+        {/* Filter and Search Controls */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+          {/* Search Input */}
+          <div className="md:col-span-6 relative flex items-center">
+            <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 pointer-events-none" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search by invoice #, client name, email..."
+              className="w-full bg-white border border-zinc-200 pl-10 pr-3.5 py-2 rounded-md text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-950 transition shadow-2xs"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="md:col-span-3 flex items-center gap-2 bg-white border border-zinc-200 px-3 py-2 rounded-md shadow-2xs">
+            <Filter className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+            <span className="text-[10px] uppercase font-mono font-medium text-zinc-400 shrink-0">
+              Status:
+            </span>
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full bg-transparent text-xs text-zinc-900 focus:outline-none cursor-pointer font-medium"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PENDING">Pending</option>
+              <option value="PAID">Paid</option>
+              <option value="OVERDUE">Overdue</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+
+          {/* Sort Selector */}
+          <div className="md:col-span-3 flex items-center gap-2 bg-white border border-zinc-200 px-3 py-2 rounded-md shadow-2xs">
+            <ArrowUpDown className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+            <span className="text-[10px] uppercase font-mono font-medium text-zinc-400 shrink-0">
+              Sort:
+            </span>
+            <select
+              value={`${sortBy}-${sortOrder}`}
+              onChange={(e) => {
+                const [field, order] = e.target.value.split("-");
+                setSortBy(field);
+                setSortOrder(order as "asc" | "desc");
+                setPage(1);
+              }}
+              className="w-full bg-transparent text-xs text-zinc-900 focus:outline-none cursor-pointer font-medium"
+            >
+              <option value="createdAt-desc">Newest First</option>
+              <option value="createdAt-asc">Oldest First</option>
+              <option value="total-desc">Amount: High to Low</option>
+              <option value="total-asc">Amount: Low to High</option>
+              <option value="DueDate-asc">Due Date: Nearest</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Table Container Card */}
+        <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs flex flex-col min-h-[460px]">
+          {isLoading ? (
+            <div className="flex-1 flex flex-col justify-center items-center p-12 text-zinc-400">
+              <Loader2 className="w-6 h-6 animate-spin mb-2 text-zinc-950" />
+              <span className="text-xs font-mono">Fetching records...</span>
+            </div>
+          ) : isError ? (
+            <div className="flex-1 flex flex-col justify-center items-center p-12 text-rose-600">
+              <span className="text-xs font-semibold mb-1">Failed to load invoices</span>
+              <span className="text-[11px] text-zinc-500 font-mono">{error?.message}</span>
+            </div>
+          ) : !data?.invoices || data.invoices.length === 0 ? (
+            <div className="flex-1 flex flex-col justify-center items-center p-12 text-zinc-400">
+              <FileText className="w-9 h-9 stroke-1 mb-2 text-zinc-300" />
+              <span className="text-sm font-medium text-zinc-900">No invoices found</span>
+              <span className="text-xs text-zinc-400 mt-1">
+                Try adjusting your search criteria or create a new invoice.
+              </span>
+            </div>
+          ) : (
+            <div className="overflow-x-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs text-zinc-700">
+                <thead className="bg-zinc-50/70 border-b border-zinc-200 text-[10px] font-mono font-medium uppercase tracking-wider text-zinc-400">
+                  <tr>
+                    <th
+                      className="py-3 px-5 cursor-pointer hover:text-zinc-900 transition"
+                      onClick={() => handleSortChange("invoiceNumber")}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Invoice #</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="py-3 px-5">Client</th>
+                    <th
+                      className="py-3 px-5 cursor-pointer hover:text-zinc-900 transition"
+                      onClick={() => handleSortChange("IssueDate")}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Issue Date</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th
+                      className="py-3 px-5 cursor-pointer hover:text-zinc-900 transition"
+                      onClick={() => handleSortChange("DueDate")}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Due Date</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th
+                      className="py-3 px-5 text-right cursor-pointer hover:text-zinc-900 transition"
+                      onClick={() => handleSortChange("total")}
+                    >
+                      <div className="flex items-center justify-end gap-1.5">
+                        <span>Amount</span>
+                        <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="py-3 px-5 text-center">Status</th>
+                    <th className="py-3 px-5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100 bg-white">
+                  {data.invoices.map((inv) => {
+                    const statusInfo = STATUS_CONFIG[inv.paymentStatus] || STATUS_CONFIG.PENDING;
+
+                    return (
+                      <tr
+                        key={inv.InvoiceId}
+                        className="hover:bg-zinc-50/80 transition duration-150 group"
+                      >
+                        {/* Invoice Number */}
+                        <td className="py-3.5 px-5 font-mono text-xs font-semibold text-zinc-900">
+                          {inv.invoiceNumber}
+                        </td>
+
+                        {/* Customer Info */}
+                        <td className="py-3.5 px-5">
+                          <div className="flex flex-col">
+                            <span className="font-medium text-zinc-900 text-xs leading-tight">
+                              {inv.CustomerName || "Unassigned Client"}
+                            </span>
+                            <span className="text-[10px] text-zinc-400 font-mono leading-tight mt-0.5">
+                              {inv.CustomerEmail || "—"}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Issue Date */}
+                        <td className="py-3.5 px-5 text-zinc-500 font-mono text-xs">
+                          {new Date(inv.IssueDate).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+
+                        {/* Due Date */}
+                        <td className="py-3.5 px-5 text-zinc-500 font-mono text-xs">
+                          {new Date(inv.DueDate).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+
+                        {/* Amount */}
+                        <td className="py-3.5 px-5 text-right font-medium text-zinc-950 font-mono text-xs">
+                          {inv.Currency} {Number(inv.total).toFixed(2)}
+                        </td>
+
+                        {/* Status Badge */}
+                        <td className="py-3.5 px-5 text-center">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono font-medium uppercase rounded-sm border ${statusInfo.badge}`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
+                            {inv.paymentStatus}
+                          </span>
+                        </td>
+
+                        {/* Action Popover */}
+                        <td className="py-3.5 px-5 text-right relative">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActiveMenuId(
+                                activeMenuId === inv.InvoiceId ? null : inv.InvoiceId
+                              )
+                            }
+                            className="p-1.5 text-zinc-400 hover:text-zinc-900 transition rounded-md hover:bg-zinc-100 cursor-pointer"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+
+                          {/* Status Popover */}
+                          {activeMenuId === inv.InvoiceId && (
+                            <StatusMenuPopover
+                              invoiceId={inv.InvoiceId}
+                              currentStatus={inv.paymentStatus}
+                              onSelect={(newStatus) =>
+                                updateStatusMutation.mutate({
+                                  invoiceId: inv.InvoiceId,
+                                  newStatus,
+                                })
+                              }
+                              onClose={() => setActiveMenuId(null)}
+                              isPending={updateStatusMutation.isPending}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Clean Pagination Footer */}
+          {data?.meta && (
+            <div className="bg-zinc-50/70 border-t border-zinc-200 p-3.5 px-5 flex items-center justify-between text-xs text-zinc-500 shrink-0 font-sans">
+              <div>
+                Showing <span className="font-semibold text-zinc-900">{(page - 1) * limit + 1}</span> to{" "}
+                <span className="font-semibold text-zinc-900">
+                  {Math.min(page * limit, data.meta.totalCount)}
+                </span>{" "}
+                of <span className="font-semibold text-zinc-900">{data.meta.totalCount}</span> records
+              </div>
+
+              <div className="flex items-center gap-2 font-mono">
+                <button
+                  disabled={page === 1 || isFetching}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="p-1.5 border border-zinc-200 rounded-md bg-white text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 transition cursor-pointer shadow-2xs"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="px-2 text-xs font-medium text-zinc-900">
+                  {page} / {data.meta.totalPages || 1}
+                </span>
+                <button
+                  disabled={page >= data.meta.totalPages || isFetching}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="p-1.5 border border-zinc-200 rounded-md bg-white text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 transition cursor-pointer shadow-2xs"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-// Inline Status Change Menu
 function StatusMenuPopover({
+  invoiceId,
   currentStatus,
   onSelect,
   onClose,
   isPending,
 }: {
+  invoiceId: string;
   currentStatus: string;
   onSelect: (status: string) => void;
   onClose: () => void;
@@ -477,22 +499,36 @@ function StatusMenuPopover({
   return (
     <div
       ref={menuRef}
-      className="absolute right-3 top-8 z-50 w-36 bg-white border border-zinc-200/90 shadow-lg rounded-xs p-1 text-left font-mono text-[11px]"
+      className="absolute right-4 top-10 z-50 w-44 bg-white border border-zinc-200 rounded-lg shadow-xl p-1.5 text-left font-sans text-xs"
     >
-      <div className="px-2 py-1 text-[9px] uppercase font-bold text-zinc-400 border-b border-zinc-100">
+      <Link
+        href={`/dashboard/invoice/${invoiceId}`}
+        onClick={onClose}
+        className="w-full flex items-center gap-2 px-2.5 py-1.5 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 rounded-md transition font-medium"
+      >
+        <Eye className="w-3.5 h-3.5 text-zinc-400" />
+        <span>View Invoice</span>
+      </Link>
+
+      <div className="border-t border-zinc-100 my-1" />
+
+      <div className="px-2.5 py-1 text-[10px] uppercase font-mono font-medium text-zinc-400">
         Update Status
       </div>
+
       {statuses.map((st) => (
         <button
           key={st}
           disabled={isPending}
           onClick={() => onSelect(st)}
-          className={`w-full flex items-center justify-between px-2 py-1.5 hover:bg-zinc-100 rounded-2xs transition cursor-pointer ${
-            currentStatus === st ? "font-bold text-teal-700 bg-teal-50/50" : "text-zinc-700"
+          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md transition cursor-pointer font-mono text-[11px] ${
+            currentStatus === st
+              ? "font-semibold text-teal-800 bg-teal-50"
+              : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
           }`}
         >
           <span>{st}</span>
-          {currentStatus === st && <Check className="w-3 h-3 text-teal-700" />}
+          {currentStatus === st && <Check className="w-3.5 h-3.5 text-teal-700" />}
         </button>
       ))}
     </div>

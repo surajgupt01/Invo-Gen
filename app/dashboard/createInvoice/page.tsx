@@ -8,8 +8,6 @@ import { useOwner } from "@/app/store/OwnerDetail";
 import { useItemsStore, CURRENCIES, type Currency } from "@/app/store/InvoiceTabel";
 import List from "@/app/Icons/List";
 import OpenArrow from "@/app/Icons/OpenArrow";
-import AddInfo from "@/app/Icons/AddInfo";
-import Info from "@/app/Icons/Info";
 import Preview from "@/app/component/Preview";
 import QR from "@/app/Icons/QR";
 import Image from "next/image";
@@ -18,7 +16,23 @@ import SeePassword from "@/app/Icons/SeePassword";
 import Docs from "@/app/Icons/Doc";
 import Both from "@/app/Icons/Both";
 import ItemsTable from "./Table";
-import { Save, Send, CheckCircle2, AlertCircle, X, Sparkles, RotateCcw, Zap, ArrowUpRight } from "lucide-react";
+import {
+  Save,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  Sparkles,
+  RotateCcw,
+  Zap,
+  ArrowUpRight,
+  Building2,
+  Users,
+  CreditCard,
+  FileText,
+  Upload,
+  Info,
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 function fileToBase64(file: globalThis.File): Promise<string> {
@@ -184,18 +198,18 @@ export default function CreateInvoice() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#FAFAFA] border-zinc-200 rounded-sm transition-all duration-500 ease-in-out font-mono relative">
-      {/* Toast Notification Bar */}
+    <div className="flex flex-col h-full w-full bg-white text-zinc-950 font-sans select-none relative">
+      {/* Toast Notification */}
       {toast.show && (
         <div
-          className={`fixed top-4 right-4 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xs border shadow-lg transition-all duration-300 text-xs font-sans ${
+          className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-lg border shadow-xl transition-all duration-300 text-xs font-sans ${
             toast.type === "success"
-              ? "bg-emerald-950 border-emerald-800 text-emerald-100"
+              ? "bg-zinc-950 border-zinc-800 text-white"
               : "bg-rose-950 border-rose-800 text-rose-100"
           }`}
         >
           {toast.type === "success" ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
           ) : (
             <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
           )}
@@ -210,77 +224,83 @@ export default function CreateInvoice() {
         </div>
       )}
 
-      {/* Top Telemetry & View Switcher Header */}
-      <div className="bg-white border-b border-zinc-200 inset-0 p-2 px-4 sm:px-6 flex flex-wrap justify-between items-center shrink-0 gap-2">
-        <div className="flex items-center gap-3">
-          <div className="text-xs font-bold uppercase text-zinc-800 tracking-wider">
-            New Invoice
+      {/* Top Header & View Switcher Bar */}
+      <div className="bg-white border-b border-zinc-200 px-4 sm:px-6 py-3 flex flex-wrap justify-between items-center shrink-0 gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 font-medium">
+              Generator
+            </p>
+            <h1 className="text-sm font-semibold tracking-tight text-zinc-950">
+              New Invoice
+            </h1>
           </div>
 
-          {/* Download Quota Badge */}
+          {/* Quota Telemetry Badge */}
           {isPro ? (
-            <div className="flex items-center gap-1 text-[10px] font-mono text-teal-700 bg-teal-50 border border-teal-200/80 px-2 py-0.5 rounded-2xs font-bold">
+            <div className="flex items-center gap-1 text-[10px] font-mono text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-sm font-semibold">
               <Zap className="w-3 h-3 text-teal-600" />
               <span>PRO UNLIMITED</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 text-[10px] font-mono bg-zinc-100 border border-zinc-200 px-2 py-0.5 rounded-2xs text-zinc-600">
-              <span>QUOTA:</span>
-              <span className={`font-bold ${downloadsRemaining === 0 ? "text-red-600" : "text-zinc-900"}`}>
+            <div className="flex items-center gap-1.5 text-[11px] font-mono bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md text-zinc-600">
+              <span className="text-[10px] uppercase text-zinc-400">Quota:</span>
+              <span className={`font-semibold ${downloadsRemaining === 0 ? "text-rose-600" : "text-zinc-950"}`}>
                 {downloadsUsed}/{MONTHLY_LIMIT}
               </span>
-              <span className="text-zinc-400 font-sans">({downloadsRemaining} left)</span>
-              <Link href="/dashboard/pricing" className="text-teal-700 hover:underline font-bold ml-1 flex items-center">
-                Upgrade <ArrowUpRight className="w-2.5 h-2.5" />
+              <span className="text-zinc-400">({downloadsRemaining} left)</span>
+              <Link href="/dashboard/pricing" className="text-teal-700 hover:underline font-semibold ml-1 inline-flex items-center">
+                Upgrade <ArrowUpRight className="w-3 h-3" />
               </Link>
             </div>
           )}
         </div>
 
-        <div className="bg-zinc-100 lg:w-62 w-44 py-1 px-1 gap-1.5 flex justify-center items-center rounded-md border border-zinc-200/60">
+        {/* View Mode Toggle */}
+        <div className="bg-zinc-100 p-1 flex items-center rounded-lg border border-zinc-200/70 gap-1 text-xs">
           <button
             type="button"
             onClick={() => setDisplay("Form")}
-            className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
+            className={`px-3 py-1 font-medium rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
               display === "Form"
-                ? "bg-white shadow-xs text-zinc-900 font-semibold border border-zinc-200/80"
-                : ""
-            } lg:flex justify-center items-center gap-1.5`}
+                ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/50"
+                : "text-zinc-500 hover:text-zinc-950"
+            }`}
           >
             <Docs />
-            Form
+            <span>Form</span>
           </button>
           <button
             type="button"
             onClick={() => setDisplay("Both")}
-            className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
+            className={`px-3 py-1 font-medium rounded-md transition-all cursor-pointer hidden lg:flex items-center gap-1.5 ${
               display === "Both"
-                ? "bg-white shadow-xs text-zinc-900 font-semibold border border-zinc-200/80"
-                : ""
-            } hidden lg:flex justify-center items-center gap-1.5`}
+                ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/50"
+                : "text-zinc-500 hover:text-zinc-950"
+            }`}
           >
             <Both />
-            Both
+            <span>Split View</span>
           </button>
           <button
             type="button"
             onClick={() => setDisplay("Preview")}
-            className={`text-zinc-500 text-xs flex hover:text-zinc-900 duration-200 ease-in-out cursor-pointer px-2.5 py-1 rounded-md ${
+            className={`px-3 py-1 font-medium rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
               display === "Preview"
-                ? "bg-white shadow-xs text-zinc-900 font-semibold border border-zinc-200/80"
-                : ""
-            } lg:flex justify-center items-center gap-1.5`}
+                ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/50"
+                : "text-zinc-500 hover:text-zinc-950"
+            }`}
           >
             <SeePassword />
-            Preview
+            <span>Live PDF</span>
           </button>
         </div>
       </div>
 
-      {/* Dynamic Body Views */}
+      {/* Dynamic Content Views */}
       {display === "Both" && (
-        <div className="lg:flex-row flex flex-col overflow-auto w-full relative gap-3 p-3 transition-all duration-500 ease-in-out flex-1 min-h-0">
-          <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out">
+        <div className="lg:flex-row flex flex-col overflow-auto w-full relative gap-6 p-4 sm:p-6 transition-all duration-300 flex-1 min-h-0 bg-zinc-50/50">
+          <div className="flex-1 min-w-0 overflow-y-auto">
             <FormComponent
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}
@@ -294,31 +314,33 @@ export default function CreateInvoice() {
             />
           </div>
 
-          <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out bg-white border border-zinc-200/80 rounded-sm">
+          <div className="flex-1 min-w-0 overflow-hidden bg-white border border-zinc-200 rounded-xl shadow-xs p-4 flex items-center justify-center">
             <Preview />
           </div>
         </div>
       )}
 
       {display === "Form" && (
-        <div className="flex-1 min-w-0 overflow-auto custom-scrollbar duration-300 ease-in-out p-3">
-          <FormComponent
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
-            paymentStatus={paymentStatus}
-            setPaymentStatus={setPaymentStatus}
-            showToast={showToast}
-            onTelemetryUpdate={(plan, downloads) => {
-              setUserPlan(plan);
-              setDownloadsUsed(downloads);
-            }}
-          />
+        <div className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 bg-zinc-50/50">
+          <div className="max-w-4xl mx-auto">
+            <FormComponent
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              paymentStatus={paymentStatus}
+              setPaymentStatus={setPaymentStatus}
+              showToast={showToast}
+              onTelemetryUpdate={(plan, downloads) => {
+                setUserPlan(plan);
+                setDownloadsUsed(downloads);
+              }}
+            />
+          </div>
         </div>
       )}
 
       {display === "Preview" && (
-        <div className="flex-1 min-w-0 overflow-hidden duration-300 ease-in-out p-3">
-          <div className="h-full bg-white border border-zinc-200/80 rounded-sm p-2">
+        <div className="flex-1 min-w-0 overflow-hidden p-4 sm:p-6 bg-zinc-50/50 flex items-center justify-center">
+          <div className="w-full max-w-4xl h-full bg-white border border-zinc-200 rounded-xl shadow-xs p-4 flex items-center justify-center">
             <Preview />
           </div>
         </div>
@@ -458,10 +480,10 @@ function FormComponent({
   }
 
   const OwnerFieldList: OwnerField[] = [
-    { label: "Company Name", name: "CompanyName", placeholder: "Company name" },
-    { label: "Company Mail", name: "CompanyMail", placeholder: "billing@company.com" },
-    { label: "Company Address", name: "CompanyAddress", placeholder: "Company Address" },
-    { label: "Tax Details", name: "TaxDetail", placeholder: "Tax Details (e.g., GSTIN / VAT)" },
+    { label: "Company Name", name: "CompanyName", placeholder: "e.g. Acme Studio LLC" },
+    { label: "Company Email", name: "CompanyMail", placeholder: "billing@acmestudio.com" },
+    { label: "Company Address", name: "CompanyAddress", placeholder: "Street, City, State, ZIP, Country" },
+    { label: "Tax Details / GSTIN", name: "TaxDetail", placeholder: "GSTIN / VAT / Tax ID" },
   ];
 
   type CustomerDetails = {
@@ -483,10 +505,10 @@ function FormComponent({
   }
 
   const customerFields: Field[] = [
-    { label: "Customer Name", name: "CustomerName", placeholder: "Customer name or Organization" },
+    { label: "Customer Name", name: "CustomerName", placeholder: "Client or organization name" },
     { label: "Customer Email", name: "CustomerEmail", placeholder: "client@example.com", type: "email" },
-    { label: "Customer Address", name: "CustomerAddress", placeholder: "Billing address" },
-    { label: "Subject", name: "Subject", placeholder: "Invoice subject or Project", type: "text" },
+    { label: "Customer Address", name: "CustomerAddress", placeholder: "Client billing address" },
+    { label: "Subject / Reference", name: "Subject", placeholder: "Project or service reference", type: "text" },
     { label: "Invoice Serial #", name: "InvoiceNo", placeholder: "2026-001", type: "text" },
     { label: "Issue Date", name: "IssueDate", type: "date" },
     { label: "Due Date", name: "DueDate", type: "date" },
@@ -519,31 +541,34 @@ function FormComponent({
   };
 
   return (
-    <div className="w-full scroll-smooth pb-12">
-      <form className="w-full space-y-3 px-1" onSubmit={(e) => e.preventDefault()}>
-        {/* PREFILL TOGGLE & QUICK SYNC BAR */}
-        <div className="p-3 rounded-xs bg-white border border-teal-600/30 flex items-center justify-between shadow-2xs">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-teal-600 shrink-0" />
+    <div className="w-full scroll-smooth pb-12 font-sans">
+      <form className="w-full space-y-5" onSubmit={(e) => e.preventDefault()}>
+        
+        {/* PREFILL TOGGLE & QUICK SYNC BANNER */}
+        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-teal-50 border border-teal-100 text-teal-700 shrink-0">
+              <Sparkles className="w-4 h-4" />
+            </div>
             <div>
-              <span className="text-xs font-bold uppercase text-zinc-900 tracking-wider flex items-center gap-1.5 font-mono">
-                Prefill Profile Defaults
+              <span className="text-xs font-semibold text-zinc-950 block">
+                Prefill Settings Defaults
               </span>
-              <span className="text-[10px] text-zinc-400 font-sans block">
-                Automatically loads organization, notes, terms, and payout defaults saved in Settings.
+              <span className="text-xs text-zinc-500 block mt-0.5">
+                Automatically synchronize company details, bank wire, and terms from your account.
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
             <button
               type="button"
               disabled={isPrefilling}
               onClick={loadProfileDefaults}
-              className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-mono font-bold uppercase bg-teal-50 hover:bg-teal-100/80 border border-teal-200 text-teal-800 rounded-2xs transition cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors cursor-pointer disabled:opacity-50"
               title="Refetch profile defaults"
             >
-              <RotateCcw className={`w-3 h-3 ${isPrefilling ? "animate-spin" : ""}`} />
+              <RotateCcw className={`w-3.5 h-3.5 ${isPrefilling ? "animate-spin" : ""}`} />
               <span>{isPrefilling ? "Syncing..." : "Sync Settings"}</span>
             </button>
 
@@ -554,41 +579,82 @@ function FormComponent({
                 onChange={(e) => handleTogglePrefill(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-7 h-4 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-teal-600"></div>
+              <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-zinc-950"></div>
             </label>
           </div>
         </div>
 
-        {/* Organization's Detail Card */}
-        <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
-          <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
-            Organization&apos;s Detail
-          </h1>
-          <div className="grid grid-cols-2 gap-3.5 w-full">
-            <div className="col-span-2">
-              <div className="w-full border border-dashed border-zinc-300 rounded-sm group px-4 py-6 cursor-pointer bg-zinc-50/50 hover:bg-zinc-100/50 transition flex flex-col gap-2 items-center justify-center">
-                <input id="logo" type="file" accept="image/*" className="hidden" onChange={handleLogo} />
-                <label htmlFor="logo" className="cursor-pointer">
-                  <div className="rounded-xs flex justify-center items-center">
-                    {logo !== "" ? (
-                      <Image alt="Company Logo" src={logo} width={120} height={120} className="object-contain" />
-                    ) : (
-                      <ImageAlt />
-                    )}
-                  </div>
-                </label>
-                <p className="text-zinc-500 whitespace-pre-line text-center text-xs">
-                  Drag and drop your company logo here, or{" "}
-                  <span className="text-teal-700 font-semibold">browse file</span>
-                </p>
-              </div>
+        {/* SECTION 1: ORGANIZATION DETAILS */}
+        <div className="p-6 rounded-xl bg-white border border-zinc-200 shadow-xs space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-zinc-950" />
+              <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+                Organization Details
+              </h2>
+            </div>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+              Sender
+            </span>
+          </div>
+
+          {/* Logo Dropzone */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="relative w-24 h-24 shrink-0 bg-zinc-50 border border-zinc-200 flex items-center justify-center group overflow-hidden rounded-lg shadow-2xs">
+              {logo ? (
+                <>
+                  <Image
+                    alt="Company Logo"
+                    src={logo}
+                    width={96}
+                    height={96}
+                    className="w-full h-full object-contain p-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLogo("");
+                      OwnerDetailHandler("companyLogo", "");
+                    }}
+                    className="absolute top-1.5 right-1.5 bg-white text-zinc-500 hover:text-zinc-950 p-1 border border-zinc-200 transition-opacity opacity-0 group-hover:opacity-100 shadow-xs cursor-pointer rounded-md"
+                    title="Remove Logo"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-zinc-400">
+                  <ImageAlt />
+                  <span className="text-[8px] font-mono mt-1 uppercase tracking-wider">
+                    NO LOGO
+                  </span>
+                </div>
+              )}
             </div>
 
+            <label className="flex-1 w-full h-24 border border-dashed border-zinc-300 hover:border-zinc-400 bg-zinc-50/50 hover:bg-zinc-100/50 transition-colors cursor-pointer flex flex-col items-center justify-center p-3 text-center group rounded-lg">
+              <input id="logo" type="file" accept="image/*" className="hidden" onChange={handleLogo} />
+              <Upload className="w-4 h-4 text-zinc-400 group-hover:text-zinc-950 transition-colors mb-1" />
+              <p className="text-xs text-zinc-600">
+                Drag and drop your company logo, or{" "}
+                <span className="text-zinc-950 font-medium underline underline-offset-2">
+                  browse file
+                </span>
+              </p>
+              <p className="text-[10px] text-zinc-400 font-mono mt-0.5 uppercase">
+                PNG, JPG, SVG UP TO 2MB
+              </p>
+            </label>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
             {OwnerFieldList.map((f, index) => (
-              <div key={index} className="flex flex-col gap-1 w-full">
-                <div className="text-zinc-600 tracking-wide text-xs">{f.label}</div>
+              <div key={index} className="flex flex-col gap-1.5 w-full">
+                <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+                  {f.label}
+                </label>
                 <input
-                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition font-mono"
+                  className="border border-zinc-200 bg-white px-3.5 py-2 rounded-md text-zinc-950 text-xs focus:outline-none focus:border-zinc-950 w-full transition shadow-2xs font-mono placeholder:text-zinc-400"
                   name={f.name}
                   placeholder={f.placeholder}
                   value={OwnerDetails[f.name] || ""}
@@ -600,18 +666,28 @@ function FormComponent({
           </div>
         </div>
 
-        {/* Customer's Detail Card */}
-        <div className="p-5 rounded-xs bg-white border border-zinc-200/80 shadow-xs">
-          <h1 className="text-xs font-semibold uppercase tracking-wider mb-3 text-zinc-800">
-            Customer&apos;s Detail
-          </h1>
+        {/* SECTION 2: CUSTOMER'S DETAIL */}
+        <div className="p-6 rounded-xl bg-white border border-zinc-200 shadow-xs space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-zinc-950" />
+              <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+                Customer Details
+              </h2>
+            </div>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+              Recipient
+            </span>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
             {customerFields.map((f, index) => (
-              <div key={index} className="flex flex-col gap-1 w-full">
-                <div className="text-zinc-600 tracking-wide text-xs">{f.label}</div>
+              <div key={index} className="flex flex-col gap-1.5 w-full">
+                <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+                  {f.label}
+                </label>
                 <input
-                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs w-full text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 transition font-mono"
+                  className="border border-zinc-200 bg-white px-3.5 py-2 rounded-md w-full text-zinc-950 text-xs focus:outline-none focus:border-zinc-950 transition shadow-2xs font-mono placeholder:text-zinc-400"
                   name={f.name}
                   placeholder={f.placeholder}
                   type={f.type || "text"}
@@ -622,10 +698,12 @@ function FormComponent({
             ))}
 
             {/* Currency Select Dropdown */}
-            <div className="flex flex-col gap-1 w-full">
-              <div className="text-zinc-600 tracking-wide text-xs">Currency</div>
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+                Currency
+              </label>
               <select
-                className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer font-mono"
+                className="border border-zinc-200 bg-white px-3.5 py-2 rounded-md text-zinc-950 text-xs focus:outline-none focus:border-zinc-950 w-full transition cursor-pointer shadow-2xs font-mono"
                 value={currency?.code || Details.Currency || "INR"}
                 onChange={(e) => handleCurrencyChange(e.target.value)}
               >
@@ -638,10 +716,12 @@ function FormComponent({
             </div>
 
             {/* Payment / Invoice Status Selector */}
-            <div className="flex flex-col gap-1 w-full">
-              <div className="text-zinc-600 tracking-wide text-xs">Invoice Status</div>
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+                Invoice Status
+              </label>
               <select
-                className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 text-xs font-semibold hover:border-zinc-400 focus:outline-teal-700 w-full transition cursor-pointer font-mono"
+                className="border border-zinc-200 bg-white px-3.5 py-2 rounded-md text-zinc-950 text-xs font-semibold focus:outline-none focus:border-zinc-950 w-full transition cursor-pointer shadow-2xs font-mono"
                 value={paymentStatus}
                 onChange={(e) => setPaymentStatus(e.target.value as InvoicePaymentStatus)}
               >
@@ -655,65 +735,70 @@ function FormComponent({
           </div>
         </div>
 
-        {/* Items Table Section */}
+        {/* SECTION 3: LINE ITEMS TABLE */}
         <div
           className={`${
-            expand ? "max-h-[800px] overflow-auto" : "max-h-12 overflow-hidden"
-          } duration-500 ease-in-out custom-scrollbar border text-xs font-bold px-2 bg-white border-zinc-200/80 shadow-xs py-1 rounded-xs transition-all`}
+            expand ? "max-h-[1000px]" : "max-h-14 overflow-hidden"
+          } transition-all duration-300 ease-in-out border bg-white border-zinc-200 shadow-xs rounded-xl overflow-hidden`}
         >
           <div
-            className="flex items-center duration-300 ease-in-out justify-between group p-2.5 text-zinc-700 cursor-pointer"
+            className="flex items-center justify-between p-4 px-6 text-zinc-950 cursor-pointer border-b border-zinc-100 hover:bg-zinc-50/60 transition-colors"
             onClick={() => setExpand(!expand)}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <List />
-              <span>Line Items Table</span>
+              <h3 className="text-sm font-medium text-zinc-950 tracking-tight">
+                Line Items & Tax Engine
+              </h3>
             </div>
             <div
               className={`${
                 expand ? "rotate-180" : ""
-              } duration-500 ease-in-out transition-all text-zinc-500 group-hover:text-zinc-900`}
+              } transition-transform duration-300 text-zinc-400 hover:text-zinc-950`}
             >
               <OpenArrow />
             </div>
           </div>
 
-          <div
-            className={`rounded-lg py-3 transition-opacity duration-500 ease-in-out ${
-              expand ? "translate-y-0" : "pointer-events-none opacity-0"
-            }`}
-          >
+          <div className="p-4 sm:p-6 bg-white">
             <ItemsTable />
           </div>
         </div>
 
-        {/* Payment Options Section */}
+        {/* SECTION 4: PAYMENT OPTIONS */}
         <PaymentOptions />
 
-        {/* Additional Info Section */}
-        <InfoParent info={AdditionalInfo} terms={TermsConditions} HandleInfo={HandleInfo} HandleTerms={HandleTerms} />
+        {/* SECTION 5: ADDITIONAL INFO & TERMS */}
+        <InfoParent
+          info={AdditionalInfo}
+          terms={TermsConditions}
+          HandleInfo={HandleInfo}
+          HandleTerms={HandleTerms}
+        />
 
         {/* Bottom Submission Toolbar */}
-        <div className="flex items-center justify-end gap-2 pt-3">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200">
           <button
             type="button"
             disabled={isSubmitting}
             onClick={() => onSubmit("DRAFT")}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-xs shadow-2xs cursor-pointer transition disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium bg-white border border-zinc-200 text-zinc-800 hover:bg-zinc-50 rounded-md shadow-xs cursor-pointer transition-colors disabled:opacity-50"
           >
             <Save className="w-3.5 h-3.5 text-zinc-500" />
-            {isSubmitting ? "Saving..." : "Save Draft"}
+            <span>{isSubmitting ? "Saving..." : "Save as Draft"}</span>
           </button>
+
           <button
             type="button"
             disabled={isSubmitting}
             onClick={() => onSubmit()}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium bg-zinc-950 text-white hover:bg-black rounded-xs shadow-2xs cursor-pointer transition disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2 text-xs font-medium bg-zinc-950 text-white hover:bg-zinc-800 rounded-md shadow-xs cursor-pointer transition-colors disabled:opacity-50"
           >
             <Send className="w-3.5 h-3.5" />
-            {isSubmitting ? "Issuing..." : `Save as ${paymentStatus}`}
+            <span>{isSubmitting ? "Issuing..." : `Issue as ${paymentStatus}`}</span>
           </button>
         </div>
+
       </form>
     </div>
   );
@@ -731,26 +816,35 @@ function InfoParent({
   HandleTerms: (val: string) => void;
 }) {
   return (
-    <div className="bg-white border border-zinc-200/80 rounded-xs text-xs font-bold px-3 py-4 shadow-xs duration-500 ease-in-out transition-all">
-      <div className="flex items-center gap-1.5 pb-2 text-zinc-800 border-b border-zinc-100">
-        <AddInfo />
-        <span className="tracking-wide text-xs font-semibold uppercase">Additional Information</span>
+    <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-xs space-y-5">
+      <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+        <div className="flex items-center gap-2">
+          <FileText className="w-4 h-4 text-zinc-950" />
+          <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+            Additional Information & Notes
+          </h2>
+        </div>
+        <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+          Optional
+        </span>
       </div>
 
-      <AddInfoComponent
-        Title="Additional Information"
-        Placeholder="Note - Add a message or special instructions for your customer"
-        Message="Additional notes for the invoice"
-        value={info}
-        onChange={HandleInfo}
-      />
-      <AddInfoComponent
-        Title="Terms"
-        Placeholder="Terms & Conditions - Enter payment terms, late fees, or other conditions"
-        Message="Terms & Conditions for the invoice"
-        value={terms}
-        onChange={HandleTerms}
-      />
+      <div className="space-y-4">
+        <AddInfoComponent
+          Title="Payment Notes"
+          Placeholder="e.g. Payment due within 14 days of invoice issue. Please include invoice number in wire memo."
+          Message="Custom instructions for settlement"
+          value={info}
+          onChange={HandleInfo}
+        />
+        <AddInfoComponent
+          Title="Terms & Conditions"
+          Placeholder="e.g. 1. Ownership of deliverables transfers upon full payment. 2. Late payments incur a 1.5% monthly charge."
+          Message="Legal conditions printed on PDF"
+          value={terms}
+          onChange={HandleTerms}
+        />
+      </div>
     </div>
   );
 }
@@ -765,24 +859,24 @@ interface AddInfoProps {
 
 function AddInfoComponent({ Title, Message, Placeholder, value, onChange }: AddInfoProps) {
   return (
-    <div className="px-1 py-1 font-normal mt-2.5">
-      <div className="flex items-center gap-2">
-        <span className="text-zinc-600 font-medium text-xs">{Title}</span>
-        <span className="bg-zinc-100 border border-zinc-200 text-zinc-500 rounded-xs px-1.5 py-0.5 text-[8px] uppercase tracking-wide">
-          Optional
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+          {Title}
+        </label>
+        <span className="text-[10px] text-zinc-400 font-mono flex items-center gap-1">
+          <Info className="w-3 h-3" />
+          {Message}
         </span>
       </div>
       <textarea
         name="note"
+        rows={3}
         value={value || ""}
-        className="bg-white text-zinc-800 focus:outline-teal-700 border border-zinc-200 w-full h-24 resize-none p-2.5 mt-1.5 rounded-xs text-xs transition font-mono leading-relaxed"
+        className="w-full bg-white border border-zinc-200 text-zinc-950 text-xs p-3 rounded-md focus:outline-none focus:border-zinc-950 transition shadow-2xs font-mono leading-relaxed resize-y placeholder:text-zinc-400"
         placeholder={Placeholder}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.currentTarget.value)}
       />
-      <div className="flex items-center text-xs gap-1 mt-1 text-zinc-400">
-        <Info />
-        <span className="text-zinc-500 text-[10px]">{Message}</span>
-      </div>
     </div>
   );
 }
@@ -808,12 +902,12 @@ function PaymentOptions() {
   }
 
   const bankFields: OwnerField[] = [
-    { label: "Account Holder Name", name: "OwnerName", placeholder: "Account Holder Name" },
-    { label: "Phone Number", name: "PhNo", placeholder: "Contact phone number" },
-    { label: "Bank Name", name: "BankName", placeholder: "Bank Name" },
-    { label: "Account Number", name: "AccountNumber", placeholder: "Account Number" },
-    { label: "Bank Address", name: "BankAddress", placeholder: "Branch address" },
-    { label: "Bank Code / IFSC / SWIFT", name: "BankCode", placeholder: "e.g., SBIN0001234 or SWIFT code" },
+    { label: "Account Holder Name", name: "OwnerName", placeholder: "e.g. Acme Studio LLC" },
+    { label: "Contact Phone", name: "PhNo", placeholder: "+1 (555) 000-0000" },
+    { label: "Bank Name", name: "BankName", placeholder: "e.g. Chase / HDFC Bank" },
+    { label: "Account / IBAN Number", name: "AccountNumber", placeholder: "Account or IBAN number" },
+    { label: "Branch Address", name: "BankAddress", placeholder: "City, State or branch location" },
+    { label: "Routing Code (IFSC / SWIFT / BIC)", name: "BankCode", placeholder: "e.g. HDFC0001234 or SWIFT code" },
   ];
 
   const [option, setOption] = useState<string>("UPI");
@@ -841,88 +935,134 @@ function PaymentOptions() {
   };
 
   return (
-    <div className="bg-white border border-zinc-200/80 text-xs font-bold px-3 py-4 shadow-xs rounded-xs duration-500 ease-in-out transition-all">
-      <div className="flex items-center gap-1.5 pb-2 border-b border-zinc-100">
-        <span className="text-zinc-800 tracking-wide font-semibold text-xs uppercase">Payment Options</span>
+    <div className="bg-white border border-zinc-200 p-6 rounded-xl shadow-xs space-y-5">
+      <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+        <div className="flex items-center gap-2">
+          <CreditCard className="w-4 h-4 text-zinc-950" />
+          <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+            Payout Channels & Payment Methods
+          </h2>
+        </div>
+        <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+          Settlement
+        </span>
       </div>
 
-      <div className="h-full w-full mt-2">
-        <div className="p-1 w-full h-auto flex justify-between items-center gap-2 bg-zinc-100 border border-zinc-200/60 rounded-xs font-mono">
-          <button
-            type="button"
-            className={`w-full flex justify-center cursor-pointer p-1.5 duration-200 ease-in-out text-xs font-medium rounded-xs ${
-              option === "Bank"
-                ? "bg-white text-zinc-900 shadow-2xs border border-zinc-200/60"
-                : "text-zinc-500 hover:text-zinc-800"
-            }`}
-            onClick={() => {
-              setOption("Bank");
-              OwnerDetailHandler("paymentMethod", "Bank");
-            }}
-          >
-            Bank Transfer
-          </button>
-          <button
-            type="button"
-            className={`w-full flex justify-center cursor-pointer p-1.5 duration-200 ease-in-out text-xs font-medium rounded-xs ${
-              option === "UPI"
-                ? "bg-white text-zinc-900 shadow-2xs border border-zinc-200/60"
-                : "text-zinc-500 hover:text-zinc-800"
-            }`}
-            onClick={() => {
-              setOption("UPI");
-              OwnerDetailHandler("paymentMethod", "UPI");
-            }}
-          >
-            UPI / QR Code
-          </button>
-        </div>
+      {/* Switcher */}
+      <div className="grid grid-cols-2 gap-1.5 p-1 bg-zinc-100 rounded-lg border border-zinc-200/70 text-xs">
+        <button
+          type="button"
+          className={`w-full flex justify-center items-center gap-1.5 py-2 font-medium rounded-md transition-all cursor-pointer ${
+            option === "Bank"
+              ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/50"
+              : "text-zinc-500 hover:text-zinc-950"
+          }`}
+          onClick={() => {
+            setOption("Bank");
+            OwnerDetailHandler("paymentMethod", "Bank");
+          }}
+        >
+          <span>Bank Wire Transfer</span>
+        </button>
+        <button
+          type="button"
+          className={`w-full flex justify-center items-center gap-1.5 py-2 font-medium rounded-md transition-all cursor-pointer ${
+            option === "UPI"
+              ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/50"
+              : "text-zinc-500 hover:text-zinc-950"
+          }`}
+          onClick={() => {
+            setOption("UPI");
+            OwnerDetailHandler("paymentMethod", "UPI");
+          }}
+        >
+          <span>UPI / QR Code</span>
+        </button>
       </div>
 
       {option === "UPI" && (
-        <div className="mt-3">
-          <div className="w-full min-h-60 group border border-dashed border-zinc-300 rounded-sm p-4 flex-1 cursor-pointer bg-zinc-50/50 hover:bg-zinc-100/50 transition flex flex-col gap-2 items-center justify-center">
-            <input id="QR" type="file" accept="image/*" className="hidden" onChange={handleChange} />
-            <label htmlFor="QR" className="cursor-pointer">
-              <div className="rounded-xs flex justify-center items-center">
-                {url !== "" ? (
-                  <Image alt="QR Code" src={url} width={120} height={120} className="object-contain" />
-                ) : (
-                  <QR />
-                )}
-              </div>
+        <div className="space-y-4 pt-1">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+              UPI ID / VPA
             </label>
-            <p className="text-zinc-500 whitespace-pre-line text-center text-xs font-normal">
-              Drag and drop your saved QR image here, or{" "}
-              <span className="text-teal-700 font-semibold">browse file</span>
-            </p>
             <input
-              className="border border-zinc-200 rounded-xs px-3 py-2 w-64 text-zinc-800 font-normal tracking-wide bg-white outline-none focus:border-teal-700 text-xs transition mt-1 font-mono"
-              placeholder="UPI-ID (e.g. name@upi or VPA)"
+              className="border border-zinc-200 rounded-md px-3.5 py-2 text-zinc-950 bg-white focus:outline-none focus:border-zinc-950 text-xs transition shadow-2xs font-mono placeholder:text-zinc-400"
+              placeholder="e.g. username@okhdfcbank"
               value={OwnerDetails.UPIID || ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => OwnerDetailHandler("UPIID", e.currentTarget.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                OwnerDetailHandler("UPIID", e.currentTarget.value)
+              }
             />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 items-center pt-2">
+            <div className="relative w-24 h-24 shrink-0 bg-zinc-50 border border-zinc-200 flex items-center justify-center group overflow-hidden rounded-lg shadow-2xs">
+              {url ? (
+                <>
+                  <Image
+                    alt="QR Code"
+                    src={url}
+                    width={96}
+                    height={96}
+                    className="w-full h-full object-contain p-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUrl("");
+                      OwnerDetailHandler("QR", "");
+                    }}
+                    className="absolute top-1.5 right-1.5 bg-white text-zinc-500 hover:text-zinc-950 p-1 border border-zinc-200 transition-opacity opacity-0 group-hover:opacity-100 shadow-xs cursor-pointer rounded-md"
+                    title="Remove QR Code"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-zinc-400">
+                  <QR />
+                  <span className="text-[8px] font-mono mt-1 uppercase tracking-wider">
+                    NO QR
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <label className="flex-1 w-full h-24 border border-dashed border-zinc-300 hover:border-zinc-400 bg-zinc-50/50 hover:bg-zinc-100/50 transition-colors cursor-pointer flex flex-col items-center justify-center p-3 text-center group rounded-lg">
+              <input id="QR" type="file" accept="image/*" className="hidden" onChange={handleChange} />
+              <Upload className="w-4 h-4 text-zinc-400 group-hover:text-zinc-950 transition-colors mb-1" />
+              <p className="text-xs text-zinc-600">
+                Upload UPI payment QR code, or{" "}
+                <span className="text-zinc-950 font-medium underline underline-offset-2">
+                  browse file
+                </span>
+              </p>
+              <p className="text-[10px] text-zinc-400 font-mono mt-0.5 uppercase">
+                PNG, JPG UP TO 2MB (PRINTED ON PDF)
+              </p>
+            </label>
           </div>
         </div>
       )}
 
       {option === "Bank" && (
-        <div className="bg-white w-full h-full min-h-60 p-2 mt-2 duration-300 ease-in-out flex justify-center items-center">
-          <div className="grid grid-cols-2 gap-3.5 w-full font-mono">
-            {bankFields.map((f, index) => (
-              <div key={index} className="flex flex-col gap-1 w-full">
-                <div className="text-zinc-600 tracking-wide text-xs font-normal">{f.label}</div>
-                <input
-                  className="border border-zinc-200 bg-white px-3 py-2 rounded-xs text-zinc-800 font-normal text-xs hover:border-zinc-400 focus:outline-teal-700 w-full transition"
-                  name={f.name}
-                  placeholder={f.placeholder}
-                  value={OwnerDetails[f.name] || ""}
-                  type="text"
-                  onChange={(e) => OwnerDetailHandler(f.name, e.currentTarget.value)}
-                />
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans pt-1">
+          {bankFields.map((f, index) => (
+            <div key={index} className="flex flex-col gap-1.5 w-full">
+              <label className="text-[11px] font-mono font-medium text-zinc-400 uppercase">
+                {f.label}
+              </label>
+              <input
+                className="border border-zinc-200 bg-white px-3.5 py-2 rounded-md text-zinc-950 text-xs focus:outline-none focus:border-zinc-950 w-full transition shadow-2xs font-mono placeholder:text-zinc-400"
+                name={f.name}
+                placeholder={f.placeholder}
+                value={OwnerDetails[f.name] || ""}
+                type="text"
+                onChange={(e) => OwnerDetailHandler(f.name, e.currentTarget.value)}
+              />
+            </div>
+          ))}
         </div>
       )}
     </div>

@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 
-// Minimal Plus / Minus Animated Icon
+// Minimal Plus / Minus Accordion Icon
 function AccordionIcon({ isOpen }: { isOpen: boolean }) {
   return (
-    <div className="relative w-3.5 h-3.5 flex items-center justify-center shrink-0 text-zinc-500">
+    <div className="relative w-4 h-4 flex items-center justify-center shrink-0 text-zinc-400">
       {/* Horizontal Line */}
-      <span className="absolute w-3 h-[1.5px] bg-zinc-600 transition-transform duration-300" />
-      {/* Vertical Line (rotates away when open) */}
+      <span className="absolute w-3.5 h-[1.5px] bg-zinc-600 transition-transform duration-300" />
+      {/* Vertical Line */}
       <span
-        className={`absolute w-3 h-[1.5px] bg-zinc-600 transition-transform duration-300 ${
+        className={`absolute w-3.5 h-[1.5px] bg-zinc-600 transition-transform duration-300 ${
           isOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
         }`}
       />
@@ -23,59 +23,34 @@ export default function FAQ() {
 
   const questions = [
     {
-      question: "What is this invoice generator and who is it for?",
+      question: "What is Luen and who is it built for?",
       answer:
-        "Luen is designed for freelancers, startups, small businesses, and agencies who want to create professional invoices quickly without complex accounting software.",
+        "Luen is a fast, minimalist invoice generator tailored for freelancers, contractors, indie hackers, and boutique agencies who need client-ready PDFs without clunky accounting overhead.",
     },
     {
-      question: "Can I customize my invoice design?",
+      question: "Can I customize templates, logos, and payment methods?",
       answer:
-        "Yes. You can customize invoice templates, colors, currency, logos, and business details to match your brand identity.",
+        "Yes. You can upload custom brand logos, toggle color accents, embed instant UPI payment QR codes, include wire instructions, and select from clean, designer-grade PDF layouts.",
     },
     {
-      question: "Is it free to use?",
+      question: "Is there a free plan available?",
       answer:
-        "Yes, there is a free plan that allows you to create and download invoices. Premium plans unlock advanced features like unlimited invoices, PDF branding, and invoice history.",
+        "Yes. The Starter tier is completely free forever and allows up to 5 invoices per month with full calculation features. Upgrading to Pro unlocks unlimited invoices, custom branding, and zero watermarks.",
     },
     {
-      question: "Is my data safe and secure?",
+      question: "How is my invoice and client data protected?",
       answer:
-        "Yes. Your data is securely stored and protected using industry-standard security practices. We never share your invoice data with third parties.",
+        "Your data security and privacy are top priorities. Invoices are stored in local-first browser memory or encrypted cloud storage with industry-standard practices. We never monetize or share your client information.",
     },
     {
-      question: "Do I need to create an account to generate invoices?",
+      question: "Do I need to register an account to create an invoice?",
       answer:
-        "You can create invoices without an account. However, signing up allows you to save invoices, access history, and manage your business details more efficiently.",
+        "No account is required to generate or export clean invoices. Creating a free account simply enables draft saving, client autofill profiles, and persistent billing history across devices.",
     },
     {
-      question: "Can I manage multiple clients and businesses?",
+      question: "Does Luen support international taxes and currencies?",
       answer:
-        "Yes. You can store multiple client profiles and business details, making it easy to switch between projects or companies.",
-    },
-    {
-      question: "Does it support multiple currencies and taxes?",
-      answer:
-        "Yes. The platform supports multiple currencies, tax rates (GST/VAT), discounts, and regional formatting to suit global invoicing needs.",
-    },
-    {
-      question: "Can I share invoices directly with my clients?",
-      answer:
-        "Yes. You can share invoices via downloadable PDFs or secure invoice links that clients can view online.",
-    },
-    {
-      question: "Can I edit an invoice after creating it?",
-      answer:
-        "Yes. You can edit invoices at any time before downloading or sharing them. Saved invoices can also be updated if changes are required.",
-    },
-    {
-      question: "Is this suitable for GST or VAT invoices?",
-      answer:
-        "Yes. You can add GST, VAT, or other tax details depending on your region and business requirements.",
-    },
-    {
-      question: "Do you offer customer support?",
-      answer:
-        "Yes. If you face any issues or have questions, you can reach out through our support channels for quick assistance.",
+        "Yes. Luen includes auto-calculating support for multi-currency invoicing ($ USD, € EUR, ₹ INR, £ GBP) as well as automated Indian GST (CGST/SGST/IGST) and standard global VAT rules.",
     },
   ];
 
@@ -86,54 +61,55 @@ export default function FAQ() {
   return (
     <section
       id="FAQ"
-      className="relative w-full bg-[#FAFAFA] text-zinc-800 font-sans py-14 md:py-20 border-b border-zinc-200/80 select-none overflow-hidden"
+      className="w-full bg-white text-zinc-900 font-sans select-none py-16 sm:py-24 border-t border-zinc-200"
     >
-      <div className="w-[90%] max-w-5xl mx-auto space-y-10">
+      {/* Constrained to max-w-6xl */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b border-zinc-200/80">
-          <div className="space-y-2 max-w-xl">
-            <span className="text-[10px] font-mono text-teal-600 uppercase tracking-widest font-semibold">
-              FREQUENTLY ASKED QUESTIONS
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900">
-              All your questions, answered.
-            </h2>
-            <p className="text-xs text-zinc-400 font-sans leading-relaxed">
-              Everything you need to know about creating, managing, and sharing invoices with Luen.
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12 border-b border-zinc-200">
+          <div className="max-w-xl">
+            <p className="text-[11px] sm:text-xs font-mono font-medium tracking-widest text-zinc-400 uppercase mb-3">
+              Frequently Asked Questions
             </p>
+            <h2 className="text-3xl sm:text-4xl font-normal tracking-tight text-zinc-950 leading-tight">
+              All your questions,{" "}
+              <span className="text-zinc-400">answered.</span>
+            </h2>
           </div>
+          <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
+            Everything you need to know about generating, customizing, and sharing invoices with Luen.
+          </p>
         </div>
 
         {/* Accordion List */}
-        <div className="divide-y divide-zinc-200/70 border-b border-zinc-200/70">
-          {questions.map((ele, idx) => {
+        <div className="divide-y divide-zinc-200 border-b border-zinc-200">
+          {questions.map((item, idx) => {
             const isOpen = openIndex === idx;
 
             return (
-              <div key={idx} className="transition-colors rounded-2xs">
+              <div key={idx} className="transition-colors">
                 <button
                   type="button"
                   onClick={() => toggleFAQ(idx)}
-                  className="w-full text-left flex justify-between items-center gap-4 cursor-pointer group py-3 px-2 hover:bg-zinc-100/60 rounded-xs transition-colors"
+                  className="w-full text-left flex justify-between items-center gap-6 py-5 px-1 sm:px-2 hover:bg-zinc-50/70 transition-colors cursor-pointer"
                 >
-                  <span className="text-xs sm:text-sm font-medium text-zinc-800 group-hover:text-teal-600 transition-colors leading-snug">
-                    {ele.question}
+                  <span className="text-sm sm:text-base font-normal text-zinc-900 leading-snug">
+                    {item.question}
                   </span>
-
                   <AccordionIcon isOpen={isOpen} />
                 </button>
 
                 <div
                   className={`grid transition-all duration-300 ease-in-out ${
                     isOpen
-                      ? "grid-rows-[1fr] opacity-100 mb-3"
-                      : "grid-rows-[0fr] opacity-0 mb-0"
+                      ? "grid-rows-[1fr] opacity-100 pb-5"
+                      : "grid-rows-[0fr] opacity-0 pb-0"
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="text-[11px] sm:text-xs text-zinc-400 leading-relaxed font-sans px-2 pt-1 pb-1">
-                      {ele.answer}
+                    <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed font-sans px-1 sm:px-2 pt-1 max-w-3xl">
+                      {item.answer}
                     </p>
                   </div>
                 </div>
@@ -143,9 +119,6 @@ export default function FAQ() {
         </div>
 
       </div>
-
-      {/* Large Bottom Faded Brand Watermark */}
-
     </section>
   );
 }

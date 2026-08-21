@@ -1,42 +1,41 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export default function SignSideBar() {
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-teal-400 via-teal-500 to-emerald-600 hidden flex-col justify-between p-8 sm:p-12 [@media(min-width:930px)]:flex overflow-hidden select-none  font-sans">
-      
-      {/* Top Tagline Badge */}
-      <div className="relative z-10">
-        <span className="text-[10px] font-mono font-bold text-teal-950 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-2xs border border-white/20 uppercase tracking-widest">
-          INVOICING & TELEMETRY
+    <div className="relative hidden [@media(min-width:930px)]:flex flex-col justify-between w-full max-w-[420px] h-full min-h-screen bg-zinc-50 border-r border-zinc-200 p-12 select-none font-sans">
+      {/* Brand */}
+      <div className="flex items-center gap-2">
+        <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
+          <Image
+            src="/favicon.png"
+            alt="Luen Logo"
+            width={20}
+            height={20}
+            className="object-contain"
+          />
+        </div>
+        <span className="font-bold text-base tracking-tight text-zinc-950">
+          Lu<span className="text-teal-500">en</span>
         </span>
       </div>
 
-      {/* Main Copy & Branding */}
-      <div className="relative z-10 space-y-3 max-w-lg">
-        <h1 className="text-6xl lg:text-7xl font-black tracking-tighter text-zinc-950">
-          Luen
-        </h1>
-        <p className="text-sm lg:text-base text-teal-950 font-medium leading-relaxed max-w-md">
-          Manage, track, and send invoices with ease. Stay on top of your business finances anytime, anywhere.
+      {/* Center Copy */}
+      <div className="space-y-3 max-w-xs">
+        <h2 className="text-2xl font-normal tracking-tight text-zinc-950 leading-snug">
+          Simple, fast invoicing for your business.
+        </h2>
+        <p className="text-xs text-zinc-500 leading-relaxed">
+          Create, track, and export clean PDF invoices in seconds with automatic GST and currency support.
         </p>
       </div>
 
-      {/* Bottom Footer Telemetry Label */}
-      <div className="relative z-10 text-[10px] font-mono text-teal-950/80 uppercase tracking-wider">
-        [ LUEN_ENGINE_v2026.2 ]
+      {/* Footer */}
+      <div className="text-[11px] font-mono text-zinc-400">
+        © 2026 Luen
       </div>
-
-      {/* Background Decorative Glass Orbs */}
-      <div 
-        aria-hidden="true" 
-        className="absolute w-96 h-96 bg-white/15 rounded-full blur-2xl -bottom-20 -right-20 pointer-events-none" 
-      />
-      <div 
-        aria-hidden="true" 
-        className="absolute w-64 h-64 bg-teal-300/20 rounded-full blur-xl top-10 -left-10 pointer-events-none" 
-      />
     </div>
   );
 }

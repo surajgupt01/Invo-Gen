@@ -1,94 +1,112 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#FAFAFA] border-t border-zinc-200/80 text-zinc-800 font-sans select-none overflow-hidden pt-12 pb-6">
-      
-      {/* Main Footer Container (Aligned with max-w-5xl layout) */}
-      <div className="w-[90%] max-w-5xl mx-auto">
+    <footer className="w-full bg-white border-t border-zinc-200 text-zinc-900 font-sans select-none overflow-hidden pt-16 pb-8">
+      {/* Constrained to max-w-6xl */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Top Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-12 border-b border-zinc-200/80">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-14 border-b border-zinc-200">
           
-          {/* Left Column: Branding, Tagline & Action Buttons */}
-          <div className="lg:col-span-7 space-y-4">
+          {/* Left Column: Brand, Tagline & Action Buttons */}
+          <div className="lg:col-span-6 space-y-5">
             
             {/* Brand Logo */}
-            <Link href="/" className="inline-block text-3xl font-bold tracking-tight text-zinc-900">
-              Lu<span className="text-teal-500">en</span>
+            <Link href="/" className="inline-flex items-center gap-2 select-none">
+              <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
+                <Image
+                  src="/favicon.png"
+                  alt="Luen Logo"
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
+              </div>
+              <span className="font-sans font-bold text-lg tracking-tight text-zinc-900">
+                Lu<span className="text-teal-500">en</span>
+              </span>
             </Link>
 
             {/* Tagline */}
-            <div className="space-y-1 max-w-md">
-              <h3 className="text-base sm:text-lg font-semibold tracking-tight text-zinc-900 leading-snug">
-                Create professional invoices in seconds — without spreadsheets.
+            <div className="space-y-1.5 max-w-md">
+              <h3 className="text-base sm:text-lg font-normal tracking-tight text-zinc-950 leading-snug">
+                Client-ready invoices created in seconds —{" "}
+                <span className="text-zinc-400">zero spreadsheets.</span>
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed">
-                Built for freelancers and small businesses who want clean, client-ready invoices without the hassle.
+              <p className="text-xs text-zinc-500 font-sans leading-relaxed">
+                Built for modern freelancers, contractors, and agencies who demand fast, clean, and beautifully structured PDF invoices.
               </p>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex items-center gap-2 pt-2">
-              <a
-                href="mailto:support@luen.in"
-                className="px-4 py-2 text-xs font-medium text-zinc-800 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xs shadow-2xs transition-colors cursor-pointer"
-              >
-                Contact Sales
-              </a>
-
+            <div className="flex items-center gap-3 pt-2">
               <Link
                 href="/dashboard"
-                className="px-4 py-2 text-xs font-medium text-white bg-zinc-950 hover:bg-black rounded-xs shadow-2xs transition-colors cursor-pointer"
+                className="px-4 py-2 text-xs font-medium text-white bg-zinc-950 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
               >
-                Try now
+                Create Invoice
               </Link>
+
+              <a
+                href="mailto:support@luen.in"
+                className="px-4 py-2 text-xs font-medium text-zinc-700 hover:text-zinc-950 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors"
+              >
+                Contact Support
+              </a>
             </div>
 
           </div>
 
           {/* Right Column: Navigation Links */}
-          <div className="lg:col-span-5 grid grid-cols-3 gap-6 text-xs font-sans pt-2">
+          <div className="lg:col-span-6 grid grid-cols-3 gap-6 text-xs font-sans pt-1">
             
-            {/* Column 1: Product / About */}
+            {/* Column 1: Product */}
             <div className="flex flex-col gap-3 items-start">
-              <Link href="/#about" className="text-zinc-600 hover:text-teal-600 transition-colors">
-                About
-              </Link>
-              <Link href="/#Features" className="text-zinc-600 hover:text-teal-600 transition-colors">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-1">
+                Product
+              </span>
+              <Link href="/#Features" className="text-zinc-600 hover:text-zinc-950 transition-colors">
                 Features
               </Link>
-              <Link href="/#PriceSection" className="text-zinc-600 hover:text-teal-600 transition-colors">
+              <Link href="#templates" className="text-zinc-600 hover:text-zinc-950 transition-colors">
+                Templates
+              </Link>
+              <Link href="/#PriceSection" className="text-zinc-600 hover:text-zinc-950 transition-colors">
                 Pricing
               </Link>
-              <a href="mailto:support@luen.in" className="text-zinc-600 hover:text-teal-600 transition-colors">
-                Contact
-              </a>
-              <Link href="/blog" className="text-zinc-600 hover:text-teal-600 transition-colors">
-                Blog
+              <Link href="/blog" className="text-zinc-600 hover:text-zinc-950 transition-colors">
+                Changelog & Blog
               </Link>
             </div>
 
             {/* Column 2: Resources & Docs */}
             <div className="flex flex-col gap-3 items-start">
-              <Link href="/docs" className="text-zinc-600 hover:text-teal-600 transition-colors">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-1">
+                Resources
+              </span>
+              <Link href="/docs" className="text-zinc-600 hover:text-zinc-950 transition-colors">
                 Documentation
               </Link>
-              <Link href="/#FAQ" className="text-zinc-600 hover:text-teal-600 transition-colors">
-                FAQ
+              <Link href="/#FAQ" className="text-zinc-600 hover:text-zinc-950 transition-colors">
+                FAQs
               </Link>
-              <a href="/support" className="text-zinc-600 hover:text-teal-600 transition-colors">
-                Support
+              <a href="mailto:support@luen.in" className="text-zinc-600 hover:text-zinc-950 transition-colors">
+                Help Desk
               </a>
             </div>
 
             {/* Column 3: Social Links */}
             <div className="flex flex-col gap-3 items-start">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-1">
+                Connect
+              </span>
               <a
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-600 hover:text-teal-600 transition-colors"
+                className="text-zinc-600 hover:text-zinc-950 transition-colors"
               >
                 X (Twitter)
               </a>
@@ -96,17 +114,17 @@ export default function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-600 hover:text-teal-600 transition-colors"
+                className="text-zinc-600 hover:text-zinc-950 transition-colors"
               >
                 LinkedIn
               </a>
               <a
-                href="https://youtube.com"
+                href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-600 hover:text-teal-600 transition-colors"
+                className="text-zinc-600 hover:text-zinc-950 transition-colors"
               >
-                YouTube
+                GitHub
               </a>
             </div>
 
@@ -115,15 +133,15 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Copyright & Legal */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-6 text-[11px] text-zinc-400 font-sans">
-          <p>© 2026 Invoice-Gen. All rights reserved.</p>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 text-xs text-zinc-400 font-sans">
+          <p>© {new Date().getFullYear()} Luen. All rights reserved.</p>
 
-          <div className="flex items-center gap-4">
-            <Link href="/terms?tab=privacy" className="hover:text-zinc-800 transition-colors">
+          <div className="flex items-center gap-6">
+            <Link href="/terms?tab=privacy" className="hover:text-zinc-900 transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms?tab=terms" className="hover:text-zinc-800 transition-colors">
-              Terms of Use
+            <Link href="/terms?tab=terms" className="hover:text-zinc-900 transition-colors">
+              Terms of Service
             </Link>
           </div>
         </div>
@@ -131,8 +149,8 @@ export default function Footer() {
       </div>
 
       {/* Large Bottom Faded Brand Watermark */}
-      <div className="w-full flex justify-center pointer-events-none select-none pt-10">
-        <span className="text-[12vw] font-black leading-none text-transparent bg-clip-text bg-gradient-to-b from-zinc-300/30 via-zinc-200/10 to-transparent tracking-tighter">
+      <div className="w-full flex justify-center pointer-events-none select-none pt-12">
+        <span className="text-[13vw] font-bold leading-none text-transparent bg-clip-text bg-gradient-to-b from-zinc-200/40 via-zinc-100/10 to-transparent tracking-tighter">
           Luen
         </span>
       </div>

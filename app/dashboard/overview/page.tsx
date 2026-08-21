@@ -23,8 +23,8 @@ import {
   CheckCircle2,
   Plus,
   MoreVertical,
-  ExternalLink,
   ChevronDown,
+  ArrowUpRight,
   Loader2,
 } from "lucide-react";
 
@@ -63,14 +63,14 @@ interface MetricCardProps {
   amount?: number;
   value?: string;
   subtext: string;
-  color?: "teal" | "default";
+  color?: "teal" | "rose" | "amber" | "default";
 }
 
 type RechartsValueType = number | string | readonly (string | number)[] | undefined;
 
 const MONTH_NAMES = [
-  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ] as const;
 
 const STATUS_COLORS: Record<string, string> = {
@@ -81,7 +81,6 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: "#A1A1AA",
 };
 
-// Helper function to extract a clean number from Recharts' ValueType
 function formatNumericValue(val: RechartsValueType): number {
   if (val === undefined || val === null) return 0;
   if (Array.isArray(val)) {
@@ -101,7 +100,7 @@ export default function OverviewDashboard() {
   const [selectedYear, setSelectedYear] = useState<string>(currentYearStr);
   const [selectedQuarter, setSelectedQuarter] = useState<string>("ALL");
 
-  // 1. Fetch pre-aggregated summary metrics
+  // 1. Summary Query
   const { data: summary } = useQuery<InvoiceSummaryData>({
     queryKey: ["invoice-summary", userId],
     queryFn: async () => {
@@ -112,7 +111,7 @@ export default function OverviewDashboard() {
     enabled: !!userId,
   });
 
-  // 2. Fetch invoices specifically for selected year
+  // 2. Year-based Invoices Query
   const { data, isLoading } = useQuery<{ invoices: InvoiceRecord[] }>({
     queryKey: ["dashboard-invoices", userId, selectedYear],
     queryFn: async () => {
@@ -128,19 +127,16 @@ export default function OverviewDashboard() {
 
   const rawInvoices = useMemo(() => data?.invoices || [], [data]);
 
-  // Dynamic fiscal year window generator
+  // Fiscal Years
   const availableYears = useMemo(() => {
     const yearSet = new Set<number>();
-
-    for (let y = currentYearNum + 3; y >= 2024; y--) {
+    for (let y = currentYearNum + 2; y >= 2024; y--) {
       yearSet.add(y);
     }
-
     const parsedSelected = parseInt(selectedYear, 10);
     if (!isNaN(parsedSelected)) {
       yearSet.add(parsedSelected);
     }
-
     rawInvoices.forEach((inv) => {
       if (inv.IssueDate) {
         const invYear = new Date(inv.IssueDate).getFullYear();
@@ -149,13 +145,10 @@ export default function OverviewDashboard() {
         }
       }
     });
-
-    return Array.from(yearSet)
-      .sort((a, b) => b - a)
-      .map(String);
+    return Array.from(yearSet).sort((a, b) => b - a).map(String);
   }, [rawInvoices, currentYearNum, selectedYear]);
 
-  // Compute metric row totals with live fallback
+  // Totals & counts calculation
   const counts = useMemo(() => {
     const pCount = Number(summary?.paidCount ?? 0);
     const pendCount = Number(summary?.pendingCount ?? 0);
@@ -202,7 +195,7 @@ export default function OverviewDashboard() {
     };
   }, [summary, rawInvoices]);
 
-  // Monthly telemetry calculation for bar chart
+  // Chart data
   const chartData = useMemo(() => {
     const monthsMap = Array.from({ length: 12 }, (_, i) => ({
       monthIndex: i,
@@ -233,12 +226,12 @@ export default function OverviewDashboard() {
     return monthsMap;
   }, [rawInvoices, selectedYear, selectedQuarter]);
 
-  // Status breakdown for donut chart
+  // Donut chart status distribution
   const statusDistribution = useMemo(() => {
     const hasData = counts.paid > 0 || counts.pending > 0 || counts.overdue > 0;
 
     if (!hasData) {
-      return [{ name: "No Invoices", value: 1, color: "#E4E4E7" }];
+      return [{ name: "No Invoices", value: 1, color: "#F4F4F5" }];
     }
 
     return [
@@ -254,219 +247,259 @@ export default function OverviewDashboard() {
   }, [counts]);
 
   return (
-    <div className="w-full h-auto bg-[#FAFAFA] text-zinc-800 p-3 sm:p-4 font-sans select-none flex flex-col gap-3 lg:overflow-hidden overflow-y-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-zinc-200/80 shrink-0">
-        <div className="space-y-0.5">
-          <h1 className="text-xs sm:text-sm font-bold tracking-tight text-zinc-900 uppercase flex items-center gap-2 font-mono">
-            <span className="w-1.5 h-3 bg-teal-600 inline-block" />
-            Overview Dashboard
-          </h1>
-          <p className="text-[11px] text-zinc-400 font-sans">
-            Real-time telemetry, revenue analytics & invoice collections.
-          </p>
-        </div>
+    <div className="w-full min-h-screen bg-white text-zinc-950 font-sans select-none pb-16">
+      {/* Top Banner / Breadcrumb area */}
+      <div className="border-b border-zinc-200 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-medium mb-1">
+                Luen Telemetry & Analytics
+              </p>
+              <h1 className="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-950">
+                Dashboard Overview
+              </h1>
+            </div>
 
-        <div className="flex items-center gap-2 font-sans flex-wrap">
-          {/* Fiscal Year Filter Dropdown */}
-          <div className="relative">
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="appearance-none px-2.5 py-1 pr-6 text-xs bg-white border border-zinc-200/80 text-zinc-800 font-mono font-medium rounded-xs shadow-2xs cursor-pointer focus:outline-none"
-            >
-              {availableYears.map((year) => (
-                <option key={year} value={year}>
-                  FY {year}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-3 h-3 text-zinc-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
+            {/* Top Bar Actions & Filters */}
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {/* Year Filter */}
+              <div className="relative">
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="appearance-none pl-3 pr-8 py-1.5 text-xs bg-white border border-zinc-200 text-zinc-900 font-mono font-medium rounded-md shadow-xs cursor-pointer focus:outline-none focus:border-zinc-900"
+                >
+                  {availableYears.map((year) => (
+                    <option key={year} value={year}>
+                      FY {year}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
 
-          <div className="flex items-center bg-zinc-100/70 p-0.5 border border-zinc-200/80 rounded-2xs text-[10px] font-mono">
-            {["ALL", "Q1", "Q2", "Q3", "Q4"].map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => setSelectedQuarter(q)}
-                className={`px-2 py-0.5 font-semibold transition-all cursor-pointer ${
-                  selectedQuarter === q
-                    ? "bg-white text-zinc-900 border border-zinc-200 shadow-2xs"
-                    : "text-zinc-500 hover:text-zinc-800"
-                }`}
+              {/* Quarter Filter */}
+              <div className="flex items-center bg-zinc-100 p-1 rounded-md border border-zinc-200/70 text-xs font-mono">
+                {["ALL", "Q1", "Q2", "Q3", "Q4"].map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => setSelectedQuarter(q)}
+                    className={`px-2.5 py-1 text-[11px] font-medium rounded-sm transition-all cursor-pointer ${
+                      selectedQuarter === q
+                        ? "bg-white text-zinc-950 shadow-xs border border-zinc-200/50"
+                        : "text-zinc-500 hover:text-zinc-950"
+                    }`}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+
+              {/* Primary Action Button */}
+              <Link
+                href="/dashboard/createInvoice"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-zinc-950 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
               >
-                {q}
-              </button>
-            ))}
+                <Plus className="w-3.5 h-3.5" />
+                <span>New Invoice</span>
+              </Link>
+            </div>
           </div>
-
-          <Link href="/dashboard/createInvoice">
-            <button className="flex items-center gap-1 px-3 py-1 text-xs font-medium bg-zinc-950 text-white hover:bg-black transition-colors rounded-xs shadow-2xs cursor-pointer">
-              <Plus className="w-3.5 h-3.5" />
-              <span>New Invoice</span>
-            </button>
-          </Link>
         </div>
       </div>
 
-      {/* Metric Cards Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 shrink-0">
-        <MetricCard
-          title="Total Revenue"
-          icon={<TrendingUp className="w-3.5 h-3.5 text-teal-600" />}
-          amount={counts.totalPaid}
-          subtext="Collected from settled invoices"
-          color="teal"
-        />
-        <MetricCard
-          title="Pending"
-          icon={<Clock className="w-3.5 h-3.5 text-amber-600" />}
-          amount={counts.totalPending}
-          subtext={`${counts.pending} active pending`}
-        />
-        <MetricCard
-          title="Overdue"
-          icon={<AlertCircle className="w-3.5 h-3.5 text-rose-600" />}
-          amount={counts.totalOverdue}
-          subtext={`${counts.overdue} past due date`}
-        />
-        <MetricCard
-          title="Paid Rate"
-          icon={<CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />}
-          value={`${paidRate}%`}
-          subtext={`${counts.paid} of ${counts.total} resolved`}
-        />
-      </div>
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
+        
+        {/* Metric Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            title="Total Revenue"
+            icon={<TrendingUp className="w-4 h-4 text-teal-600" />}
+            amount={counts.totalPaid}
+            subtext="Settled & collected payments"
+            color="teal"
+          />
+          <MetricCard
+            title="Pending Invoices"
+            icon={<Clock className="w-4 h-4 text-amber-500" />}
+            amount={counts.totalPending}
+            subtext={`${counts.pending} invoices awaiting payout`}
+            color="amber"
+          />
+          <MetricCard
+            title="Overdue Balance"
+            icon={<AlertCircle className="w-4 h-4 text-rose-500" />}
+            amount={counts.totalOverdue}
+            subtext={`${counts.overdue} invoices past due`}
+            color="rose"
+          />
+          <MetricCard
+            title="Collection Rate"
+            icon={<CheckCircle2 className="w-4 h-4 text-zinc-700" />}
+            value={`${paidRate}%`}
+            subtext={`${counts.paid} of ${counts.total} resolved`}
+          />
+        </div>
 
-      {/* Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 flex-1 min-h-85">
-        {/* Cash Flow Bar Chart */}
-        <div className="lg:col-span-8 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between lg:min-h-full min-h-80">
-          <div className="flex justify-between items-center font-sans shrink-0 mb-1">
-            <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono">
-              Cash Flow Telemetry ({selectedYear})
-            </h2>
-            <div className="flex items-center gap-3 text-[10px] font-mono">
-              <span className="flex items-center gap-1 text-zinc-500 uppercase">
-                <span className="w-1.5 h-1.5 bg-[#1875f0] rounded-2xs" />
-                COLLECTED
-              </span>
-              <span className="flex items-center gap-1 text-zinc-500 uppercase">
-                <span className="w-1.5 h-1.5 bg-black rounded-2xs" />
-                PENDING
-              </span>
+        {/* Analytics Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Revenue & Cash Flow Bar Chart */}
+          <div className="lg:col-span-8 bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between min-h-[380px]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-zinc-100 mb-4">
+              <div>
+                <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+                  Cash Flow Activity
+                </h2>
+                <p className="text-[11px] text-zinc-400 font-mono">
+                  Collected vs Pending for FY {selectedYear}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4 text-xs font-mono">
+                <span className="flex items-center gap-1.5 text-zinc-600">
+                  <span className="w-2 h-2 bg-teal-600 rounded-xs" />
+                  Collected
+                </span>
+                <span className="flex items-center gap-1.5 text-zinc-600">
+                  <span className="w-2 h-2 bg-zinc-950 rounded-xs" />
+                  Pending
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full flex-1 min-h-[260px] relative">
+              {isLoading ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={6}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F4F4F5" vertical={false} />
+                    <XAxis dataKey="month" stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={{ stroke: "#E4E4E7" }} />
+                    <YAxis stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      cursor={{ fill: "#F4F4F5", opacity: 0.6 }}
+                      formatter={(val: RechartsValueType) => [
+                        `₹${formatNumericValue(val).toLocaleString("en-IN")}`,
+                        "Amount",
+                      ]}
+                      contentStyle={{
+                        backgroundColor: "#FFFFFF",
+                        borderColor: "#E4E4E7",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontFamily: "monospace",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                      }}
+                    />
+                    <Bar dataKey="revenue" name="Collected" fill="#0D9488" radius={[4, 4, 0, 0]} barSize={14} />
+                    <Bar dataKey="pending" name="Pending" fill="#18181B" radius={[4, 4, 0, 0]} barSize={14} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 
-          <div className="w-full flex-1 min-h-0 relative">
-            {isLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Loader2 className="w-5 h-5 animate-spin text-teal-600" />
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 10, right: 5, left: -25, bottom: 0 }} barGap={4}>
-                  <CartesianGrid strokeDasharray="2 2" stroke="#F1F1F4" vertical={false} />
-                  <XAxis dataKey="month" stroke="#A1A1AA" fontSize={9} tickLine={false} />
-                  <YAxis stroke="#A1A1AA" fontSize={9} tickLine={false} />
+          {/* Status Breakdown Donut Chart */}
+          <div className="lg:col-span-4 bg-white border border-zinc-200 rounded-xl p-6 shadow-xs flex flex-col justify-between min-h-[380px]">
+            <div className="pb-4 border-b border-zinc-100">
+              <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+                Status Distribution
+              </h2>
+              <p className="text-[11px] text-zinc-400 font-mono">
+                Current invoice lifecycle
+              </p>
+            </div>
+
+            <div className="w-full flex-1 relative flex items-center justify-center my-2">
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={58}
+                    outerRadius={80}
+                    paddingAngle={statusDistribution.length > 1 ? 4 : 0}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {statusDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
                   <Tooltip
-                    cursor={{ fill: "#F4F4F5", opacity: 0.5 }}
-                    formatter={(val: RechartsValueType) => [
-                      `₹${formatNumericValue(val).toLocaleString("en-IN")}`,
-                      "Amount",
+                    formatter={(val: RechartsValueType, name: unknown) => [
+                      String(name) === "No Invoices" ? 0 : formatNumericValue(val),
+                      String(name ?? ""),
                     ]}
                     contentStyle={{
                       backgroundColor: "#FFFFFF",
                       borderColor: "#E4E4E7",
-                      borderRadius: "2px",
-                      fontSize: "10px",
+                      borderRadius: "8px",
+                      fontSize: "12px",
                       fontFamily: "monospace",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                     }}
                   />
-                  <Bar dataKey="revenue" name="Collected" fill="#1875f0" radius={[2, 2, 0, 0]} barSize={12} />
-                  <Bar dataKey="pending" name="Pending" fill="#000000" radius={[2, 2, 0, 0]} barSize={12} />
-                </BarChart>
+                </PieChart>
               </ResponsiveContainer>
-            )}
-          </div>
-        </div>
 
-        {/* Status Donut Chart */}
-        <div className="lg:col-span-4 bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs flex flex-col justify-between lg:min-h-full min-h-60">
-          <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono shrink-0">
-            Status Breakdown
-          </h2>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-xl font-bold text-zinc-950 font-mono">
+                  {paidRate}%
+                </span>
+                <span className="text-[9px] text-zinc-400 font-mono uppercase tracking-wider">
+                  Settled
+                </span>
+              </div>
+            </div>
 
-          <div className="w-full flex-1 min-h-36 relative flex items-center justify-center my-1">
-            <ResponsiveContainer width="100%" height={160}>
-              <PieChart>
-                <Pie
-                  data={statusDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={70}
-                  paddingAngle={statusDistribution.length > 1 ? 3 : 0}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {statusDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(val: RechartsValueType, name: unknown) => [
-                    String(name) === "No Invoices" ? 0 : formatNumericValue(val),
-                    String(name ?? ""),
-                  ]}
-                  contentStyle={{
-                    backgroundColor: "#FFFFFF",
-                    borderColor: "#E4E4E7",
-                    borderRadius: "2px",
-                    fontSize: "10px",
-                    fontFamily: "monospace",
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-sm font-bold text-zinc-900 font-mono">
-                {paidRate}%
-              </span>
-              <span className="text-[8px] text-zinc-400 font-mono uppercase">PAID</span>
+            <div className="flex justify-around pt-4 border-t border-zinc-100 text-xs font-mono">
+              {[
+                { name: "Paid", color: STATUS_COLORS.PAID },
+                { name: "Pending", color: STATUS_COLORS.PENDING },
+                { name: "Overdue", color: STATUS_COLORS.OVERDUE },
+              ].map((item) => (
+                <div key={item.name} className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span className="text-zinc-600">{item.name}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="flex justify-around pt-2 border-t border-zinc-100 text-[10px] font-mono shrink-0">
-            {[
-              { name: "Paid", color: STATUS_COLORS.PAID },
-              { name: "Pending", color: STATUS_COLORS.PENDING },
-              { name: "Overdue", color: STATUS_COLORS.OVERDUE },
-            ].map((item) => (
-              <div key={item.name} className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-                <span className="text-zinc-500">{item.name}</span>
-              </div>
-            ))}
+        </div>
+
+        {/* Recent Invoices Table */}
+        <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-xs">
+          <div className="flex items-center justify-between p-5 border-b border-zinc-200">
+            <div>
+              <h2 className="text-sm font-medium text-zinc-950 tracking-tight">
+                Recent Invoices
+              </h2>
+              <p className="text-xs text-zinc-500">
+                Latest client activity and invoice settlements
+              </p>
+            </div>
+            
+            <Link
+              href="/dashboard/invoices"
+              className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-950 transition-colors"
+            >
+              <span>View All Invoices</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-        </div>
-      </div>
 
-      {/* Recent Activity Table (Strictly 2 most recent records) */}
-      <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs shrink-0 space-y-2">
-        <div className="flex justify-between items-center gap-2 font-sans">
-          <h2 className="text-xs font-bold text-zinc-900 uppercase tracking-wider font-mono">
-            Recent Activity
-          </h2>
-          <Link href="/dashboard/invoices" className="flex items-center gap-1 text-[11px] text-teal-700 hover:text-teal-800 transition-colors font-medium">
-            <span className="hidden sm:inline">View All</span>
-            <ExternalLink className="w-3 h-3" />
-          </Link>
+          <RecentActivityTable invoices={rawInvoices} isLoading={isLoading} />
         </div>
 
-        <RecentActivityTable invoices={rawInvoices} isLoading={isLoading} />
       </div>
     </div>
   );
@@ -474,67 +507,122 @@ export default function OverviewDashboard() {
 
 function MetricCard({ title, icon, amount, value, subtext, color }: MetricCardProps) {
   return (
-    <div className="bg-white border border-zinc-200/80 p-3 rounded-xs shadow-2xs space-y-1">
-      <div className="flex justify-between items-center">
-        <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">{title}</span>
-        {icon}
+    <div className="bg-white border border-zinc-200 p-5 rounded-xl shadow-xs space-y-3 hover:border-zinc-300 transition-colors">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
+          {title}
+        </span>
+        <div className="p-1.5 rounded-md bg-zinc-50 border border-zinc-100">
+          {icon}
+        </div>
       </div>
       <div>
-        <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight font-mono">
+        <h3 className="text-2xl font-semibold text-zinc-950 tracking-tight font-mono">
           {value !== undefined ? value : `₹${(amount || 0).toLocaleString("en-IN")}`}
         </h3>
-        <p className={`text-[10px] font-sans ${color === "teal" ? "text-teal-700 font-medium" : "text-zinc-400"}`}>{subtext}</p>
+        <p
+          className={`text-xs mt-1 ${
+            color === "teal"
+              ? "text-teal-700 font-medium"
+              : color === "rose"
+              ? "text-rose-600 font-medium"
+              : "text-zinc-500"
+          }`}
+        >
+          {subtext}
+        </p>
       </div>
     </div>
   );
 }
 
-function RecentActivityTable({ invoices, isLoading }: { invoices: InvoiceRecord[]; isLoading: boolean }) {
-  const recentInvoices = useMemo(() => invoices.slice(0, 2), [invoices]);
+function RecentActivityTable({
+  invoices,
+  isLoading,
+}: {
+  invoices: InvoiceRecord[];
+  isLoading: boolean;
+}) {
+  const recentInvoices = useMemo(() => invoices.slice(0, 5), [invoices]);
 
   return (
-    <div className="overflow-x-auto border border-zinc-200/80 rounded-2xs">
+    <div className="w-full overflow-x-auto">
       <table className="w-full text-left text-xs text-zinc-700 font-sans">
-        <thead className="bg-zinc-50 border-b border-zinc-200/80 text-zinc-400 font-mono uppercase text-[9px] tracking-wider">
+        <thead className="bg-zinc-50/70 border-b border-zinc-200 text-zinc-400 font-mono uppercase text-[10px] tracking-wider">
           <tr>
-            <th className="py-2 px-3">Invoice ID</th>
-            <th className="py-2 px-3">Client</th>
-            <th className="py-2 px-3">Issued</th>
-            <th className="py-2 px-3">Due</th>
-            <th className="py-2 px-3">Amount</th>
-            <th className="py-2 px-3">Status</th>
-            <th className="py-2 px-3 text-right">Action</th>
+            <th className="py-3 px-5 font-medium">Invoice</th>
+            <th className="py-3 px-5 font-medium">Client</th>
+            <th className="py-3 px-5 font-medium">Issued Date</th>
+            <th className="py-3 px-5 font-medium">Due Date</th>
+            <th className="py-3 px-5 font-medium">Amount</th>
+            <th className="py-3 px-5 font-medium">Status</th>
+            <th className="py-3 px-5 text-right font-medium">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-100 bg-white">
           {isLoading ? (
-            <tr><td colSpan={7} className="py-6 text-center text-zinc-400 font-mono text-xs">Loading activity...</td></tr>
+            <tr>
+              <td colSpan={7} className="py-10 text-center text-zinc-400 font-mono text-xs">
+                Loading telemetry...
+              </td>
+            </tr>
           ) : recentInvoices.length === 0 ? (
-            <tr><td colSpan={7} className="py-6 text-center text-zinc-400 font-mono text-xs">No records found.</td></tr>
+            <tr>
+              <td colSpan={7} className="py-10 text-center text-zinc-400 font-mono text-xs">
+                No recent invoices recorded.
+              </td>
+            </tr>
           ) : (
             recentInvoices.map((inv) => (
               <tr key={inv.InvoiceId} className="hover:bg-zinc-50/80 transition-colors">
-                <td className="py-2 px-3 font-mono text-[11px] text-zinc-500 font-semibold">{inv.invoiceNumber}</td>
-                <td className="py-2 px-3">
-                  <div className="font-medium text-zinc-900 text-xs leading-tight">{inv.CustomerName || "Unassigned"}</div>
-                  <div className="text-[9px] text-zinc-400 font-mono leading-tight">{inv.CustomerEmail || "—"}</div>
+                <td className="py-3.5 px-5 font-mono text-xs text-zinc-900 font-semibold">
+                  {inv.invoiceNumber}
                 </td>
-                <td className="py-2 px-3 text-zinc-500 text-[10px] font-mono">{new Date(inv.IssueDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
-                <td className="py-2 px-3 text-zinc-500 text-[10px] font-mono">{new Date(inv.DueDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
-                <td className="py-2 px-3 font-semibold text-zinc-900 font-mono text-xs">{inv.Currency} {Number(inv.total).toFixed(2)}</td>
-                <td className="py-2 px-3">
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase rounded-2xs border ${
-                    inv.paymentStatus === "PAID" ? "bg-teal-50 text-teal-800 border-teal-200/80" :
-                    inv.paymentStatus === "OVERDUE" ? "bg-rose-50 text-rose-800 border-rose-200/80" :
-                    "bg-amber-50 text-amber-800 border-amber-200/80"
-                  }`}>
+                <td className="py-3.5 px-5">
+                  <div className="font-medium text-zinc-900 text-xs leading-tight">
+                    {inv.CustomerName || "Unassigned"}
+                  </div>
+                  <div className="text-[10px] text-zinc-400 font-mono leading-tight mt-0.5">
+                    {inv.CustomerEmail || "—"}
+                  </div>
+                </td>
+                <td className="py-3.5 px-5 text-zinc-500 text-xs font-mono">
+                  {new Date(inv.IssueDate).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+                <td className="py-3.5 px-5 text-zinc-500 text-xs font-mono">
+                  {new Date(inv.DueDate).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+                <td className="py-3.5 px-5 font-medium text-zinc-950 font-mono text-xs">
+                  {inv.Currency} {Number(inv.total).toFixed(2)}
+                </td>
+                <td className="py-3.5 px-5">
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-medium uppercase rounded-sm border ${
+                      inv.paymentStatus === "PAID"
+                        ? "bg-teal-50 text-teal-800 border-teal-200/80"
+                        : inv.paymentStatus === "OVERDUE"
+                        ? "bg-rose-50 text-rose-800 border-rose-200/80"
+                        : "bg-amber-50 text-amber-800 border-amber-200/80"
+                    }`}
+                  >
                     {inv.paymentStatus}
                   </span>
                 </td>
-                <td className="py-2 px-3 text-right">
-                  <button type="button" className="p-1 text-zinc-400 hover:text-zinc-800 transition-colors rounded-2xs hover:bg-zinc-100">
-                    <MoreVertical className="w-3.5 h-3.5" />
-                  </button>
+                <td className="py-3.5 px-5 text-right">
+                  <Link
+                    href={`/dashboard/invoice/${inv.InvoiceId}`}
+                    className="p-1.5 text-zinc-400 hover:text-zinc-900 transition-colors inline-block rounded-md hover:bg-zinc-100"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </Link>
                 </td>
               </tr>
             ))

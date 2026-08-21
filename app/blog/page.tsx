@@ -29,7 +29,6 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  // Schema.org Blog & ItemList structured data for search rich results
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -61,12 +60,12 @@ export default function BlogPage() {
   };
 
   return (
-    <>
+    <div className="w-full min-h-screen bg-white text-zinc-950 font-sans selection:bg-teal-100 selection:text-teal-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <BlogClient posts={BLOG_POSTS} />
-    </>
+    </div>
   );
 }

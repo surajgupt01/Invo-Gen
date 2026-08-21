@@ -2,18 +2,10 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import {
-  Calculator,
-  QrCode,
-  Palette,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Lock,
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 export default function FeatureSection() {
-  // Interactive mini calculator state for the live preview box
+  // Interactive mini calculator state
   const [qty, setQty] = useState<number>(2);
   const [rate, setRate] = useState<number>(1500);
   const [gstRate, setGstRate] = useState<number>(18);
@@ -25,100 +17,106 @@ export default function FeatureSection() {
   return (
     <section
       id="Features"
-      className="relative w-full max-w-5xl bg-[#FAFAFA] text-zinc-800 font-sans py-16 md:py-24 overflow-hidden border-b border-zinc-200/80 select-none"
+      className="w-full bg-white text-zinc-900 font-sans select-none py-16 sm:py-24 border-t border-zinc-200"
     >
-      <div className="w-[90%] max-w-[85vw] mx-auto space-y-16">
+      {/* Constrained to max-w-6xl */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
-        {/* SECTION HEADER */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-zinc-200/80">
-          <div className="space-y-3 max-w-2xl">
-            <span className="text-xs font-mono text-teal-600 uppercase tracking-widest font-semibold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>POWERFUL FEATURE SUITE</span>
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 leading-snug">
-              Everything you need to bill clients with total confidence.
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 font-sans leading-relaxed">
-              Forget complex accounting suites. Create, format, and issue client-ready PDF invoices without spreadsheets or hassle.
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12 border-b border-zinc-200">
+          <div className="max-w-xl">
+            <p className="text-[11px] sm:text-xs font-mono font-medium tracking-widest text-zinc-400 uppercase mb-3">
+              Powerful Feature Suite
             </p>
+            <h2 className="text-3xl sm:text-4xl font-normal tracking-tight text-zinc-950 leading-tight">
+              Everything you need to bill clients{" "}
+              <span className="text-zinc-400">with total confidence.</span>
+            </h2>
           </div>
 
-          <Link href="/dashboard/createInvoice">
-            <button className="px-5 py-2.5 bg-zinc-950 hover:bg-black text-white text-xs font-medium rounded-xs shadow-2xs transition-colors flex items-center gap-2 cursor-pointer font-sans whitespace-nowrap">
+          <div className="shrink-0 mb-1">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-medium text-white bg-zinc-950 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
+            >
               <span>Create Invoice Now</span>
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </Link>
+            </Link>
+          </div>
         </div>
 
-        {/* FEATURE HIGHLIGHT 1: INTERACTIVE CALCULATOR ENGINE */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pb-12 border-b border-zinc-200/80">
+        {/* Feature Highlight: Interactive Calculation Sandbox */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center py-12 border-b border-zinc-200">
           
-          {/* Left Text Explanation */}
+          {/* Left Text Block */}
           <div className="lg:col-span-5 space-y-4">
-            <span className="text-xs font-mono text-teal-600 uppercase tracking-wider font-semibold block">
-              AUTOMATED CALCULATION ENGINE
-            </span>
-            <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
-              Zero manual math. Zero formula errors.
+            <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
+              Automated Calculation Engine
+            </p>
+            <h3 className="text-2xl sm:text-3xl font-normal text-zinc-950 tracking-tight leading-snug">
+              Zero manual math. <br />
+              <span className="text-zinc-400">Zero formula errors.</span>
             </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans">
-              Input your line items and quantities—Luen automatically computes subtotals, applies GST/VAT breakdowns, and updates totals in real time.
+            <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed">
+              Input your line items and quantities—Luen automatically computes subtotals, applies tax breakdowns, and generates totals in real time.
             </p>
 
-            <div className="pt-2 space-y-2.5 text-xs text-zinc-600">
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                <span>Supports Indian GST (CGST, SGST, IGST)</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                <span>Multi-currency support ($ USD, € EUR, ₹ INR, £ GBP)</span>
-              </div>
-            </div>
+            <ul className="pt-2 space-y-2.5 text-xs text-zinc-600">
+              <li className="flex items-center gap-2.5">
+                <span className="text-teal-600 shrink-0">
+                  <Check className="w-4 h-4" />
+                </span>
+                <span>Supports Indian GST (CGST, SGST, IGST) & international VAT</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="text-teal-600 shrink-0">
+                  <Check className="w-4 h-4" />
+                </span>
+                <span>Multi-currency formatting ($ USD, € EUR, ₹ INR, £ GBP)</span>
+              </li>
+            </ul>
           </div>
 
-          {/* Right Interactive Calculation Sandbox */}
-          <div className="lg:col-span-7 bg-white border border-zinc-200/80 p-6 rounded-xs space-y-4 font-mono shadow-2xs">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 text-[10px] text-zinc-400 uppercase tracking-widest">
-              <span>INTERACTIVE PREVIEW</span>
-              <span className="text-teal-600 font-bold">LIVE ENGINE</span>
+          {/* Right Interactive Preview Card */}
+          <div className="lg:col-span-7 bg-zinc-50/50 border border-zinc-200 rounded-xl p-6 sm:p-8 space-y-5 font-mono shadow-xs">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-200 text-[10px] text-zinc-400 uppercase tracking-widest">
+              <span>Interactive Preview</span>
+              <span className="text-teal-600 font-bold">● Live Math Sandbox</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-[10px] text-zinc-400 uppercase mb-1">
+                <label className="block text-[10px] text-zinc-400 uppercase mb-1.5 font-medium">
                   Qty / Hours
                 </label>
                 <input
                   type="number"
                   value={qty}
                   onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-zinc-50 border border-zinc-200 text-xs px-3 py-2 rounded-xs text-zinc-800 font-mono focus:outline-teal-600"
+                  className="w-full bg-white border border-zinc-200 text-xs px-3 py-2 rounded-md text-zinc-900 font-mono focus:outline-zinc-900 shadow-2xs"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] text-zinc-400 uppercase mb-1">
+                <label className="block text-[10px] text-zinc-400 uppercase mb-1.5 font-medium">
                   Rate (₹)
                 </label>
                 <input
                   type="number"
                   value={rate}
                   onChange={(e) => setRate(Math.max(0, Number(e.target.value)))}
-                  className="w-full bg-zinc-50 border border-zinc-200 text-xs px-3 py-2 rounded-xs text-zinc-800 font-mono focus:outline-teal-600"
+                  className="w-full bg-white border border-zinc-200 text-xs px-3 py-2 rounded-md text-zinc-900 font-mono focus:outline-zinc-900 shadow-2xs"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] text-zinc-400 uppercase mb-1">
+                <label className="block text-[10px] text-zinc-400 uppercase mb-1.5 font-medium">
                   GST Rate
                 </label>
                 <select
                   value={gstRate}
                   onChange={(e) => setGstRate(Number(e.target.value))}
-                  className="w-full bg-zinc-50 border border-zinc-200 text-xs px-3 py-2 rounded-xs text-zinc-800 font-mono focus:outline-teal-600 cursor-pointer"
+                  className="w-full bg-white border border-zinc-200 text-xs px-3 py-2 rounded-md text-zinc-900 font-mono focus:outline-zinc-900 cursor-pointer shadow-2xs"
                 >
                   <option value={0}>0% (Exempt)</option>
                   <option value={5}>5% GST</option>
@@ -129,17 +127,17 @@ export default function FeatureSection() {
               </div>
             </div>
 
-            {/* Live Calculations Breakdown */}
-            <div className="bg-zinc-50/80 border border-zinc-200/80 p-3.5 rounded-xs space-y-2 text-xs">
+            {/* Calculated Output Summary */}
+            <div className="bg-white border border-zinc-200/80 p-4 rounded-lg space-y-2.5 text-xs shadow-2xs">
               <div className="flex justify-between text-zinc-500">
                 <span>Subtotal</span>
-                <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                <span className="font-semibold text-zinc-900">₹{subtotal.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between text-teal-600 font-semibold">
+              <div className="flex justify-between text-teal-600 font-medium">
                 <span>Tax ({gstRate}%)</span>
                 <span>₹{tax.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between font-bold text-zinc-900 border-t border-zinc-200 pt-2 text-sm">
+              <div className="flex justify-between font-bold text-zinc-950 border-t border-zinc-100 pt-2.5 text-sm">
                 <span>Total Amount Due</span>
                 <span>₹{total.toLocaleString("en-IN")}</span>
               </div>
@@ -148,54 +146,48 @@ export default function FeatureSection() {
 
         </div>
 
-        {/* 3-COLUMN FEATURE CARDS (UNBOXED) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+        {/* 3-Column Core Capabilities Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12">
           
-          {/* Feature 1 */}
-          <div className="space-y-3">
-            <span className="text-xs font-mono text-zinc-400 uppercase tracking-widest block">
-              01. PAYOUTS
+          <div className="space-y-2.5">
+            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">
+              01. Payouts
             </span>
-            <h3 className="text-lg font-bold text-zinc-900 tracking-tight">
+            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">
               Instant UPI & Bank Details
-            </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-              Print custom UPI QR codes (GPay, PhonePe, Paytm) or bank transfer details directly onto your PDF for faster client settlements.
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Embed custom UPI QR codes (GPay, PhonePe, Paytm) or bank wire instructions directly on the PDF for zero-friction settlements.
             </p>
           </div>
 
-          {/* Feature 2 */}
-          <div className="space-y-3">
-            <span className="text-xs font-mono text-zinc-400 uppercase tracking-widest block">
-              02. DESIGN
+          <div className="space-y-2.5">
+            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">
+              02. Design
             </span>
-            <h3 className="text-lg font-bold text-zinc-900 tracking-tight">
-              Designer PDF Templates
-            </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-              Switch effortlessly between modern, minimal, and high-density invoice layouts tailored to elevate your professional brand.
+            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">
+              Minimalist PDF Templates
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Clean typography and high-density layouts crafted to present your freelance or agency brand with extreme polish.
             </p>
           </div>
 
-          {/* Feature 3 */}
-          <div className="space-y-3">
-            <span className="text-xs font-mono text-zinc-400 uppercase tracking-widest block">
-              03. PRIVACY
+          <div className="space-y-2.5">
+            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">
+              03. Privacy
             </span>
-            <h3 className="text-lg font-bold text-zinc-900 tracking-tight">
-              Private & Local Storage
-            </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-              Your billing data stays yours. Draft invoices locally inside browser memory or sync with your profile for instant client autofill.
+            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">
+              Private & Local-First
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Your billing data stays private. Generate invoices instantly in your browser without mandatory accounts or tracking.
             </p>
           </div>
 
         </div>
 
       </div>
-
-      {/* Large Bottom Faded Brand Watermark */}
-
     </section>
   );
 }

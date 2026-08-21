@@ -3,11 +3,10 @@
 import { authClient } from "@/lib/auth-client";
 import SideNav from "../component/SideNav";
 import { useState, useEffect } from "react";
-import Menu from "../Icons/Menu";
-import CloseSide from "../Icons/CloseSide";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { X } from "lucide-react";
+import Image from "next/image";
+import { Menu, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -20,8 +19,6 @@ export default function DashboardLayout({
 
   // Desktop sidebar collapsed state
   const [menu, setMenu] = useState(true);
-
-  // Mobile drawer open state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -30,18 +27,17 @@ export default function DashboardLayout({
     }
   }, [isPending, session, router]);
 
-  // Automatically close mobile menu on route changes
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // Loading State - Light Theme
+  // Loading State
   if (isPending) {
     return (
-      <div className="h-screen w-full bg-[#FAFAFA] text-zinc-600 flex items-center justify-center font-mono">
-        <div className="flex items-center gap-2.5 border border-zinc-200 bg-white px-4 py-2.5 shadow-sm">
-          <span className="w-2 h-2 bg-teal-600 animate-ping" />
-          <span className="text-xs font-bold uppercase tracking-widest text-zinc-800">
+      <div className="h-screen w-full bg-white text-zinc-900 flex items-center justify-center font-mono">
+        <div className="flex items-center gap-3 border border-zinc-200 bg-white px-5 py-3 rounded-lg shadow-xs">
+          <Loader2 className="w-4 h-4 animate-spin text-zinc-950" />
+          <span className="text-xs font-mono uppercase tracking-widest text-zinc-600">
             Authenticating Session...
           </span>
         </div>
@@ -57,92 +53,79 @@ export default function DashboardLayout({
   const email = session.user.email ?? "";
 
   return (
-    <div className="h-screen w-full lg:overflow-hidden overflow-y-auto bg-[#FAFAFA] text-zinc-800 font-mono select-none selection:bg-teal-100 selection:text-teal-900">
+    <div className="h-screen w-full bg-white text-zinc-950 font-sans select-none flex flex-col lg:flex-row overflow-hidden">
       
-      {/* ==========================================
-          MOBILE TOP NAVBAR (< lg screens)
-      ========================================== */}
-      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-zinc-200 shrink-0 z-40 shadow-2xs">
-        <Link href="/dashboard/overview" className="flex items-center gap-2 font-sans">
-          <div className="w-6 h-6 bg-zinc-900 text-white font-black text-xs flex items-center justify-center font-mono">
-            L
+      {/* Mobile Top Header (< lg) */}
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-zinc-200 shrink-0 z-40">
+        <Link href="/dashboard/overview" className="inline-flex items-center gap-2">
+          <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
+            <Image
+              src="/favicon.png"
+              alt="Luen Logo"
+              width={20}
+              height={20}
+              className="object-contain"
+            />
           </div>
-          <span className="font-bold text-sm tracking-widest text-zinc-900 uppercase">
-            Luen
+          <span className="font-sans font-bold text-base tracking-tight text-zinc-950">
+            Lu<span className="text-teal-500">en</span>
           </span>
         </Link>
 
-        {/* Mobile Hamburger Toggle */}
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 text-zinc-600 hover:text-zinc-900 bg-white border border-zinc-200 focus:outline-none transition shadow-2xs cursor-pointer"
+          className="p-2 text-zinc-600 hover:text-zinc-950 rounded-md hover:bg-zinc-100 transition cursor-pointer"
           aria-label="Toggle Mobile Menu"
         >
-          {mobileMenuOpen ? (
-            <X className="w-5 h-5 text-teal-700" />
-          ) : (
-            <Menu />
-          )}
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </header>
 
-      {/* ==========================================
-          MOBILE DRAWER USING SideNav COMPONENT (< lg)
-      ========================================== */}
+      {/* Mobile Drawer (< lg) */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop Overlay */}
           <div
-            className="fixed inset-0 bg-zinc-900/30 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-zinc-950/40 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Slide-over Container rendering SideNav */}
-          <div className="relative h-full z-50 shadow-xl flex bg-white">
+          <div className="relative h-full z-50 shadow-2xl flex bg-white max-w-[280px] w-full">
             <SideNav name={name} email={email} menu={true} />
-            
-            {/* Close Button Header overlay for mobile drawer */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-3 right-3 p-1.5 text-zinc-500 hover:text-zinc-900 bg-zinc-50 border border-zinc-200 transition z-50 shadow-2xs cursor-pointer"
-              title="Close Menu"
+              className="absolute top-4 right-4 p-1.5 text-zinc-400 hover:text-zinc-900 rounded-md hover:bg-zinc-100 transition z-50 cursor-pointer"
             >
-              <CloseSide />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
       )}
 
-      {/* ==========================================
-          DESKTOP LAYOUT (lg+ screens)
-      ========================================== */}
-      <div className="h-full flex items-stretch min-h-0 relative">
-        
-        {/* Desktop Sidebar */}
-        <div
-          className={`${
-            menu ? "" : "h-full z-30"
-          } duration-300 ease-in-out lg:block hidden bg-white border-r border-zinc-200/80`}
-        >
-          <SideNav name={name} email={email} menu={menu} />
-        </div>
+      {/* Desktop Sidebar (lg+) with Border Collapse Button */}
+      <div className="hidden lg:flex relative shrink-0 h-full">
+        <SideNav name={name} email={email} menu={menu} />
 
-        {/* Desktop Collapse Toggle Button */}
+        {/* Toggle Button attached directly on the sidebar border */}
         <button
-          onClick={() => setMenu((e) => !e)}
-          className={`${
-            menu ? "left-52" : "left-2"
-          } absolute z-40 lg:block hidden p-1.5 text-zinc-500 hover:text-zinc-900 bg-white border border-zinc-200/80 top-2.5 transition-all duration-300 shadow-2xs cursor-pointer`}
-          title={menu ? "Collapse Sidebar" : "Expand Sidebar"}
+          type="button"
+          onClick={() => setMenu(!menu)}
+          className="absolute -right-3 top-6 z-40 w-6 h-6 rounded-full bg-white border border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50 flex items-center justify-center shadow-xs transition-colors cursor-pointer"
+          title={menu ? "Collapse sidebar" : "Expand sidebar"}
         >
-          {menu ? <CloseSide /> : <Menu />}
+          {menu ? (
+            <ChevronLeft className="w-3.5 h-3.5" />
+          ) : (
+            <ChevronRight className="w-3.5 h-3.5" />
+          )}
         </button>
-
-        {/* Main Content Area */}
-        <main className="flex-1 min-w-0 min-h-0 overflow-auto transition-all duration-300 bg-[#FAFAFA]">
-          {children}
-        </main>
       </div>
+
+      {/* Main Workspace */}
+      <main className="flex-1 min-w-0 min-h-0 overflow-y-auto bg-white">
+        {children}
+      </main>
 
     </div>
   );
