@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/pricing`,
+      url: `${baseUrl}/blog`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -47,7 +47,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/refund`,
+      url: `${baseUrl}/#PriceSection`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,
