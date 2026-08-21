@@ -1,10 +1,7 @@
 import { MetadataRoute } from "next";
 
-// Fetch posts from your database, CMS, or local markdown files
-async function getAllBlogSlugs(): Promise<
-  Array<{ slug: string; updatedAt: string }>
-> {
-  // Example: return await db.posts.findMany({ select: { slug: true, updatedAt: true } });
+// Fetch posts dynamically from your CMS, DB, or markdown files
+async function getAllBlogSlugs(): Promise<Array<{ slug: string; updatedAt: string }>> {
   return [
     {
       slug: "about-luen-how-our-browser-first-invoicing-work",
@@ -43,13 +40,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // 2. Static routes (removed the /#PriceSection anchor)
+  // 2. Static & Parameterized entries
   const staticEntries: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/signin`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/blog`,
@@ -70,13 +73,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/terms`,
+      url: `${baseUrl}/terms?tab=terms`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/privacy`,
+      url: `${baseUrl}/terms?tab=privacy`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,

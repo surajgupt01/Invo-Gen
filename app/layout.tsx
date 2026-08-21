@@ -119,10 +119,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    // google: "YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_KEY",
-    // yandex: "YOUR_YANDEX_VERIFICATION_KEY",
-  },
 };
 
 export default function RootLayout({
@@ -130,12 +126,53 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Rich Structured Data (JSON-LD) for Search Engine Crawlers
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "WebSite",
+        "@id": "https://www.luen.in/#website",
+        "url": "https://www.luen.in",
+        "name": "Luen",
+        "publisher": {
+          "@id": "https://www.luen.in/#organization",
+        },
+        "hasPart": [
+          {
+            "@type": "SiteNavigationElement",
+            "name": "Sign In",
+            "url": "https://www.luen.in/signin",
+          },
+          {
+            "@type": "SiteNavigationElement",
+            "name": "Blog",
+            "url": "https://www.luen.in/blog",
+          },
+          {
+            "@type": "SiteNavigationElement",
+            "name": "Documentation",
+            "url": "https://www.luen.in/docs",
+          },
+          {
+            "@type": "SiteNavigationElement",
+            "name": "Support",
+            "url": "https://www.luen.in/support",
+          },
+          {
+            "@type": "SiteNavigationElement",
+            "name": "Terms of Service",
+            "url": "https://www.luen.in/terms?tab=terms",
+          },
+          {
+            "@type": "SiteNavigationElement",
+            "name": "Privacy Policy",
+            "url": "https://www.luen.in/terms?tab=privacy",
+          },
+        ],
+      },
+      {
         "@type": "SoftwareApplication",
+        "@id": "https://www.luen.in/#software",
         "name": "Luen",
         "url": "https://www.luen.in",
         "applicationCategory": "BusinessApplication",
@@ -148,7 +185,8 @@ export default function RootLayout({
             "name": "Starter Free Tier",
             "price": "0",
             "priceCurrency": "INR",
-            "description": "5 free monthly invoice exports with essential templates and local persistence.",
+            "description":
+              "5 free monthly invoice exports with essential templates and local persistence.",
           },
           {
             "@type": "Offer",
@@ -156,7 +194,8 @@ export default function RootLayout({
             "price": "299",
             "priceCurrency": "INR",
             "billingDuration": "P1M",
-            "description": "Unlimited invoice downloads, watermark suppression, and custom branding.",
+            "description":
+              "Unlimited invoice downloads, watermark suppression, and custom branding.",
           },
           {
             "@type": "Offer",
@@ -164,16 +203,17 @@ export default function RootLayout({
             "price": "12",
             "priceCurrency": "USD",
             "billingDuration": "P1M",
-            "description": "Unlimited invoice downloads, multi-currency engine, and global payment support.",
+            "description":
+              "Unlimited invoice downloads, multi-currency engine, and global payment support.",
           },
         ],
       },
       {
         "@type": "Organization",
+        "@id": "https://www.luen.in/#organization",
         "name": "Luen",
         "url": "https://www.luen.in",
         "logo": "https://www.luen.in/favicon.png",
-        "sameAs": [],
         "contactPoint": {
           "@type": "ContactPoint",
           "email": "support@luen.in",
