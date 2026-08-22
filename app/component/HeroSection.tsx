@@ -3,8 +3,8 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="w-full bg-white pt-10 sm:pt-14 lg:pt-16">
-      {/* Constrained to max-w-6xl */}
+    <section className="w-full bg-white pt-10 sm:pt-14 lg:pt-16 overflow-hidden">
+      {/* Constrained Header */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Top Tagline */}
         <p className="text-[11px] sm:text-xs font-mono font-medium tracking-widest text-zinc-400 uppercase mb-5">
@@ -29,35 +29,36 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Feature Highlights Bar */}
-      <div className="border-y border-zinc-200">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 text-center">
-          <div className="py-4 px-4 flex items-center justify-center">
-            <span className="font-mono tracking-wider text-xs sm:text-sm font-semibold text-zinc-800 uppercase">
+      {/* Feature Highlights Bar - Single Line (horizontal scroll on mobile) */}
+      {/* Feature Highlights Bar - Pure Single Line (No Scroll) */}
+      <div className="w-full border-y border-zinc-200 overflow-hidden">
+        <div className="max-w-6xl mx-auto flex items-center justify-between divide-x divide-zinc-200 text-center">
+          <div className="py-2.5 sm:py-4 px-1 sm:px-3 flex-1 flex items-center justify-center min-w-0">
+            <span className="font-mono tracking-tighter sm:tracking-wider text-[8.5px] xs:text-[10px] sm:text-xs md:text-sm font-semibold text-zinc-800 uppercase truncate">
               Auto Calculations
             </span>
           </div>
 
-          <div className="py-4 px-4 flex items-center justify-center">
-            <span className="font-mono tracking-wider text-xs sm:text-sm font-semibold text-zinc-800 uppercase">
+          <div className="py-2.5 sm:py-4 px-1 sm:px-3 flex-1 flex items-center justify-center min-w-0">
+            <span className="font-mono tracking-tighter sm:tracking-wider text-[8.5px] xs:text-[10px] sm:text-xs md:text-sm font-semibold text-zinc-800 uppercase truncate">
               Multi-Currency
             </span>
           </div>
 
-          <div className="py-4 px-4 flex items-center justify-center">
-            <span className="font-mono tracking-wider text-xs sm:text-sm font-semibold text-zinc-800 uppercase">
+          <div className="py-2.5 sm:py-4 px-1 sm:px-3 flex-1 flex items-center justify-center min-w-0">
+            <span className="font-mono tracking-tighter sm:tracking-wider text-[8.5px] xs:text-[10px] sm:text-xs md:text-sm font-semibold text-zinc-800 uppercase truncate">
               Custom QR & Tax
             </span>
           </div>
 
-          <div className="py-4 px-4 flex items-center justify-center">
-            <span className="font-mono tracking-wider text-xs sm:text-sm font-semibold text-zinc-800 uppercase">
+          <div className="py-2.5 sm:py-4 px-1 sm:px-3 flex-1 flex items-center justify-center min-w-0">
+            <span className="font-mono tracking-tighter sm:tracking-wider text-[8.5px] xs:text-[10px] sm:text-xs md:text-sm font-semibold text-zinc-800 uppercase truncate">
               Clean PDF Export
             </span>
           </div>
 
-          <div className="py-4 px-4 flex items-center justify-center col-span-2 sm:col-span-1">
-            <span className="font-mono tracking-wider text-xs sm:text-sm font-semibold text-teal-600 uppercase">
+          <div className="py-2.5 sm:py-4 px-1 sm:px-3 flex-1 flex items-center justify-center min-w-0">
+            <span className="font-mono tracking-tighter sm:tracking-wider text-[8.5px] xs:text-[10px] sm:text-xs md:text-sm font-semibold text-teal-600 uppercase truncate">
               Zero Watermark
             </span>
           </div>
@@ -65,17 +66,16 @@ export default function HeroSection() {
       </div>
 
       {/* Product Mockup Preview Container */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 my-10  ">
-        <div className="relative border border-neutral-200 shadow-xl  bg-gradient-to-r from-blue-600 via-teal-400 to-amber-500 overflow-hidden pt-6 sm:pt-15 pl-6 sm:pl-12 lg:pl-16">
-          <div className=" overflow-hidden bg-white   border-zinc-200/80 shadow-4xl">
-            {/* Container sizing matches natural dashboard scale */}
-            <div className="w-full relative bg-zinc-50 ">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 my-6 sm:my-10">
+        <div className="relative  border border-neutral-200/80 shadow-2xl bg-gradient-to-r from-blue-600 via-teal-400 to-amber-500 overflow-hidden pt-4 sm:pt-10 lg:pt-12 pl-4 sm:pl-8 lg:pl-12">
+          <div className=" overflow-hidden bg-zinc-50 border-t border-l border-zinc-200/80 shadow-2xl">
+            <div className="w-full relative aspect-16/10 sm:aspect-16/9">
               <Image
                 src="/dash.png"
                 alt="Luen Live Invoice Generator Preview"
-                width={1920}
-                height={1080}
-                className="w-full h-auto object-contain object-left-top block"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1152px"
+                className="object-cover object-left-top"
                 priority
               />
             </div>
