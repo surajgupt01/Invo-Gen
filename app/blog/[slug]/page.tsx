@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Nav from "../../component/Nav";
 import Footer from "../../component/Footer";
-import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
+import { NEW_BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
 import { ArrowLeft, Clock, Calendar, User } from "lucide-react";
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({
+  return NEW_BLOG_POSTS.map((post) => ({
     slug: post.slug,
   }));
 }

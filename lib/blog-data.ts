@@ -9,16 +9,353 @@ export interface BlogPost {
   slug: string;
   title: string;
   description: string;
-  category: "Company" | "Automation" | "GST & Tax" | "Engineering" | "International";
+  category:
+    | "Company"
+    | "Automation"
+    | "GST & Tax"
+    | "Engineering"
+    | "International";
   categoryTab: string;
   readTime: string;
   publishedDate: string;
   author: string;
   content: BlogSection[];
 }
-
-export const BLOG_POSTS: BlogPost[] = [
+export const NEW_BLOG_POSTS: BlogPost[] = [
   {
+    slug: "how-to-create-an-invoice-step-by-step-guide",
+    title: "How to Create an Invoice: A Complete Step-by-Step Guide",
+    description:
+      "Learn how to create a professional invoice from scratch. Step-by-step instructions, essential line-item details, practical examples, and common billing mistakes to avoid.",
+    category: "Automation",
+    categoryTab: "automation",
+    readTime: "9 min read",
+    publishedDate: "August 18, 2026",
+    author: "Luen Team",
+    content: [
+      {
+        id: "introduction-definition",
+        title: "1. What Is an Invoice and Why Does It Matter?",
+        paragraphs: [
+          "An invoice is a structured commercial document issued by a seller or service provider to a client. It itemizes the products supplied or services rendered, states the total monetary balance due, and defines the exact timeframe and rails through which payment must be completed.",
+          "Beyond serving as a simple payment request, a professional invoice functions as a legally valid accounting record for both parties. For service providers, issuing clean, well-formatted invoices establishes professional credibility, accelerates payment settlement times, and prevents scope misunderstandings. For clients, receiving a complete invoice is essential for recording business expenses and claiming tax credits accurately.",
+        ],
+      },
+      {
+        id: "when-to-create",
+        title: "2. When Do You Need to Create an Invoice?",
+        paragraphs: [
+          "In commercial transactions, payment obligations require structured documentation. You should create and send an invoice across any of the following standard scenarios:",
+        ],
+        bulletPoints: [
+          "Freelance & Contract Work: Billing individual or corporate clients for design, development, writing, or consulting engagements.",
+          "Boutique Agency Deliverables: Invoicing monthly project retainers, fixed milestones, or approved scope changes.",
+          "Small Business & Trade Services: Requesting payment for physical goods sold, software licensing, or localized on-site services.",
+          "Upfront Project Deposits: Collecting partial payment (such as 30% or 50%) before kicking off high-scope client deliverables.",
+          "International Clients: Documenting cross-border service exports across multiple currencies for tax accounting and remittance verification.",
+        ],
+      },
+      {
+        id: "prerequisite-information",
+        title: "3. What Information Do You Need Before Creating an Invoice?",
+        paragraphs: [
+          "Before drafting an invoice, ensure you have gathered verified contact and billing information from both sides of the transaction. Missing identifiers are the primary cause of corporate accounting departments rejecting payment submissions.",
+        ],
+        bulletPoints: [
+          "Your Business Information: Official legal name or registered trade name, physical or registered postal address, direct contact email, and applicable tax identifiers (such as GSTIN, VAT, or EIN).",
+          "Client Billing Details: Client company name, official billing address, point-of-contact email, accounts payable department details, and client tax registration number.",
+          "Deliverable Scope Records: Clear documentation of work completed, approved hourly totals, or signed milestone agreement sheets.",
+          "Payment Rail Credentials: Exact bank routing parameters (IBAN, SWIFT/BIC, ACH routing number, or direct digital payment URLs).",
+        ],
+      },
+      {
+        id: "step-by-step-guide",
+        title: "4. How to Create an Invoice Step by Step",
+        paragraphs: [
+          "Following a standardized, repeatable sequence prevents clerical errors and ensures your document meets corporate accounting requirements.",
+        ],
+        bulletPoints: [
+          "1. Add Your Business Information: Place your legal trading name, logo, contact details, and registered tax number prominently in the header so clients can immediately identify the issuer.",
+          "2. Add Client Information: Specify the exact entity name and billing address of the customer to ensure the document is valid for their expense accounting.",
+          "3. Assign a Unique Invoice Number: Use a sequential, non-repeating alphanumeric code (such as INV-2026-001) for strict bookkeeping, audit trails, and tracking.",
+          "4. Specify the Invoice Date: Record the exact calendar date on which the document is issued to establish the official billing timeline.",
+          "5. State the Payment Due Date: Clearly define the deadline by which funds must clear (e.g., Net 14 or a fixed date) to eliminate payment ambiguity.",
+          "6. Itemize Products or Services: Break down each deliverable into discrete line items with transparent scope descriptions rather than vague summaries.",
+          "7. Input Quantities and Rates: State the billable hours, units, or milestone scope alongside unit prices so client accountants can verify the math.",
+          "8. Apply Applicable Taxes: Calculate and display local, regional, or international tax rates (such as GST, VAT, or Sales Tax) as separate line elements.",
+          "9. Calculate Totals: Clearly present the subtotal, applicable percentage discounts, total tax amounts, and the final bolded balance due.",
+          "10. Include Payment Rails & Instructions: List direct bank account numbers, IBAN/SWIFT codes, or embed clickable digital payment links.",
+          "11. Review and Export: Double-check all numbers, tax calculations, and contact data before downloading a clean vector PDF or sending it to the client.",
+        ],
+      },
+      {
+        id: "invoice-example",
+        title: "5. Example of a Professional Invoice",
+        paragraphs: [
+          "Here is an example demonstrating a clean, compliant invoice structure for a digital services contractor:",
+        ],
+        bulletPoints: [
+          "Issuer: Apex Digital Studio | 104 Innovation Way, Tech Park | Tax ID: US-EIN-98-7654321",
+          "Billed To: Horizon Logistics Corp | 500 Commerce Blvd, Suite 200 | Tax ID: US-EIN-12-3456789",
+          "Invoice Details: Invoice #: APX-2026-042 | Issue Date: August 18, 2026 | Due Date: September 01, 2026 (Net 14)",
+          "Line Item 1: Frontend Next.js Interface Redesign - 40 hrs @ $85.00/hr = $3,400.00",
+          "Line Item 2: API Integration & Payment Gateway Setup - Fixed Milestone = $1,200.00",
+          "Financial Summary: Subtotal: $4,600.00 | Tax (0% Service Export): $0.00 | Total Balance Due: $4,600.00 USD",
+          "Payment Rails: Direct Wire / ACH to Apex Studio (Routing: 123456789, Account: 987654321) or pay online via Wise/Stripe.",
+        ],
+      },
+      {
+        id: "mistakes-to-avoid",
+        title: "6. Common Invoice Mistakes to Avoid",
+        paragraphs: [
+          "Clerical errors on invoices introduce administrative friction and stall payouts. Before sending, ensure your document is free of these frequent issues:",
+        ],
+        bulletPoints: [
+          "Omitted Invoice Numbers: Duplicate or missing numbers cause invoice tracking confusion and lead client accounting software to flag submissions.",
+          "Vague Deliverable Descriptions: Labeling a line item simply as 'Services Rendered' creates review delays; always include specific scope details.",
+          "Missing or Ambiguous Due Dates: Using terms like 'Due Upon Receipt' lacks an enforceable deadline; specify an explicit calendar date.",
+          "Manual Calculation Errors: Incorrectly totaled line items or misapplied tax percentages require re-issuance and delay approvals.",
+          "Missing Payment Methods: Forgetting to provide complete banking coordinates, IBAN/SWIFT codes, or digital payment URLs forces unnecessary back-and-forth communication.",
+        ],
+      },
+      {
+        id: "online-browser-invoicing",
+        title: "7. Creating Invoices Online with Browser-Based Tools",
+        paragraphs: [
+          "While manual spreadsheets and basic word processing templates are widely accessible, they lack structural validation, require manual math calculations, and frequently produce broken layout formatting when exported to PDF format.",
+          "For freelancers and growing businesses seeking a fast, reliable workflow, a browser-first invoice generator like Luen provides a modern alternative. With Luen, you can input client details, calculate line items and taxes automatically, and compile crisp, client-ready vector PDF invoices directly within your browser in seconds—without requiring heavy accounting software suites or complex onboarding flows.",
+        ],
+      },
+      {
+        id: "faqs",
+        title: "8. Frequently Asked Questions",
+        paragraphs: [
+          "Quick answers to common questions about creating invoices:",
+        ],
+        bulletPoints: [
+          "Can I create an invoice without accounting software? Yes. You can draft invoices using online browser-based invoice generators, word processors, or spreadsheets without purchasing full-scale accounting software.",
+          "Can a freelancer issue an official invoice? Yes. Freelancers and independent contractors have full legal authority to issue invoices for their services by providing their personal or business contact details and tax identifiers.",
+          "What is the difference between an invoice and a receipt? An invoice is a payment request issued before or upon delivery of goods/services detailing what is owed. A receipt is an acknowledgment issued after payment has cleared confirming settlement.",
+          "How should I number my invoices? Use a consistent sequential system, such as starting with INV-001 or incorporating the year (e.g., INV-2026-001), ensuring no numbers are duplicated or skipped.",
+          "What happens if a client pays an invoice late? Follow up immediately with a polite payment reminder, attach the original invoice PDF, confirm receipt with accounts payable, and reference the agreed-upon payment terms.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "what-should-an-invoice-include-essential-elements",
+    title:
+      "What Should an Invoice Include? 10 Essential Elements of a Professional Invoice",
+    description:
+      "A comprehensive breakdown of the 10 mandatory components every professional invoice must include to ensure compliance, clear billing, and fast client approval.",
+    category: "GST & Tax",
+    categoryTab: "gst-tax",
+    readTime: "9 min read",
+    publishedDate: "August 20, 2026",
+    author: "Luen Team",
+    content: [
+      {
+        id: "direct-answer",
+        title: "1. The Anatomy of a Professional Invoice",
+        paragraphs: [
+          "A professional invoice must clearly identify the seller and buyer, provide a unique reference number, document the issue and due dates, describe the goods or services provided, itemize rates and applicable taxes, state the total balance due, and supply unambiguous payment instructions.",
+          "Whether you are billing a domestic small business or an international enterprise, including these core elements ensures statutory compliance, expedites accounts payable approvals, and prevents invoice disputes.",
+        ],
+      },
+      {
+        id: "ten-essential-elements",
+        title: "2. The 10 Essential Elements of an Invoice",
+        paragraphs: [
+          "Every compliant invoice should incorporate these 10 foundational elements:",
+        ],
+        bulletPoints: [
+          "1. Business or Seller Information: Your official legal name or trade name, registered address, direct email, phone number, and tax registration identifiers (such as GSTIN, VAT, or EIN).",
+          "2. Client or Buyer Information: The recipient's legal corporate entity name, registered billing address, and point-of-contact details to ensure proper corporate expense allocation.",
+          "3. Unique Invoice Number: A sequential, non-duplicative identifier that enables precise tracking and audit compliance across both accounting ledgers.",
+          "4. Invoice Issue Date: The exact date on which the document is generated, marking the beginning of the credit payment window.",
+          "5. Payment Due Date: The explicit final date by which payment must be completed (e.g., Net 14 or Net 30 terms).",
+          "6. Detailed Service / Product Descriptions: Specific line-item summaries describing the deliverables or project milestones completed.",
+          "7. Quantity, Unit Rate, and Line-Item Amounts: Transparent numerical breakdowns showing hours worked, units supplied, or milestone rates multiplied to calculate line totals.",
+          "8. Taxes, Fees, and Discounts: Clear itemization of applied regional taxes, standard statutory withholdings, or agreed-upon promotional discounts.",
+          "9. Total Balance Due: A prominently displayed subtotal, tax aggregate, and final bolded monetary total required to settle the invoice.",
+          "10. Payment Instructions and Terms: Concrete payment rails including bank account numbers, IBAN/SWIFT codes, digital payment URLs, and stated late payment policies.",
+        ],
+      },
+      {
+        id: "structural-example",
+        title: "3. Complete Invoice Structure Example",
+        paragraphs: [
+          "A properly formatted invoice balances visual clarity with structural data compliance:",
+        ],
+        bulletPoints: [
+          "Header Section: Issuer Name & Logo | Tax ID: 12-3456789 | Invoice #: INV-2026-108 | Issue Date: Aug 20, 2026 | Due Date: Sep 03, 2026",
+          "Recipient Block: Client: Vertex Media LLC | Billing Address: 840 North Market St, Austin, TX | Contact: ap@vertexmedia.com",
+          "Line Items: 'Cloud Infrastructure Migration & Security Audit' | Qty: 1 | Rate: $3,200.00 | Total: $3,200.00",
+          "Summary Calculations: Subtotal: $3,200.00 | Applicable Tax (0%): $0.00 | Total Balance Due: $3,200.00 USD",
+          "Remittance Details: Direct Bank Transfer: Bank of America | Routing: 026009593 | Account: 458920194 | SWIFT: BOFAUS3N",
+        ],
+      },
+      {
+        id: "optional-elements",
+        title: "4. Optional and Context-Specific Information",
+        paragraphs: [
+          "Depending on client corporate requirements and international tax frameworks, you may also want to include supplementary metadata on your invoices:",
+        ],
+        bulletPoints: [
+          "Purchase Order (PO) Number: Many enterprise finance departments require an internal PO number to match invoices with authorized purchase approvals.",
+          "Three-Letter ISO Currency Code: Explicitly specifying currency indicators (e.g., USD, EUR, GBP, AUD) avoids currency conversion disputes.",
+          "Statutory Tax Declarations: Mandatory regulatory phrases, such as service export declarations under Letters of Undertaking (LUT).",
+          "Client Account Reference: Dedicated customer account or contract codes for long-term recurring engagements.",
+        ],
+      },
+      {
+        id: "pre-send-checklist",
+        title: "5. Pre-Send Invoice Quality Checklist",
+        paragraphs: [
+          "Run through this quick verification checklist before sending your invoice to a client:",
+        ],
+        bulletPoints: [
+          "Are both the issuer's and recipient's legal trade names and addresses 100% accurate?",
+          "Is the invoice number sequential and completely unique across your billing records?",
+          "Are the issue date and explicit payment due date clearly displayed?",
+          "Does every line item clearly communicate the deliverable without ambiguous jargon?",
+          "Have line totals, subtotals, tax rates, and final balances been verified for mathematical accuracy?",
+          "Are full bank account coordinates, SWIFT codes, or direct payment URLs included?",
+        ],
+      },
+      {
+        id: "modern-generation",
+        title: "6. Generating Professional Invoices Online",
+        paragraphs: [
+          "Formatting invoices manually in static text documents often introduces layout alignment issues and calculation errors. Using an online invoicing tool simplifies this process.",
+          "With a modern browser-based invoicing tool like Luen, you can enter your business details, add itemized deliverables, calculate multi-currency totals and taxes, and export crisp, compliant vector PDF invoices in seconds—straight from your browser without tedious manual configuration.",
+        ],
+      },
+      {
+        id: "faqs",
+        title: "7. Frequently Asked Questions",
+        paragraphs: [
+          "Common questions regarding essential invoice components:",
+        ],
+        bulletPoints: [
+          "What is the single most important detail on an invoice? The total balance due combined with clear payment instructions and an unambiguous due date.",
+          "Is a Purchase Order (PO) number legally required? It is not universally required by law, but large corporate clients frequently mandate PO numbers to approve vendor payments.",
+          "Can I issue an invoice without a registered tax ID? Yes, if your business falls below local statutory registration thresholds. In such cases, provide your standard personal or trading details.",
+          "What happens if an invoice has a calculation error? You should immediately notify the client, void or cancel the incorrect invoice, and issue an amended document with a clear reference note.",
+          "Should I display my payment terms directly on the invoice? Yes. Stating payment terms (e.g., Net 14) and any late penalty policies directly on the invoice ensures clear expectations for accounts payable.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "how-to-invoice-a-client-as-a-freelancer",
+    title: "How to Invoice a Client as a Freelancer: A Complete Guide",
+    description:
+      "A complete invoicing guide for freelancers and independent contractors. Learn how to set payment terms, structure milestone deposits, invoice international clients, and get paid on time.",
+    category: "Automation",
+    categoryTab: "automation",
+    readTime: "10 min read",
+    publishedDate: "August 22, 2026",
+    author: "Luen Team",
+    content: [
+      {
+        id: "freelancer-invoicing-basics",
+        title: "1. What Is a Freelancer Invoice and Why It Matters",
+        paragraphs: [
+          "A freelancer invoice is a formal payment request and commercial document issued by an independent contractor to a client. It details the work delivered, hours or milestone fees, applied taxes, payment deadlines, and payment methods.",
+          "Invoicing is not just about requesting payment—it establishes a clear professional record of your work, sets structured payment expectations, and ensures smooth accounting approvals for both you and your client.",
+        ],
+      },
+      {
+        id: "billing-models",
+        title: "2. When and How Much Should a Freelancer Bill?",
+        paragraphs: [
+          "The timing and structure of your invoices depend on your contract type and project scope. Choosing the right billing structure helps protect your cash flow:",
+        ],
+        bulletPoints: [
+          "Upfront Deposits: For new clients or large fixed-price projects, charge an initial 30% to 50% deposit before beginning work to secure commitment.",
+          "Milestone Billing: Break substantial deliverables into verified stages (e.g., 30% kickoff, 30% midpoint review, 40% final delivery).",
+          "Hourly Invoicing: Bill bi-weekly or monthly by providing itemized timesheets showing hours worked multiplied by your agreed hourly rate.",
+          "Monthly Retainers: Issue invoices at the start of each month for ongoing advisory, maintenance, or design services with guaranteed availability.",
+        ],
+      },
+      {
+        id: "step-by-step-freelance-flow",
+        title: "3. How to Create a Freelancer Invoice Step by Step",
+        paragraphs: [
+          "Follow this simple step-by-step process to generate and send your invoice:",
+        ],
+        bulletPoints: [
+          "1. Add Your Professional Details: Your full legal name, trading name, contact email, address, and applicable tax numbers.",
+          "2. Add Client Information: The client's corporate business name, billing address, and the specific contact person handling finance.",
+          "3. Include Invoice Metadata: Assign a unique sequential invoice number (e.g., FREELANCE-2026-015), the issue date, and an explicit due date.",
+          "4. Itemize Deliverables: Clearly describe the specific work done (e.g., 'Brand Identity System & Figma Guidelines' instead of 'Design Work').",
+          "5. Calculate Subtotals, Discounts, and Taxes: Accurately apply any agreed scope discounts or applicable regional taxes.",
+          "6. Provide Convenient Payment Rails: Add your direct bank account information (IBAN/SWIFT/routing) or direct digital payment URLs (such as Stripe, Wise, or PayPal).",
+          "7. Review and Send: Export a clean vector PDF invoice and email it directly to the project lead and accounts payable team.",
+        ],
+      },
+      {
+        id: "freelance-example",
+        title: "4. Example of a Professional Freelance Invoice",
+        paragraphs: [
+          "Here is a realistic example of a clean invoice for an independent contractor:",
+        ],
+        bulletPoints: [
+          "Freelancer: Elena Rostova | Brand & UI Designer | Berlin, Germany | Tax ID: DE319827410",
+          "Billed To: Hyperion SaaS Ltd | 120 Fleet Street, London, UK | Contact: finance@hyperionsaas.co.uk",
+          "Metadata: Invoice Number: ER-2026-088 | Issue Date: August 22, 2026 | Due Date: September 05, 2026 (Net 14)",
+          "Line Item 1: UI/UX Redesign for Mobile iOS App (Milestone 2 Sign-off) - 1 Fixed Unit = $2,500.00",
+          "Line Item 2: Custom Design System Iconography Pack (25 Vector Assets) - 1 Fixed Unit = $750.00",
+          "Totals: Subtotal: $3,250.00 | VAT (Reverse Charge Applied): $0.00 | Total Balance Due: $3,250.00 USD",
+          "Payment Instructions: Wise Multi-Currency Transfer (IBAN: GB29WISE00000012345678) or pay via Stripe link.",
+        ],
+      },
+      {
+        id: "payment-terms-late-fees",
+        title: "5. Setting Payment Terms and Managing Overdue Invoices",
+        paragraphs: [
+          "Payment terms determine when your invoice is due. Standard freelancer terms include Net 7, Net 14, or Net 30 days. Shorter payment windows (such as Net 14) are typically best for independent contractors to keep cash flow predictable.",
+          "If an invoice becomes overdue, manage the situation professionally with a structured follow-up process:",
+        ],
+        bulletPoints: [
+          "Verify the Due Date: Ensure the payment window has actually elapsed and check your bank records for any incoming pending settlements.",
+          "Send a Friendly Reminder: Send a polite email 1 to 2 days after the due date with the original PDF invoice re-attached.",
+          "Confirm Accounts Payable Receipt: Check if the invoice requires additional details, such as internal PO numbers or vendor onboarding documentation.",
+          "Follow Up Systematically: Send formal follow-up notices at 7 and 14 days overdue, referencing the original contract terms.",
+        ],
+      },
+      {
+        id: "international-billing",
+        title: "6. Invoicing International Clients",
+        paragraphs: [
+          "Working with global clients requires extra attention to currency, cross-border payment fees, and tax reporting. To avoid unexpected bank fee deductions, clarify who covers intermediary wire transfer fees and specify the exact three-letter ISO billing currency code (e.g., USD, EUR, GBP).",
+          "Using virtual collection accounts (like Wise or Payoneer) can significantly reduce transfer fees compared to traditional SWIFT wire transfers. For a deeper breakdown of cross-border compliance, exchange rates, and banking rails, explore our comprehensive guide on international multi-currency invoicing.",
+        ],
+      },
+      {
+        id: "browser-invoicing-luen",
+        title: "7. Creating Freelance Invoices Online",
+        paragraphs: [
+          "Managing invoices across manual spreadsheets and document templates is slow and prone to formatting errors. Online invoice generators help freelancers streamline the entire process.",
+          "A browser-first invoicing tool like Luen enables freelancers to create clean, professional invoices in seconds. You can easily add client details, itemize hourly rates or fixed milestones, calculate multi-currency totals, and download sharp vector PDF invoices straight from your browser—no complex accounting setup required.",
+        ],
+      },
+      {
+        id: "freelancer-faqs",
+        title: "8. Frequently Asked Questions",
+        paragraphs: ["Common questions from freelancers about client billing:"],
+        bulletPoints: [
+          "What payment terms should I choose as a beginner freelancer? Net 14 is a balanced standard. It gives clients sufficient time to process payments while keeping your payout timeline reasonable.",
+          "Should I charge an upfront deposit? Yes. Requiring a 30% to 50% deposit before starting work is standard professional practice that helps secure commitment on both sides.",
+          "How do I send my invoice to a client? Export your invoice as a clean vector PDF and email it directly to your client contact and their accounts payable department.",
+          "Do I need to charge taxes on freelance services? This depends on your local tax laws and business revenue thresholds. Always check regional guidelines regarding sales tax, GST, or VAT registration.",
+          "What should I do if a client asks for a spreadsheet invoice? Send a finalized PDF invoice instead. PDFs ensure your formatting, calculations, and payment terms remain locked and unaltered.",
+        ],
+      },
+    ],
+  },
+    {
     slug: "about-luen-how-our-browser-first-invoicing-works",
     title: "Inside Luen: How Our Browser-First Invoicing Platform Works",
     description: "An in-depth look at Luen's mission, local-first privacy architecture, instant vector compilation engine, and how we help freelancers issue professional invoices without spreadsheets.",
@@ -268,7 +605,6 @@ export const BLOG_POSTS: BlogPost[] = [
     ]
   }
 ];
-
 export function getPostBySlug(slug: string): BlogPost | undefined {
-  return BLOG_POSTS.find((post) => post.slug === slug);
+  return NEW_BLOG_POSTS.find((post) => post.slug === slug);
 }

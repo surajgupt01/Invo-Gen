@@ -1,7 +1,9 @@
 import { MetadataRoute } from "next";
 
 // Fetch posts dynamically from your CMS, DB, or markdown files
-async function getAllBlogSlugs(): Promise<Array<{ slug: string; updatedAt: string }>> {
+async function getAllBlogSlugs(): Promise<
+  Array<{ slug: string; updatedAt: string }>
+> {
   return [
     {
       slug: "about-luen-how-our-browser-first-invoicing-work",
@@ -22,6 +24,18 @@ async function getAllBlogSlugs(): Promise<Array<{ slug: string; updatedAt: strin
     {
       slug: "international-multi-currency-invoicing-guide",
       updatedAt: "2026-08-15T00:00:00.000Z",
+    },
+    {
+      slug: "how-to-create-an-invoice-step-by-step-guide",
+      updatedAt: "2026-08-18T00:00:00.000Z",
+    },
+    {
+      slug: "what-should-an-invoice-include-essential-elements",
+      updatedAt: "2026-08-20T00:00:00.000Z",
+    },
+    {
+      slug: "how-to-invoice-a-client-as-a-freelancer",
+      updatedAt: "2026-08-22T00:00:00.000Z",
     },
   ];
 }

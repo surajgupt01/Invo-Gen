@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BLOG_POSTS } from "@/lib/blog-data";
+import { NEW_BLOG_POSTS } from "@/lib/blog-data";
 import BlogClient from "./BlogClient";
 
 export const metadata: Metadata = {
@@ -45,7 +45,7 @@ export default function BlogPage() {
         url: "https://www.luen.in/favicon.png",
       },
     },
-    blogPost: BLOG_POSTS.map((post, idx) => ({
+    blogPost: NEW_BLOG_POSTS.map((post, idx) => ({
       "@type": "BlogPosting",
       position: idx + 1,
       headline: post.title,
@@ -65,7 +65,7 @@ export default function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <BlogClient posts={BLOG_POSTS} />
+      <BlogClient posts={NEW_BLOG_POSTS} />
     </div>
   );
 }
