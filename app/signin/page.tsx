@@ -68,14 +68,14 @@ export default function SignUp() {
             </button>
 
             {/* GitHub Sign-in */}
-            <button
+            {/* <button
               type="button"
               onClick={handleGithubSignIn}
               className="w-full h-10 px-4 bg-zinc-950 hover:bg-zinc-800 text-white rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
             >
               <Github />
               <span>Continue with GitHub</span>
-            </button>
+            </button> */}
 
           </div>
 
