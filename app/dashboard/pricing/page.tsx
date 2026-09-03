@@ -49,9 +49,9 @@ const PRICING = {
   IN: {
     symbol: "₹",
     currency: "INR",
-    monthly: 399,
+    monthly: 349,
     yearly: 2999,
-    monthlyText: "₹399",
+    monthlyText: "₹349",
     yearlyText: "₹2,999",
     yearlyPerMonth: "₹250",
     paymentNote: "UPI Autopay, Netbanking & Domestic Indian Cards accepted.",
