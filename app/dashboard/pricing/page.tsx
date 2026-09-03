@@ -27,12 +27,21 @@ interface PurchasedDetails {
   subscriptionId?: string;
 }
 
-interface DashboardPricingProps {
-  userId?: string;
-  userEmail?: string;
-  currentPlan?: "free" | "pro";
-  activeInterval?: "monthly" | "yearly" | null;
-  invoicesUsed?: number;
+interface UserSettingsApiResponse {
+  user?: {
+    id?: string;
+    email?: string;
+    plan?: string;
+    billingCycle?: string;
+    downloads?: number;
+    country?: "IN" | "GLOBAL";
+  };
+  id?: string;
+  email?: string;
+  plan?: string;
+  billingCycle?: string;
+  downloads?: number;
+  country?: "IN" | "GLOBAL";
 }
 
 // Pricing Matrix
@@ -61,33 +70,21 @@ const PRICING = {
   },
 };
 
-export default function DashboardPricing({
-  userId: initialUserId = "",
-  userEmail: initialUserEmail = "",
-  currentPlan: initialCurrentPlan = "free",
-  activeInterval: initialActiveInterval = null,
-  invoicesUsed: initialDownloadsUsed = 0,
-}: DashboardPricingProps) {
-  const [billingInterval, setBillingInterval] = useState<"monthly" | "yearly">(
-    initialActiveInterval === "yearly" ? "yearly" : "monthly"
-  );
-  
-  // Country is locked based on auto-detection (no manual switcher)
+export default function DashboardPricing() {
+  const [billingInterval, setBillingInterval] = useState<"monthly" | "yearly">("monthly");
   const [country, setCountry] = useState<"IN" | "GLOBAL">("IN");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [sdkReady, setSdkReady] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // User State Hydration
-  const [, setUserId] = useState<string>(initialUserId);
-  const [userEmail, setUserEmail] = useState<string>(initialUserEmail);
-  const [planStatus, setPlanStatus] = useState<"FREE" | "PRO">(
-    initialCurrentPlan?.toLowerCase() === "pro" ? "PRO" : "FREE"
-  );
-  const [activeCycle, setActiveCycle] = useState<"monthly" | "yearly" | null>(
-    initialActiveInterval
-  );
-  const [downloadsUsed, setDownloadsUsed] = useState<number>(initialDownloadsUsed);
+  // User State Hydrated from Backend
+  const [, setUserId] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [planStatus, setPlanStatus] = useState<"FREE" | "PRO">("FREE");
+  const [activeCycle, setActiveCycle] = useState<"monthly" | "yearly" | null>(null);
+  const [downloadsUsed, setDownloadsUsed] = useState<number>(0);
 
   const MONTHLY_LIMIT = 5;
 
@@ -96,39 +93,59 @@ export default function DashboardPricing({
   const [purchasedDetails, setPurchasedDetails] = useState<PurchasedDetails | null>(null);
 
   useEffect(() => {
-    // 1. Auto-detect country based on browser timezone
+    // 1. Client-side Timezone auto-detect fallback
+    let detectedCountry: "IN" | "GLOBAL" = "IN";
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const isIndianSubcontinent =
         tz.includes("Calcutta") || tz.includes("Kolkata") || tz.includes("Asia/Colombo");
-      setCountry(isIndianSubcontinent ? "IN" : "GLOBAL");
+      detectedCountry = isIndianSubcontinent ? "IN" : "GLOBAL";
+      setCountry(detectedCountry);
     } catch {
       setCountry("IN");
     }
 
-    // 2. Fetch latest user settings
+    // 2. Fetch original user profile & active billing state
     async function fetchLatestUserSettings() {
       try {
+        setInitialLoading(true);
         const res = await fetch("/api/settings", { credentials: "include" });
         if (res.ok) {
-          const data = await res.json();
+          const data: UserSettingsApiResponse = await res.json();
           const dbUser = data?.user || data || {};
 
           if (dbUser.id) setUserId(dbUser.id);
           if (dbUser.email) setUserEmail(dbUser.email);
-          if (dbUser.plan) setPlanStatus(dbUser.plan.toUpperCase());
-          if (typeof dbUser.downloads === "number") setDownloadsUsed(dbUser.downloads);
+          if (dbUser.plan) {
+            setPlanStatus(dbUser.plan.toUpperCase() === "PRO" ? "PRO" : "FREE");
+          }
+          if (typeof dbUser.downloads === "number") {
+            setDownloadsUsed(dbUser.downloads);
+          }
+
+          // If backend provided geo-location country header, prioritize it over client timezone
+          if (dbUser.country === "IN" || dbUser.country === "GLOBAL") {
+            setCountry(dbUser.country);
+          }
 
           const cycle =
-            dbUser.billingCycle?.toLowerCase() ||
-            (dbUser.plan?.toUpperCase() === "PRO" ? "monthly" : null);
+            dbUser.billingCycle?.toLowerCase() === "yearly"
+              ? "yearly"
+              : dbUser.billingCycle?.toLowerCase() === "monthly"
+              ? "monthly"
+              : dbUser.plan?.toUpperCase() === "PRO"
+              ? "monthly"
+              : null;
+
           setActiveCycle(cycle);
-          if (cycle === "yearly" || cycle === "monthly") {
+          if (cycle) {
             setBillingInterval(cycle);
           }
         }
       } catch (err) {
         console.error("Failed to fetch user billing settings:", err);
+      } finally {
+        setInitialLoading(false);
       }
     }
 
@@ -259,23 +276,29 @@ export default function DashboardPricing({
                 <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950">
                   Plan Confirmed
                 </h2>
-                <p className="text-[10px] text-zinc-400 font-mono">Invoice #{purchasedDetails?.paymentId?.slice(-6)}</p>
+                <p className="text-[10px] text-zinc-400 font-mono">
+                  Invoice #{purchasedDetails?.paymentId?.slice(-6)}
+                </p>
               </div>
             </div>
 
             <p className="text-xs text-zinc-600 leading-relaxed">
-              Your Pro subscription is now active. Watermarks have been removed and your unlimited export quota is live.
+              Your Pro subscription is active. Watermarks have been removed and your unlimited export quota is live.
             </p>
 
             <div className="bg-zinc-50 border border-zinc-200/80 p-3 rounded-lg space-y-1.5 text-[11px] font-mono text-zinc-600">
               <div className="flex justify-between">
                 <span className="text-zinc-400">Payment ID:</span>
-                <span className="font-medium text-zinc-950 truncate max-w-[170px]">{purchasedDetails?.paymentId}</span>
+                <span className="font-medium text-zinc-950 truncate max-w-[170px]">
+                  {purchasedDetails?.paymentId}
+                </span>
               </div>
               {purchasedDetails?.subscriptionId && (
                 <div className="flex justify-between">
                   <span className="text-zinc-400">Subscription:</span>
-                  <span className="font-medium text-zinc-950 truncate max-w-[170px]">{purchasedDetails.subscriptionId}</span>
+                  <span className="font-medium text-zinc-950 truncate max-w-[170px]">
+                    {purchasedDetails.subscriptionId}
+                  </span>
                 </div>
               )}
               <div className="flex justify-between pt-1.5 border-t border-zinc-200/60">
@@ -297,7 +320,7 @@ export default function DashboardPricing({
         </div>
       )}
 
-      <main className="w-full   max-w-5xl mx-auto p-4 sm:p-6 font-sans select-none space-y-6">
+      <main className="w-full max-w-5xl mx-auto p-4 sm:p-6 font-sans select-none space-y-6">
         {/* Header Telemetry */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-200 pb-4 gap-4">
           <div>
@@ -313,14 +336,18 @@ export default function DashboardPricing({
             <div className="text-[11px] font-mono text-zinc-600 bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md shadow-2xs">
               TIER:{" "}
               <span className="font-semibold text-zinc-950">
-                {isPro ? `PRO (${(activeCycle || "ACTIVE").toUpperCase()})` : "FREE"}
+                {initialLoading
+                  ? "FETCHING..."
+                  : isPro
+                  ? `PRO (${(activeCycle || "ACTIVE").toUpperCase()})`
+                  : "FREE"}
               </span>
             </div>
           </div>
         </div>
 
         {/* 2-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-14  gap-5 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
           {/* PRO TIER CARD */}
           <div
             className={`bg-white border rounded-xl p-5 sm:p-6 space-y-5 shadow-xs md:col-span-7 ${
@@ -373,7 +400,9 @@ export default function DashboardPricing({
               <div>
                 <div className="flex items-baseline gap-1.5 font-mono">
                   <span className="text-3xl font-semibold tracking-tight text-zinc-950">
-                    {billingInterval === "monthly" ? currentPricing.monthlyText : currentPricing.yearlyText}
+                    {billingInterval === "monthly"
+                      ? currentPricing.monthlyText
+                      : currentPricing.yearlyText}
                   </span>
                   <span className="text-xs text-zinc-400 font-normal">
                     {billingInterval === "yearly" ? "/year" : "/month"}
@@ -438,6 +467,7 @@ export default function DashboardPricing({
                 type="button"
                 disabled={
                   loading ||
+                  initialLoading ||
                   !sdkReady ||
                   isHighestTierActive ||
                   isSelectedPlanActive
@@ -445,9 +475,11 @@ export default function DashboardPricing({
                 onClick={handleSubscribe}
                 className="w-full py-2.5 px-4 text-xs font-medium text-white bg-zinc-950 hover:bg-zinc-800 active:bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition-all cursor-pointer shadow-xs flex items-center justify-center gap-2"
               >
-                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                <span>{getButtonText()}</span>
-                {!loading && !isSelectedPlanActive && !isHighestTierActive && (
+                {(loading || initialLoading) && (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                )}
+                <span>{initialLoading ? "Checking plan..." : getButtonText()}</span>
+                {!loading && !initialLoading && !isSelectedPlanActive && !isHighestTierActive && (
                   <ArrowRight className="w-3.5 h-3.5" />
                 )}
               </button>
@@ -501,7 +533,11 @@ export default function DashboardPricing({
                       : "text-zinc-900"
                   }`}
                 >
-                  {isPro ? "UNLIMITED" : `${downloadsUsed} / ${MONTHLY_LIMIT} DOWNLOADS`}
+                  {initialLoading
+                    ? "..."
+                    : isPro
+                    ? "UNLIMITED"
+                    : `${downloadsUsed} / ${MONTHLY_LIMIT} DOWNLOADS`}
                 </span>
               </div>
 
@@ -520,7 +556,7 @@ export default function DashboardPricing({
                 />
               </div>
 
-              {!isPro && (
+              {!isPro && !initialLoading && (
                 <div className="flex justify-between items-center text-[10px] text-zinc-400 font-mono pt-0.5">
                   <span>
                     {MONTHLY_LIMIT - downloadsUsed > 0
