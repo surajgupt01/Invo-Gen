@@ -19,19 +19,15 @@ export const auth = betterAuth({
   // Automatically includes your custom User fields in the session object
   user: {
     additionalFields: {
-      subscription: {
-        type: "boolean",
-        defaultValue: false,
-      },
-      Downloads: {
+      downloads: {
         type: "number",
         defaultValue: 0,
       },
-      Storage: {
+      storage: {
         type: "number",
         defaultValue: 0,
       },
-      lastLogin: {
+      lastloginAt : {
         type: "date",
         required: false,
       },
