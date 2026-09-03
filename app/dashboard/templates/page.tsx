@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, memo } from "react";
 import TempDesign from "@/app/component/ModernTemp";
 import InvoicePreview from "@/app/component/InvoicePreview";
 import InvoicePreview2 from "@/app/component/Design2";
@@ -18,18 +18,90 @@ import {
   Maximize2,
 } from "lucide-react";
 
+const TemplateDesigns = {
+  classic: InvoicePreview,
+  modern: TempDesign,
+  regular: InvoicePreview2,
+  trendy: InvoicePreview3,
+  sassy: InvoicePreview4,
+  Slate: InvoicePreview5,
+};
+
+type TempTypes = keyof typeof TemplateDesigns;
+
+// Memoized thumbnail card to prevent all previews from re-rendering on selection change
+interface TemplateThumbnailProps {
+  id: TempTypes;
+  isActive: boolean;
+  isSaved: boolean;
+  onSelect: (id: TempTypes) => void;
+  Component: React.ComponentType;
+}
+
+const TemplateThumbnail = memo(function TemplateThumbnail({
+  id,
+  isActive,
+  isSaved,
+  onSelect,
+  Component,
+}: TemplateThumbnailProps) {
+  return (
+    <div
+      onClick={() => onSelect(id)}
+      className={`relative h-28 md:h-36 w-36 md:w-full shrink-0 border cursor-pointer transition-[border-color,box-shadow] duration-150 group overflow-hidden rounded-lg will-change-transform ${
+        isActive
+          ? "border-zinc-950 ring-1 ring-zinc-950/20 shadow-xs bg-white"
+          : "border-zinc-200 hover:border-zinc-300 bg-white"
+      }`}
+    >
+      {/* Thumbnail Scaled View with hardware compositor boost */}
+      <div
+        className={`absolute inset-0 origin-top-left transform-gpu scale-[0.08] md:scale-[0.14] w-[210mm] h-[297mm] transition-opacity duration-150 pointer-events-none select-none ${
+          isActive ? "opacity-100" : "opacity-45 group-hover:opacity-75"
+        }`}
+        style={{ contentVisibility: "auto" }}
+      >
+        <Component />
+      </div>
+
+      {/* Top Badges */}
+      <div className="absolute top-2 left-2 right-2 flex justify-between items-center pointer-events-none z-10">
+        {isSaved ? (
+          <span className="px-1.5 py-0.5 bg-teal-600 text-white text-[9px] font-mono font-medium uppercase tracking-wider rounded-sm shadow-xs">
+            Active
+          </span>
+        ) : (
+          <span />
+        )}
+
+        {isActive && !isSaved && (
+          <span className="px-1.5 py-0.5 bg-white/95 backdrop-blur-xs text-zinc-800 border border-zinc-200 text-[9px] font-mono font-medium uppercase rounded-sm shadow-2xs">
+            Previewing
+          </span>
+        )}
+      </div>
+
+      {/* Bottom Control Bar */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 py-1.5 px-3 border-t flex items-center justify-between transition-colors z-10 ${
+          isActive
+            ? "bg-zinc-950 border-zinc-950 text-white"
+            : "bg-white border-zinc-100 text-zinc-700 group-hover:text-zinc-950"
+        }`}
+      >
+        <span className="text-[11px] font-mono font-medium capitalize truncate">
+          {id}
+        </span>
+
+        {isActive && (
+          <Sparkles className="w-3.5 h-3.5 text-teal-400 animate-pulse" />
+        )}
+      </div>
+    </div>
+  );
+});
+
 export default function Templates() {
-  const TemplateDesigns = {
-    classic: InvoicePreview,
-    modern: TempDesign,
-    regular: InvoicePreview2,
-    trendy: InvoicePreview3,
-    sassy: InvoicePreview4,
-    Slate: InvoicePreview5,
-  };
-
-  type TempTypes = keyof typeof TemplateDesigns;
-
   const { handler, selectedTemplate } = useInvoiceSelect();
 
   const [ActiveComponent, setActiveComponent] = useState<TempTypes>(
@@ -53,6 +125,8 @@ export default function Templates() {
   const a4Height = 1123;
 
   useEffect(() => {
+    let animationFrameId: number;
+
     const updateScale = () => {
       if (!canvasRef.current) return;
       const isMobile = window.innerWidth < 768;
@@ -63,16 +137,23 @@ export default function Templates() {
       const scaleX = containerWidth / a4Width;
       const scaleY = containerHeight / a4Height;
 
-      // On mobile, scale strictly by available width so the entire width is legible
       const fittedScale = isMobile ? scaleX : Math.min(scaleX, scaleY, 1);
       setScale(Math.max(fittedScale, 0.28));
     };
 
-    const resizeObserver = new ResizeObserver(updateScale);
+    const debouncedUpdate = () => {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(updateScale);
+    };
+
+    const resizeObserver = new ResizeObserver(debouncedUpdate);
     if (canvasRef.current) resizeObserver.observe(canvasRef.current);
 
     updateScale();
-    return () => resizeObserver.disconnect();
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -102,10 +183,8 @@ export default function Templates() {
 
   return (
     <div className="flex flex-col md:flex-row gap-4 h-full w-full bg-white text-zinc-950 p-3 sm:p-5 font-sans select-none overflow-y-auto md:overflow-hidden">
-      
       {/* --- SIDEBAR: CATALOG & MINI PREVIEWS --- */}
       <aside className="w-full md:w-80 flex flex-col border border-zinc-200 bg-white shrink-0 h-44 md:h-full rounded-xl shadow-xs overflow-hidden">
-        
         {/* Header Bar */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100 bg-white shrink-0">
           <div className="flex items-center gap-2">
@@ -115,7 +194,8 @@ export default function Templates() {
             </h2>
           </div>
           <span className="text-[11px] text-zinc-400 font-mono">
-            {String(templateKeys.length).padStart(2, "0")} / {String(Object.keys(TemplateDesigns).length).padStart(2, "0")}
+            {String(templateKeys.length).padStart(2, "0")} /{" "}
+            {String(Object.keys(TemplateDesigns).length).padStart(2, "0")}
           </span>
         </div>
 
@@ -134,72 +214,22 @@ export default function Templates() {
         </div>
 
         {/* Template Mini Preview List */}
-        <div className="flex-1 overflow-x-auto md:overflow-y-auto p-2.5 flex flex-row md:flex-col gap-2.5 bg-zinc-50/30 scrollbar-none">
+        <div className="flex-1 overflow-x-auto md:overflow-y-auto p-2.5 flex flex-row md:flex-col gap-2.5 bg-zinc-50/30 scrollbar-none overscroll-contain [-webkit-overflow-scrolling:touch]">
           {templateKeys.length === 0 ? (
             <div className="p-6 text-center text-zinc-400 text-xs font-mono w-full">
               {`No templates match "${searchQuery}"`}
             </div>
           ) : (
-            templateKeys.map((Id) => {
-              const MiniPreview = TemplateDesigns[Id];
-              const isActive = ActiveComponent === Id;
-              const isSaved = selectedTemplate === Id;
-
-              return (
-                <div
-                  key={Id}
-                  onClick={() => setActiveComponent(Id)}
-                  className={`relative h-28 md:h-36 w-36 md:w-full shrink-0 border cursor-pointer transition-all duration-150 group overflow-hidden rounded-lg ${
-                    isActive
-                      ? "border-zinc-950 ring-1 ring-zinc-950/20 shadow-xs bg-white"
-                      : "border-zinc-200 hover:border-zinc-300 bg-white"
-                  }`}
-                >
-                  {/* Thumbnail Scaled View */}
-                  <div
-                    className={`absolute inset-0 origin-top-left scale-[0.08] md:scale-[0.14] w-[210mm] h-[297mm] transition-opacity duration-150 pointer-events-none ${
-                      isActive ? "opacity-100" : "opacity-45 group-hover:opacity-75"
-                    }`}
-                  >
-                    <MiniPreview />
-                  </div>
-
-                  {/* Top Badges */}
-                  <div className="absolute top-2 left-2 right-2 flex justify-between items-center pointer-events-none z-10">
-                    {isSaved ? (
-                      <span className="px-1.5 py-0.5 bg-teal-600 text-white text-[9px] font-mono font-medium uppercase tracking-wider rounded-sm shadow-xs">
-                        Active
-                      </span>
-                    ) : (
-                      <span />
-                    )}
-
-                    {isActive && !isSaved && (
-                      <span className="px-1.5 py-0.5 bg-white/95 backdrop-blur-xs text-zinc-800 border border-zinc-200 text-[9px] font-mono font-medium uppercase rounded-sm shadow-2xs">
-                        Previewing
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Bottom Control Bar */}
-                  <div
-                    className={`absolute bottom-0 left-0 right-0 py-1.5 px-3 border-t flex items-center justify-between transition-colors z-10 ${
-                      isActive
-                        ? "bg-zinc-950 border-zinc-950 text-white"
-                        : "bg-white border-zinc-100 text-zinc-700 group-hover:text-zinc-950"
-                    }`}
-                  >
-                    <span className="text-[11px] font-mono font-medium capitalize truncate">
-                      {Id}
-                    </span>
-
-                    {isActive && (
-                      <Sparkles className="w-3.5 h-3.5 text-teal-400 animate-pulse" />
-                    )}
-                  </div>
-                </div>
-              );
-            })
+            templateKeys.map((id) => (
+              <TemplateThumbnail
+                key={id}
+                id={id}
+                isActive={ActiveComponent === id}
+                isSaved={selectedTemplate === id}
+                onSelect={setActiveComponent}
+                Component={TemplateDesigns[id]}
+              />
+            ))
           )}
         </div>
 
@@ -214,7 +244,6 @@ export default function Templates() {
 
       {/* --- CANVAS PREVIEW AREA --- */}
       <main className="flex-1 border border-zinc-200 bg-white flex flex-col relative rounded-xl shadow-xs min-h-0 overflow-hidden">
-        
         {/* Control Header Bar */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-zinc-200 bg-white gap-4 shrink-0">
           <div className="flex items-center gap-2 text-xs">
@@ -257,12 +286,11 @@ export default function Templates() {
           </div>
         </div>
 
-        {/* Scrollable Canvas Area (Allows vertical scroll on mobile, perfect-fit centered on desktop) */}
+        {/* Scrollable Canvas Area */}
         <div
           ref={canvasRef}
           className="flex-1 w-full h-full p-2 sm:p-6 flex justify-center items-start md:items-center bg-zinc-50/70 overflow-y-auto md:overflow-hidden select-text"
         >
-          {/* Dimension wrapper matches exact scaled box size to prevent layout shifts/cropping */}
           <div
             className="relative shrink-0 my-auto"
             style={{
@@ -283,7 +311,6 @@ export default function Templates() {
           </div>
         </div>
       </main>
-
     </div>
   );
 }

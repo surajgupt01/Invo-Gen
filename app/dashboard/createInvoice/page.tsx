@@ -300,7 +300,7 @@ export default function CreateInvoice() {
       {/* Dynamic Content Views */}
       {display === "Both" && (
         <div className="lg:flex-row flex flex-col overflow-auto w-full relative gap-6 p-4 sm:p-6 transition-all duration-300 flex-1 min-h-0 bg-zinc-50/50">
-          <div className="flex-1 min-w-0 overflow-y-auto">
+          <div className="flex-1 min-w-0 overflow-y-auto custom-scrollbar">
             <FormComponent
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}
