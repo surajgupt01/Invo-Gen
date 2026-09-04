@@ -777,7 +777,7 @@ function FormComponent({
         />
 
         {/* Bottom Submission Toolbar */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200">
+        {/* <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200">
           <button
             type="button"
             disabled={isSubmitting}
@@ -797,7 +797,7 @@ function FormComponent({
             <Send className="w-3.5 h-3.5" />
             <span>{isSubmitting ? "Issuing..." : `Issue as ${paymentStatus}`}</span>
           </button>
-        </div>
+        </div> */}
 
       </form>
     </div>
