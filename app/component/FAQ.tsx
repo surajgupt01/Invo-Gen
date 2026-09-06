@@ -1,19 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import Minus from "../Icons/Minus";
+import Plus from "../Icons/Plus";
 
 // Minimal Plus / Minus Accordion Icon
 function AccordionIcon({ isOpen }: { isOpen: boolean }) {
   return (
-    <div className="relative w-4 h-4 flex items-center justify-center shrink-0 text-zinc-400">
-      {/* Horizontal Line */}
-      <span className="absolute w-3.5 h-[1.5px] bg-zinc-600 transition-transform duration-300" />
-      {/* Vertical Line */}
-      <span
-        className={`absolute w-3.5 h-[1.5px] bg-zinc-600 transition-transform duration-300 ${
-          isOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
-        }`}
-      />
+    <div className={` ${isOpen  ? 'rotate-0' : 'rotate-270'} duration-300 ease-in-out relative w-4 h-4 flex items-center justify-center shrink-0 text-zinc-400`}>
+    {isOpen ?  <Minus/> : <Plus/>}
     </div>
   );
 }
@@ -45,7 +40,7 @@ export default function FAQ() {
     {
       question: "Do I need to register an account to create an invoice?",
       answer:
-        "No account is required to generate or export clean invoices. Creating a free account simply enables draft saving, client autofill profiles, and persistent billing history across devices.",
+        "Yes account is required to generate or export clean invoices. Creating a free account simply enables draft saving, client autofill profiles, and persistent billing history across devices.",
     },
     {
       question: "Does Luen support international taxes and currencies?",

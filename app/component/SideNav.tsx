@@ -188,7 +188,7 @@ export default function SideNav({
     <aside
       className={`${
         menu ? "w-64 px-4" : "w-[72px] px-2.5"
-      } h-full transition-all duration-300 ease-in-out bg-white border-r border-zinc-200 font-sans py-4 flex flex-col justify-between select-none shrink-0 relative z-30`}
+      } h-full transition-all duration-300 ease-in-out bg-white lg:border-r lg:border-zinc-200 font-sans py-4 flex flex-col justify-between select-none shrink-0 relative z-30`}
     >
       {/* Top Branding & Nav */}
       <div className="flex flex-col gap-6">
