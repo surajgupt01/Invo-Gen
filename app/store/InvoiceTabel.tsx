@@ -67,6 +67,7 @@ export const UNITS = ["pcs", "bag", "kg", "hr", "ltr", "mtr", "box", "set", "doz
 export const GST_RATES = ["0", "5", "12", "18", "28"];
 
 export const CURRENCIES: Currency[] = [
+  // Existing
   { code: "USD", symbol: "$",   locale: "en-US" },
   { code: "EUR", symbol: "€",   locale: "de-DE" },
   { code: "GBP", symbol: "£",   locale: "en-GB" },
@@ -75,6 +76,43 @@ export const CURRENCIES: Currency[] = [
   { code: "SGD", symbol: "S$",  locale: "en-SG" },
   { code: "AED", symbol: "AED", locale: "en-AE" },
   { code: "INR", symbol: "₹",   locale: "en-IN" },
+
+  // Asia-Pacific & Oceania
+  { code: "JPY", symbol: "¥",   locale: "ja-JP" }, // Japanese Yen (zero-decimal)
+  { code: "CNY", symbol: "¥",   locale: "zh-CN" }, // Chinese Yuan
+  { code: "HKD", symbol: "HK$", locale: "zh-HK" }, // Hong Kong Dollar
+  { code: "KRW", symbol: "₩",   locale: "ko-KR" }, // South Korean Won (zero-decimal)
+  { code: "NZD", symbol: "NZ$", locale: "en-NZ" }, // New Zealand Dollar
+  { code: "THB", symbol: "฿",   locale: "th-TH" }, // Thai Baht
+  { code: "MYR", symbol: "RM",  locale: "ms-MY" }, // Malaysian Ringgit
+  { code: "IDR", symbol: "Rp",  locale: "id-ID" }, // Indonesian Rupiah
+  { code: "PHP", symbol: "₱",   locale: "en-PH" }, // Philippine Peso
+  { code: "VND", symbol: "₫",   locale: "vi-VN" }, // Vietnamese Dong (zero-decimal)
+
+  // Europe & Non-Euro Majors
+  { code: "CHF", symbol: "CHF", locale: "de-CH" }, // Swiss Franc
+  { code: "SEK", symbol: "kr",  locale: "sv-SE" }, // Swedish Krona
+  { code: "NOK", symbol: "kr",  locale: "nb-NO" }, // Norwegian Krone
+  { code: "DKK", symbol: "kr",  locale: "da-DK" }, // Danish Krone
+  { code: "PLN", symbol: "zł",  locale: "pl-PL" }, // Polish Zloty
+  { code: "TRY", symbol: "₺",   locale: "tr-TR" }, // Turkish Lira
+
+  // Middle East & Africa
+  { code: "SAR", symbol: "SAR", locale: "ar-SA" }, // Saudi Riyal
+  { code: "QAR", symbol: "QAR", locale: "ar-QA" }, // Qatari Riyal
+  { code: "ILS", symbol: "₪",   locale: "he-IL" }, // Israeli New Shekel
+  { code: "ZAR", symbol: "R",   locale: "en-ZA" }, // South African Rand
+  { code: "EGP", symbol: "E£",  locale: "ar-EG" }, // Egyptian Pound
+  { code: "NGN", symbol: "₦",   locale: "en-NG" }, // Nigerian Naira
+  { code: "KES", symbol: "KSh", locale: "en-KE" }, // Kenyan Shilling
+
+  // Americas
+  { code: "BRL", symbol: "R$",  locale: "pt-BR" }, // Brazilian Real
+  { code: "MXN", symbol: "Mex$", locale: "es-MX" }, // Mexican Peso
+  { code: "CLP", symbol: "CLP$", locale: "es-CL" }, // Chilean Peso (zero-decimal)
+  { code: "COP", symbol: "COL$", locale: "es-CO" }, // Colombian Peso
+  { code: "PEN", symbol: "S/",  locale: "es-PE" }, // Peruvian Sol
+  { code: "ARS", symbol: "ARS$", locale: "es-AR" }, // Argentine Peso
 ];
 
 export const TAX_PRESETS = [
