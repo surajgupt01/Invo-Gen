@@ -170,38 +170,62 @@ enum InvoiceStatus {
   CANCELLED
 }
 
+// model Invoice {
+//   InvoiceId       String        @id @default(cuid())
+//   invoiceNumber   String        @unique // Unique e.g. "INV-2026-001"
+  
+//   // Customer Details
+//   CustomerName    String?
+//   CustomerEmail   String?
+//   CustomerAddress String?
+//   Subject         String?
+  
+//   // Dates
+//   IssueDate       DateTime
+//   DueDate         DateTime
+  
+//   // Financial Amounts
+//   Currency        String        @default("INR")
+//   subtotal        Decimal       @default(0.0)
+//   tax             Decimal       @default(0.0)
+//   discount        Decimal?      @default(0.0)
+//   total           Decimal       @default(0.0)
+  
+//   // Granular Payment Status
+//   paymentStatus   InvoiceStatus @default(PENDING)
+  
+//   // User Relation
+//   userId          String
+//   user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   // Audit Timestamps
+//   createdAt       DateTime      @default(now())
+//   updatedAt       DateTime      @updatedAt
+
+//   @@map("invoice")
+// }
+
 model Invoice {
   InvoiceId       String        @id @default(cuid())
-  invoiceNumber   String        @unique // Unique e.g. "INV-2026-001"
-  
-  // Customer Details
+  invoiceNumber   String        @unique
   CustomerName    String?
   CustomerEmail   String?
   CustomerAddress String?
   Subject         String?
-  
-  // Dates
   IssueDate       DateTime
   DueDate         DateTime
-  
-  // Financial Amounts
   Currency        String        @default("INR")
   subtotal        Decimal       @default(0.0)
   tax             Decimal       @default(0.0)
   discount        Decimal?      @default(0.0)
   total           Decimal       @default(0.0)
-  
-  // Granular Payment Status
   paymentStatus   InvoiceStatus @default(PENDING)
-  
-  // User Relation
   userId          String
   user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Audit Timestamps
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
+  @@index([userId, Currency, IssueDate])
+  @@index([userId, Currency, paymentStatus])
   @@map("invoice")
 }
-

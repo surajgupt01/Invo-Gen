@@ -22,7 +22,159 @@ export interface BlogPost {
   content: BlogSection[];
 }
 export const NEW_BLOG_POSTS: BlogPost[] = [
+
   {
+    slug: "invoice-payment-terms-guide-net-30-net-15",
+    title: "Understanding Invoice Payment Terms: Net 30, Net 15 & Getting Paid on Time",
+    description:
+      "A complete guide to invoice payment terms. Learn the difference between Net 30, Net 15, and Due Upon Receipt, how to write enforceable late fee clauses, and shorten your payout cycle.",
+    category: "Automation",
+    categoryTab: "automation",
+    readTime: "8 min read",
+    publishedDate: "August 28, 2026",
+    author: "Luen Team",
+    content: [
+      {
+        id: "payment-terms-definition",
+        title: "1. What Are Invoice Payment Terms and Why Do They Matter?",
+        paragraphs: [
+          "Invoice payment terms are the specific rules and expectations established between a vendor and a client governing when, how, and through what rails a commercial balance must be satisfied. They explicitly define the duration of credit extended, the exact calendar deadline for funds clearance, early-settlement incentives, and late payment penalties.",
+          "Clear payment terms establish enforceable expectations that protect cash flow. Without explicit terms printed directly on your document, enterprise accounts payable departments will automatically default to their own internal disbursement schedules—frequently pushing your payout out 60 to 90 days.",
+        ],
+      },
+      {
+        id: "common-payment-terms",
+        title: "2. Standard Payment Terms Compared: Net 7, 15, 30 & Due Upon Receipt",
+        paragraphs: [
+          "Choosing the right payment term depends on project duration, mutual trust, and client size. Here is how common payment intervals function in commercial invoicing:",
+        ],
+        bulletPoints: [
+          "Net 7 / Net 10: Best for fast turnarounds, small freelance tasks, and contractors with tight cash flow requirements. Ensures rapid settlement before work recedes from memory.",
+          "Net 14 / Net 15: The balanced standard for modern service providers. Provides corporate clients two standard business weeks to clear payment approvals without dragging out contractor cash flow.",
+          "Net 30: Traditional enterprise corporate standard. Grants clients 30 calendar days to process payment, common in B2B supply chains but often burdensome for solo operators.",
+          "Due Upon Receipt: Mandates immediate settlement upon delivery. While direct, it often creates friction with corporate accounts payable teams operating on bi-weekly payment runs.",
+          "Cash in Advance (CIA) / Paid Upfront: 100% settlement required before work begins; mandatory for digital assets, high-risk clients, or custom tooling investments.",
+          "2/10 Net 30: An early payment discount model where the client receives a 2% discount if settled within 10 days; otherwise, the full sum is due within 30 days.",
+        ],
+      },
+      {
+        id: "writing-enforceable-clauses",
+        title: "3. How to Draft Enforceable Late Fee and Interest Clauses",
+        paragraphs: [
+          "Payment terms carry little weight if an invoice does not outline explicit consequences for delayed settlement. Adding a clear, legally sound late payment clause establishes accountability before invoices fall overdue.",
+          "Ensure your standard invoice terms include concrete language specifying penalty rates and administrative compensation rights:",
+        ],
+        bulletPoints: [
+          "State Explicit Percentage Penalties: Specify a realistic monthly interest rate (e.g., '1.5% statutory monthly interest accrued on balances unpaid after 30 days').",
+          "Specify the Compounding Frequency: State whether late fees accrue on a monthly compounding schedule or as a flat, one-time late administrative charge.",
+          "Pause Deliverables Clause: Add language that reserves the right to halt active production, revoke software access, or withhold final code/design assets until past-due balances clear.",
+          "Tie Terms to the Master Service Agreement (MSA): Ensure that the late fee clauses shown on your PDF invoices mirror the signed master contract to prevent disputes.",
+        ],
+      },
+      {
+        id: "shortening-payout-cycles",
+        title: "4. Practical Strategies to Shorten Your Collection Cycle",
+        paragraphs: [
+          "Shortening Days Sales Outstanding (DSO) requires actively removing administrative roadblocks for client accounting teams before the due date arrives:",
+        ],
+        bulletPoints: [
+          "Default to Shorter Windows: Switch your default billing terms from Net 30 to Net 14 across all new client proposals.",
+          "List Multiple Payment Rails: Display clickable digital payment options (Stripe, UPI, Wise) alongside standard bank routing coordinates directly on the document.",
+          "Send Invoices Mid-Week: Avoid sending bills on Friday afternoons when accounts payable queues close; target Tuesday or Wednesday mornings for optimal visibility.",
+          "Automate Pre-Due Reminders: Set up polite, automated reminder emails sent 3 days before an invoice matures to ensure payment processing is on schedule.",
+        ],
+      },
+      {
+        id: "faqs",
+        title: "5. Frequently Asked Questions About Invoice Payment Terms",
+        paragraphs: [
+          "Common questions regarding terms, credit periods, and dispute resolution:",
+        ],
+        bulletPoints: [
+          "Does Net 30 include weekends? Yes. Net 30 refers to 30 calendar days from the invoice date, not business days.",
+          "Can a client refuse to pay late fees? If late payment penalties were not included in the signed initial agreement or on the invoice terms, clients may challenge them. Always secure written acceptance beforehand.",
+          "What should I do if a large enterprise demands Net 60 or Net 90? Counter by requesting an increased upfront milestone deposit (e.g., 40% to 50%) or build financing overhead directly into your overall project rate.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "retainer-invoicing-guide-freelancers-agencies",
+    title: "How to Structure Retainer Invoicing: The Guide for Freelancers & Agencies",
+    description:
+      "Master recurring retainer billing. Discover how to structure unearned revenue, rollover hours, upfront billing schedules, and create compliant retainer invoices.",
+    category: "Automation",
+    categoryTab: "automation",
+    readTime: "9 min read",
+    publishedDate: "September 02, 2026",
+    author: "Luen Team",
+    content: [
+      {
+        id: "what-is-a-retainer-invoice",
+        title: "1. What Is a Retainer Invoice and How Does It Function?",
+        paragraphs: [
+          "A retainer invoice is a recurring commercial billing document issued to reserve ongoing professional availability, continuous advisory services, or a predictable block of production deliverables over a set period (typically monthly or quarterly).",
+          "Unlike standard project-based milestone invoices that bill retrospectively for completed work, retainer invoices are structured in advance. This provides independent contractors, software consultants, and boutique agencies with predictable recurring monthly revenue (MRR) while guaranteeing dedicated capacity for the client.",
+        ],
+      },
+      {
+        id: "retainer-models",
+        title: "2. The Three Common Retainer Billing Models",
+        paragraphs: [
+          "Selecting the right retainer structure protects your margins and prevents scope creep:",
+        ],
+        bulletPoints: [
+          "Pay-for-Access (Advisory) Retainers: The client pays a fixed monthly fee simply to reserve guaranteed access to your expertise, priority response times, and strategy audits. Unused hours expire at month's end.",
+          "Dedicated Capacity (Hourly Bucket) Retainers: The client purchases a predefined block of billable time each month (e.g., 20 hours/month at $120/hr). A discounted rate is often offered in exchange for this multi-month commitment.",
+          "Deliverable-Based (Value) Retainers: The client pays a fixed recurring fee for specific, repeatable ongoing deliverables rather than logged hours (e.g., 4 optimized technical blog posts, 2 monthly UX feature audits, or continuous server maintenance).",
+        ],
+      },
+      {
+        id: "key-elements-retainer-invoice",
+        title: "3. What to Include on a Compliant Retainer Invoice",
+        paragraphs: [
+          "Because retainer invoices are often processed before all work is rendered, corporate accounting departments require specific documentation to categorize the transaction correctly as prepaid unearned revenue or ongoing operational expense:",
+        ],
+        bulletPoints: [
+          "Explicit Coverage Period: Clearly state the exact active calendar window in the line items (e.g., 'Monthly Retainer Services: September 01, 2026 – September 30, 2026').",
+          "Scope and Limitations Summary: Clearly document the included scope boundary (e.g., 'Includes up to 25 engineering hours; additional hours billed at the standard rate of $150/hr').",
+          "Rollover Policy Declarations: Clarify whether unused capacity rolls over into subsequent months (e.g., 'Unused retainer hours do not roll over past the end of the calendar month').",
+          "Advance Due Date: Set payment due dates prior to or on the first day of the coverage cycle to ensure funds clear before service rendering begins.",
+          "Next Billing Date Notice: Remind the client of the upcoming billing schedule to maintain steady, automated payment processing without surprises.",
+        ],
+      },
+      {
+        id: "managing-scope-creep",
+        title: "4. Protecting Retainers from Scope Creep and Unused Rollover Disputes",
+        paragraphs: [
+          "The most frequent challenge with retainer agreements is scope creep—clients expecting unlimited revisions or demanding that unused hours accumulate indefinitely into a massive bank of delayed work.",
+          "To avoid disputes, use structured retainer terms. Prohibit indefinite hour rollovers, as they create an unpredictable delivery liability for your business. When client requests exceed the agreed monthly retainer limit, issue a separate 'Overage Invoice' at your full standard rate rather than absorbing extra work within the flat monthly fee.",
+        ],
+      },
+      {
+        id: "generating-retainer-invoices-luen",
+        title: "5. Streamlining Retainer Invoicing with Luen",
+        paragraphs: [
+          "Generating recurring retainer invoices manually each month often leads to copy-paste errors, incorrect coverage dates, or broken spreadsheet layouts. Using a dedicated browser-based invoice generator keeps recurring billing fast and consistent.",
+          "With Luen, you can save core client billing profiles, specify recurring coverage dates, automate line-item tax calculations, and export clean, professional vector PDF retainer invoices directly within your browser in under a minute.",
+        ],
+      },
+      {
+        id: "faqs",
+        title: "6. Frequently Asked Questions About Retainer Invoices",
+        paragraphs: [
+          "Common questions regarding recurring billing and contract structures:",
+        ],
+        bulletPoints: [
+          "Should retainer invoices be sent before or after work is done? Retainer invoices should almost always be sent and settled in advance (prior to the start of the service month) to secure your availability.",
+          "Do unused retainer hours roll over? Industry standard practice is that retainer hours expire at the end of the billing cycle. If you permit rollovers, cap them at a maximum of 30 to 60 days.",
+          "How do I handle taxes on advance retainer payments? In many tax systems (including GST and VAT), tax liability arises upon issuing the invoice or receiving advance payment—whichever comes first. Itemize statutory taxes on the initial advance retainer bill.",
+        ],
+      },
+    ],
+  },
+  {
+    
     slug: "how-to-create-an-invoice-step-by-step-guide",
     title: "How to Create an Invoice: A Complete Step-by-Step Guide",
     description:

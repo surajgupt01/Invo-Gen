@@ -19,6 +19,7 @@ import {
   XCircle,
   FileEdit,
   Eye,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -106,6 +107,9 @@ export default function InvoicesDashboard() {
   const [page, setPage] = useState(1);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
+  // Deletion Modal State
+  const [invoiceToDelete, setInvoiceToDelete] = useState<{ id: string; number: string } | null>(null);
+
   const limit = 8;
   const debouncedSearch = useDebounce(searchTerm, 350);
 
@@ -160,7 +164,30 @@ export default function InvoicesDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       queryClient.invalidateQueries({ queryKey: ["invoice-summary"] });
+      setActiveMenuId(null);
+    },
+  });
+
+  // Mutation for deleting an invoice
+  const deleteInvoiceMutation = useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const res = await fetch(`/api/invoice?invoiceId=${invoiceId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to delete invoice");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-summary"] });
+      setInvoiceToDelete(null);
       setActiveMenuId(null);
     },
   });
@@ -173,6 +200,12 @@ export default function InvoicesDashboard() {
       setSortOrder("desc");
     }
     setPage(1);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (invoiceToDelete) {
+      deleteInvoiceMutation.mutate(invoiceToDelete.id);
+    }
   };
 
   return (
@@ -411,14 +444,19 @@ export default function InvoicesDashboard() {
                           {activeMenuId === inv.InvoiceId && (
                             <StatusMenuPopover
                               invoiceId={inv.InvoiceId}
+                              invoiceNumber={inv.invoiceNumber}
                               currentStatus={inv.paymentStatus}
                               isNearBottom={isNearBottom}
-                              onSelect={(newStatus) =>
+                              onSelectStatus={(newStatus) =>
                                 updateStatusMutation.mutate({
                                   invoiceId: inv.InvoiceId,
                                   newStatus,
                                 })
                               }
+                              onDeleteClick={() => {
+                                setInvoiceToDelete({ id: inv.InvoiceId, number: inv.invoiceNumber });
+                                setActiveMenuId(null);
+                              }}
                               onClose={() => setActiveMenuId(null)}
                               isPending={updateStatusMutation.isPending}
                             />
@@ -466,22 +504,36 @@ export default function InvoicesDashboard() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {invoiceToDelete && (
+        <DeleteConfirmModal
+          invoiceNumber={invoiceToDelete.number}
+          isDeleting={deleteInvoiceMutation.isPending}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setInvoiceToDelete(null)}
+        />
+      )}
     </div>
   );
 }
 
 function StatusMenuPopover({
   invoiceId,
+  invoiceNumber,
   currentStatus,
   isNearBottom,
-  onSelect,
+  onSelectStatus,
+  onDeleteClick,
   onClose,
   isPending,
 }: {
   invoiceId: string;
+  invoiceNumber: string;
   currentStatus: string;
   isNearBottom: boolean;
-  onSelect: (status: string) => void;
+  onSelectStatus: (status: string) => void;
+  onDeleteClick: () => void;
   onClose: () => void;
   isPending: boolean;
 }) {
@@ -501,7 +553,6 @@ function StatusMenuPopover({
 
   return (
     <>
-      {/* Invisible full-screen backdrop to safely capture outside clicks */}
       <div 
         className="fixed inset-0 z-40" 
         onClick={onClose} 
@@ -532,7 +583,7 @@ function StatusMenuPopover({
           <button
             key={st}
             disabled={isPending}
-            onClick={() => onSelect(st)}
+            onClick={() => onSelectStatus(st)}
             className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md transition cursor-pointer font-mono text-[11px] ${
               currentStatus === st
                 ? "font-semibold text-teal-800 bg-teal-50"
@@ -543,7 +594,71 @@ function StatusMenuPopover({
             {currentStatus === st && <Check className="w-3.5 h-3.5 text-teal-700" />}
           </button>
         ))}
+
+        <div className="border-t border-zinc-100 my-1" />
+
+        {/* Delete Trigger */}
+        <button
+          type="button"
+          onClick={onDeleteClick}
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-md transition cursor-pointer font-medium"
+        >
+          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+          <span>Delete Invoice</span>
+        </button>
       </div>
     </>
+  );
+}
+
+function DeleteConfirmModal({
+  invoiceNumber,
+  isDeleting,
+  onConfirm,
+  onCancel,
+}: {
+  invoiceNumber: string;
+  isDeleting: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-2xs p-4">
+      <div className="w-full max-w-sm bg-white rounded-xl border border-zinc-200 shadow-2xl p-5 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-rose-50 rounded-lg text-rose-600 shrink-0">
+            <AlertCircle className="w-5 h-5" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-zinc-950">
+              Delete Invoice
+            </h3>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Are you sure you want to delete invoice <span className="font-mono font-medium text-zinc-900">{invoiceNumber}</span>? This action cannot be undone.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-1 border-t border-zinc-100">
+          <button
+            type="button"
+            disabled={isDeleting}
+            onClick={onCancel}
+            className="px-3 py-1.5 text-xs font-medium text-zinc-700 bg-white border border-zinc-200 rounded-md hover:bg-zinc-50 transition cursor-pointer disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={isDeleting}
+            onClick={onConfirm}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-md transition cursor-pointer shadow-xs disabled:opacity-50"
+          >
+            {isDeleting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+            <span>{isDeleting ? "Deleting..." : "Delete"}</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

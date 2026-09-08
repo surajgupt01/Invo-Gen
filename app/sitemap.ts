@@ -6,24 +6,36 @@ async function getAllBlogSlugs(): Promise<
 > {
   return [
     {
-      slug: "about-luen-how-our-browser-first-invoicing-work",
-      updatedAt: "2026-08-15T00:00:00.000Z",
+      slug: "about-luen-how-our-browser-first-invoicing-works",
+      updatedAt: "2026-08-08T00:00:00.000Z",
     },
     {
-      slug: "automate-invoicing-get-paid-faster",
-      updatedAt: "2026-08-15T00:00:00.000Z",
-    },
-    {
-      slug: "gst-compliance-digital-invoicing-guide",
-      updatedAt: "2026-08-15T00:00:00.000Z",
+      slug: "modern-digital-invoice-templates-guide",
+      updatedAt: "2026-08-10T00:00:00.000Z",
     },
     {
       slug: "fast-browser-pdf-generation-architecture",
-      updatedAt: "2026-08-15T00:00:00.000Z",
+      updatedAt: "2026-07-15T00:00:00.000Z",
+    },
+    {
+      slug: "international-invoice-currency-formatting-standards",
+      updatedAt: "2026-07-14T00:00:00.000Z",
+    },
+    {
+      slug: "cutting-hidden-cross-border-fx-invoicing-fees",
+      updatedAt: "2026-07-22T00:00:00.000Z",
+    },
+    {
+      slug: "gst-compliance-digital-invoicing-guide",
+      updatedAt: "2026-07-28T00:00:00.000Z",
+    },
+    {
+      slug: "automate-invoicing-get-paid-faster",
+      updatedAt: "2026-08-02T00:00:00.000Z",
     },
     {
       slug: "international-multi-currency-invoicing-guide",
-      updatedAt: "2026-08-15T00:00:00.000Z",
+      updatedAt: "2026-06-30T00:00:00.000Z",
     },
     {
       slug: "how-to-create-an-invoice-step-by-step-guide",
@@ -36,6 +48,14 @@ async function getAllBlogSlugs(): Promise<
     {
       slug: "how-to-invoice-a-client-as-a-freelancer",
       updatedAt: "2026-08-22T00:00:00.000Z",
+    },
+    {
+      slug: "invoice-payment-terms-guide-net-30-net-15",
+      updatedAt: "2026-08-28T00:00:00.000Z",
+    },
+    {
+      slug: "retainer-invoicing-guide-freelancers-agencies",
+      updatedAt: "2026-09-02T00:00:00.000Z",
     },
   ];
 }

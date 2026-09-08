@@ -1,25 +1,42 @@
 "use client";
 
+import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import Google from "../Icons/Google";
 import Github from "../Icons/Github";
 import SignSideBar from "../component/SignSideBar";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleGoogleSignIn = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    });
+    if (isLoading) return;
+    try {
+      setIsLoading(true);
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+      });
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setIsLoading(false);
+    }
   };
 
   const handleGithubSignIn = async () => {
-    await authClient.signIn.social({
-      provider: "github",
-      callbackURL: "/dashboard",
-    });
+    if (isLoading) return;
+    try {
+      setIsLoading(true);
+      await authClient.signIn.social({
+        provider: "github",
+        callbackURL: "/dashboard",
+      });
+    } catch (error) {
+      console.error("GitHub sign-in error:", error);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -61,17 +78,32 @@ export default function SignUp() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full h-10 px-4 bg-white hover:bg-zinc-50 text-zinc-900 border border-zinc-200 rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs hover:border-zinc-300"
+              disabled={isLoading}
+              className={`w-full h-10 px-4 duration-300 ease-in-out bg-white text-zinc-900 border border-zinc-200 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-2.5 shadow-2xs ${
+                isLoading
+                  ? "opacity-75 cursor-not-allowed border-zinc-300"
+                  : "hover:bg-zinc-50 hover:border-zinc-300 active:scale-95 cursor-pointer"
+              }`}
             >
-              <Google />
-              <span>Continue with Google</span>
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <Google />
+                  <span>Continue with Google</span>
+                </>
+              )}
             </button>
 
-            {/* GitHub Sign-in */}
+            {/* GitHub Sign-in (Keep ready if enabled later) */}
             {/* <button
               type="button"
               onClick={handleGithubSignIn}
-              className="w-full h-10 px-4 bg-zinc-950 hover:bg-zinc-800 text-white rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
+              disabled={isLoading}
+              className="w-full h-10 px-4 bg-zinc-950 hover:bg-zinc-800 disabled:opacity-70 disabled:cursor-not-allowed text-white rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-2xs"
             >
               <Github />
               <span>Continue with GitHub</span>
