@@ -103,7 +103,7 @@ export default function Footer() {
                 Connect
               </span>
               <a
-                href="https://x.com"
+                href="https://x.com/LuenInvoices"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-600 hover:text-zinc-950 transition-colors"
@@ -111,20 +111,20 @@ export default function Footer() {
                 X (Twitter)
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.youtube.com/@Luen-Invoices"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-600 hover:text-zinc-950 transition-colors"
               >
-                LinkedIn
+                YouTube
               </a>
               <a
-                href="https://github.com"
+                href="mailto:support@luen.in"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-zinc-600 hover:text-zinc-950 transition-colors"
               >
-                GitHub
+                Email
               </a>
             </div>
 

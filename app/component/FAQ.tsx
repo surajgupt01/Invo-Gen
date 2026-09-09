@@ -7,8 +7,12 @@ import Plus from "../Icons/Plus";
 // Minimal Plus / Minus Accordion Icon
 function AccordionIcon({ isOpen }: { isOpen: boolean }) {
   return (
-    <div className={` ${isOpen  ? 'rotate-0' : 'rotate-270'} duration-300 ease-in-out relative w-4 h-4 flex items-center justify-center shrink-0 text-zinc-400`}>
-    {isOpen ?  <Minus/> : <Plus/>}
+    <div
+      className={`${
+        isOpen ? "rotate-0" : "rotate-270"
+      } duration-300 ease-in-out relative w-4 h-4 flex items-center justify-center shrink-0 text-zinc-400`}
+    >
+      {isOpen ? <Minus /> : <Plus />}
     </div>
   );
 }
@@ -18,36 +22,52 @@ export default function FAQ() {
 
   const questions = [
     {
-      question: "What is Luen and who is it built for?",
+      question: "How do I create a GST-compliant invoice online for free?",
       answer:
-        "Luen is a fast, minimalist invoice generator tailored for freelancers, contractors, indie hackers, and boutique agencies who need client-ready PDFs without clunky accounting overhead.",
+        "Select your client's state to automatically split taxes between CGST + SGST (intra-state) or IGST (inter-state). Enter your GSTIN, client details, line items with HSN/SAC codes, and download a clean, vector-sharp PDF instantly without manual tax calculations.",
     },
     {
-      question: "Can I customize templates, logos, and payment methods?",
+      question:
+        "Can I generate invoices in foreign currencies like USD, EUR, and GBP?",
       answer:
-        "Yes. You can upload custom brand logos, toggle color accents, embed instant UPI payment QR codes, include wire instructions, and select from clean, designer-grade PDF layouts.",
+        "Yes. Luen supports multi-currency billing across USD ($), EUR (€), GBP (£), and INR (₹). You can bill global clients in their local currency while embedding international bank wire details, SWIFT codes, or direct payment links.",
     },
     {
-      question: "Is there a free plan available?",
+      question:
+        "How do I bill international clients under GST LUT (zero-rated export)?",
       answer:
-        "Yes. The Starter tier is completely free forever and allows up to 5 invoices per month with full calculation features. Upgrading to Pro unlocks unlimited invoices, custom branding, and zero watermarks.",
+        "For cross-border service exports from India, toggle the 'Export under LUT' option. Luen automatically applies a 0% IGST rate and appends the mandatory statutory declaration required by Indian tax authorities on your exported PDF invoice.",
     },
     {
-      question: "How is my invoice and client data protected?",
+      question: "Can I embed a UPI QR code directly on the PDF invoice?",
       answer:
-        "Your data security and privacy are top priorities. Invoices are stored in local-first browser memory or encrypted cloud storage with industry-standard practices. We never monetize or share your client information.",
+        "Yes. Add your UPI ID (VPA) or payment handle, and Luen generates a dynamic QR code on the invoice PDF. Domestic Indian clients can scan the code with PhonePe, Google Pay, or Paytm to pay the exact invoiced amount instantly.",
     },
     {
-      question: "Do I need to register an account to create an invoice?",
+      question: "Do I need an account to create and export invoices?",
       answer:
-        "Yes account is required to generate or export clean invoices. Creating a free account simply enables draft saving, client autofill profiles, and persistent billing history across devices.",
+        "Yes, creating a free account takes seconds and lets you generate compliant GST and multi-currency PDF invoices immediately. A free account secures your billing history, auto-saves client profiles, and enables multi-device cloud synchronization.",
     },
     {
-      question: "Does Luen support international taxes and currencies?",
+      question:
+        "Is this free invoice generator suitable for freelancers and agencies?",
       answer:
-        "Yes. Luen includes auto-calculating support for multi-currency invoicing ($ USD, € EUR, ₹ INR, £ GBP) as well as automated Indian GST (CGST/SGST/IGST) and standard global VAT rules.",
+        "Yes. Luen is designed for freelancers, independent contractors, indie hackers, and small businesses who need professional digital invoice formatting, custom logo branding, and automated math without expensive accounting software.",
     },
   ];
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: questions.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
 
   const toggleFAQ = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -56,11 +76,16 @@ export default function FAQ() {
   return (
     <section
       id="FAQ"
-      className="w-full bg-white text-zinc-900 font-sans select-none py-16 sm:py-24 border-t border-zinc-200"
+      className="w-full bg-white text-zinc-900 font-sans py-16 sm:py-24 border-t border-zinc-200"
     >
+      {/* Schema injected into DOM for Google Rich Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* Constrained to max-w-6xl */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12 border-b border-zinc-200">
           <div className="max-w-xl">
@@ -73,7 +98,8 @@ export default function FAQ() {
             </h2>
           </div>
           <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
-            Everything you need to know about generating, customizing, and sharing invoices with Luen.
+            Everything you need to know about generating, customizing, and
+            sharing invoices with Luen.
           </p>
         </div>
 
@@ -86,6 +112,9 @@ export default function FAQ() {
               <div key={idx} className="transition-colors">
                 <button
                   type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
+                  id={`faq-question-${idx}`}
                   onClick={() => toggleFAQ(idx)}
                   className="w-full text-left flex justify-between items-center gap-6 py-5 px-1 sm:px-2 hover:bg-zinc-50/70 transition-colors cursor-pointer"
                 >
@@ -96,6 +125,9 @@ export default function FAQ() {
                 </button>
 
                 <div
+                  id={`faq-answer-${idx}`}
+                  role="region"
+                  aria-labelledby={`faq-question-${idx}`}
                   className={`grid transition-all duration-300 ease-in-out ${
                     isOpen
                       ? "grid-rows-[1fr] opacity-100 pb-5"
@@ -112,7 +144,6 @@ export default function FAQ() {
             );
           })}
         </div>
-
       </div>
     </section>
   );

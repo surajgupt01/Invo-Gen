@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 export default function FeatureSection() {
-  const [items, setItems] = useState([
+  const [items] = useState([
     { desc: "UI/UX Brand Design & Assets", qty: 1, rate: 2400 },
     { desc: "Next.js Frontend Architecture", qty: 35, rate: 85 },
   ]);
@@ -16,17 +16,20 @@ export default function FeatureSection() {
   const total = subtotal + tax;
 
   return (
-    <section id="Features" className="w-full bg-white text-zinc-900 font-sans select-none py-16 sm:py-24 border-t border-zinc-200">
+    <section
+      id="Features"
+      className="w-full bg-white text-zinc-900 font-sans py-16 sm:py-24 border-t border-zinc-200"
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12 border-b border-zinc-200">
           <div className="max-w-xl">
             <p className="text-[11px] sm:text-xs font-mono font-medium tracking-widest text-zinc-400 uppercase mb-3">
-              Powerful Feature Suite
+              Professional Billing Features
             </p>
             <h2 className="text-3xl sm:text-4xl font-normal tracking-tight text-zinc-950 leading-tight">
-              Everything you need to bill clients <span className="text-zinc-400">with total confidence.</span>
+              Create GST & global invoices{" "}
+              <span className="text-zinc-400">with automated accuracy.</span>
             </h2>
           </div>
 
@@ -43,36 +46,54 @@ export default function FeatureSection() {
 
         {/* Feature Split Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center py-12 border-b border-zinc-200">
-          
           <div className="lg:col-span-5 space-y-4">
             <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
               Automated Calculation Engine
             </p>
             <h3 className="text-2xl sm:text-3xl font-normal text-zinc-950 tracking-tight leading-snug">
-              Zero manual math. <br />
+              Instant tax computation. <br />
               <span className="text-zinc-400">Zero formula errors.</span>
             </h3>
             <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed">
-              Input your services and hourly rates—Luen computes sub-totals, applies international or local tax rules, and outputs balanced ledgers automatically.
+              Add billable services, quantities, and rates—Luen auto-calculates
+              subtotals, applies compliant GST or international tax rates, and
+              outputs error-free invoice ledgers instantly.
             </p>
 
             <ul className="pt-2 space-y-2.5 text-xs text-zinc-600">
               <li className="flex items-center gap-2.5">
-                <span className="text-teal-600 shrink-0"><Check className="w-4 h-4" /></span>
-                <span>Automated GST (CGST/SGST/IGST), VAT & custom tax splits</span>
+                <span className="text-teal-600 shrink-0">
+                  <Check className="w-4 h-4" />
+                </span>
+                <span>
+                  Automated CGST, SGST, IGST splits & zero-rated LUT exports
+                </span>
               </li>
               <li className="flex items-center gap-2.5">
-                <span className="text-teal-600 shrink-0"><Check className="w-4 h-4" /></span>
-                <span>Multi-currency formatting with localized separators</span>
+                <span className="text-teal-600 shrink-0">
+                  <Check className="w-4 h-4" />
+                </span>
+                <span>
+                  Multi-currency billing in USD ($), EUR (€), GBP (£), and INR (₹)
+                </span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="text-teal-600 shrink-0">
+                  <Check className="w-4 h-4" />
+                </span>
+                <span>
+                  High-resolution vector PDF export with crisp print typography
+                </span>
               </li>
             </ul>
           </div>
 
           {/* Micro Invoice Slate Preview */}
-{/* Light Minimalist Invoice Preview Card */}
           <div className="lg:col-span-7 bg-zinc-50/70 text-zinc-900 rounded-xl p-6 sm:p-7 shadow-xs border border-zinc-200 font-mono">
             <div className="flex items-center justify-between pb-4 border-b border-zinc-200 text-[11px]">
-              <span className="text-zinc-500 font-medium">INVOICE PREVIEW / #INV-2026-08</span>
+              <span className="text-zinc-500 font-medium">
+                INVOICE PREVIEW / #INV-2026-08
+              </span>
               <span className="text-teal-700 text-[10px] bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60 font-semibold tracking-wide">
                 LIVE SYNC
               </span>
@@ -86,11 +107,16 @@ export default function FeatureSection() {
                 <span className="col-span-3 text-right">Amount</span>
               </div>
               {items.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-12 py-3 text-zinc-700 items-center">
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 py-3 text-zinc-700 items-center"
+                >
                   <span className="col-span-7 truncate font-sans text-xs font-medium text-zinc-900">
                     {item.desc}
                   </span>
-                  <span className="col-span-2 text-right text-zinc-500">{item.qty}</span>
+                  <span className="col-span-2 text-right text-zinc-500">
+                    {item.qty}
+                  </span>
                   <span className="col-span-3 text-right font-medium text-zinc-900">
                     ${(item.qty * item.rate).toLocaleString()}
                   </span>
@@ -102,7 +128,9 @@ export default function FeatureSection() {
             <div className="pt-4 border-t border-zinc-200 space-y-2 text-xs">
               <div className="flex justify-between text-zinc-500 text-[11px]">
                 <span>Subtotal</span>
-                <span className="text-zinc-800 font-medium">${subtotal.toLocaleString()}</span>
+                <span className="text-zinc-800 font-medium">
+                  ${subtotal.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between text-teal-700 text-[11px] font-medium">
                 <span>Applied Tax (GST 18%)</span>
@@ -114,28 +142,52 @@ export default function FeatureSection() {
               </div>
             </div>
           </div>
-
         </div>
 
         {/* 3 Capabilities */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12">
           <div className="space-y-2.5">
-            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">01. Payouts</span>
-            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">Instant UPI & Bank Details</h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">Embed custom UPI QR codes or wire instructions directly on the PDF for rapid settlements.</p>
+            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">
+              01. Settlements
+            </span>
+            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">
+              Dynamic UPI QR & Bank Wire
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Embed scannable UPI QR codes for domestic Indian clients or
+              SWIFT and IBAN wire instructions for international transfers
+              directly on the PDF.
+            </p>
           </div>
+
           <div className="space-y-2.5">
-            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">02. Design</span>
-            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">Minimalist PDF Templates</h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">Clean typography and balanced margins crafted to present your brand with extreme polish.</p>
+            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">
+              02. Compliance
+            </span>
+            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">
+              GSTIN & LUT Declarations
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Pre-formatted fields for HSN/SAC codes, state of supply, and
+              statutory export declarations so your digital invoice format
+              remains fully compliant.
+            </p>
           </div>
+
           <div className="space-y-2.5">
-            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">03. Privacy</span>
-            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">Private & Local-First</h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">Your client and billing data stays private. Generate invoices entirely inside your browser session.</p>
+            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest block">
+              03. Architecture
+            </span>
+            <h4 className="text-base sm:text-lg font-medium text-zinc-950 tracking-tight">
+              Vector PDF Generation
+            </h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Invoices render directly to lightweight vector PDFs without
+              watermarks—delivering pixel-sharp fonts and logos for both print
+              and email sharing.
+            </p>
           </div>
         </div>
-
       </div>
     </section>
   );

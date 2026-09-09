@@ -13,23 +13,29 @@ export default function HeroSection() {
 
         {/* Headline + Call to Action */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10 sm:pb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-zinc-950 max-w-2xl leading-[1.15]">
-            Create Client-Ready Invoices{" "}
-            <span className="text-zinc-400">In Seconds, Not Hours.</span>
-          </h1>
+          <div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-zinc-950 max-w-2xl leading-[1.15]">
+              Free GST & Multi-Currency{" "}
+              <span className="text-zinc-400">Invoice Generator.</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-zinc-500 max-w-xl mt-3 leading-relaxed">
+              Create client-ready, vector-sharp PDF invoices in seconds.
+              Automated CGST/SGST/IGST calculation, LUT export support, and
+              instant downloads.
+            </p>
+          </div>
 
-          <div className="shrink-0 mb-1">
+          <div className="shrink-0 mb-1 flex flex-col items-start md:items-end gap-1.5">
             <Link
               href="/dashboard"
               className="inline-flex items-center justify-center px-5 py-2.5 text-xs sm:text-sm font-medium text-white bg-zinc-950 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
             >
-              Start Generating
+              Start Generating Free
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Feature Highlights Bar - Single Line (horizontal scroll on mobile) */}
       {/* Feature Highlights Bar - Pure Single Line (No Scroll) */}
       <div className="w-full border-y border-zinc-200 overflow-hidden">
         <div className="max-w-6xl mx-auto flex items-center justify-between divide-x divide-zinc-200 text-center">
@@ -67,12 +73,12 @@ export default function HeroSection() {
 
       {/* Product Mockup Preview Container */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 my-6 sm:my-10">
-        <div className="relative  border border-neutral-200/80 shadow-2xl bg-gradient-to-r from-blue-600 via-teal-400 to-amber-500 overflow-hidden pt-4 sm:pt-10 lg:pt-12 pl-4 sm:pl-8 lg:pl-12">
-          <div className=" overflow-hidden bg-zinc-50 border-t border-l border-zinc-200/80 shadow-2xl">
+        <div className="relative border border-neutral-200/80 shadow-2xl bg-gradient-to-r from-blue-600 via-teal-400 to-amber-500 overflow-hidden pt-4 sm:pt-10 lg:pt-12 pl-4 sm:pl-8 lg:pl-12">
+          <div className="overflow-hidden bg-zinc-50 border-t border-l border-zinc-200/80 shadow-2xl">
             <div className="w-full relative aspect-16/10 sm:aspect-16/9">
               <Image
                 src="/dash.png"
-                alt="Luen Live Invoice Generator Preview"
+                alt="Luen Free GST Invoice Generator and Billing Dashboard Preview"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1152px"
                 className="object-cover object-left-top"

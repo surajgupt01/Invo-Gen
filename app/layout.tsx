@@ -29,94 +29,71 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.luen.in"),
   title: {
-    default: "Luen — Professional GST & Multi-Currency Invoice Generator",
+    // Front-load top-intent keywords; keep under 60 characters
+    default: "Free Invoice Generator — GST & Multi-Currency PDF | Luen",
     template: "%s | Luen",
   },
+  // 150 characters with clear CTR triggers (Free, Instant, No sign-up)
   description:
-    "Generate, customize, and issue high-resolution vector PDF invoices instantly without spreadsheets. Built-in Indian GST engine (CGST/SGST/IGST), zero-rated LUT cross-border exports, and multi-currency billing for freelancers and modern businesses.",
-  keywords: [
-    "Invoice Generator",
-    "GST Invoice Generator",
-    "PDF Invoicing Software",
-    "Freelancer Invoice Maker",
-    "Multi-Currency Invoicing",
-    "Indian GST Invoicing",
-    "Export under LUT Invoice",
-    "Software Engineer Invoicing",
-    "Small Business Billing Software",
-    "Razorpay Invoicing Tool",
-    "Clean PDF Invoice Template",
-    "Vector PDF Generator",
-  ],
+    "Generate professional GST and multi-currency PDF invoices online for free. Instant vector PDF download with CGST/SGST/IGST and LUT export compliance.",
+  applicationName: "Luen",
   authors: [{ name: "Luen", url: "https://www.luen.in" }],
   creator: "Luen",
-  publisher: "Luen Software Inc.",
-  applicationName: "Luen",
-  generator: "Next.js",
-  referrer: "origin-when-cross-origin",
+  publisher: "Luen",
   category: "Business & Productivity",
-  classification: "Invoicing and Financial Software",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
   alternates: {
     canonical: "https://www.luen.in",
     languages: {
-      "en-US": "https://www.luen.in",
       "en-IN": "https://www.luen.in",
+      "en-US": "https://www.luen.in",
+      "x-default": "https://www.luen.in",
     },
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", sizes: "any" },
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },
     ],
-    shortcut: "/favicon.png",
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "Luen — Professional GST & Multi-Currency Invoice Generator",
+    title: "Free Invoice Generator — GST & Multi-Currency PDF | Luen",
     description:
-      "Generate clean, vector-sharp PDF invoices in seconds. Integrated Indian GST breakdown, cross-border LUT compliance, UPI QR codes, and seamless export.",
+      "Create clean, compliant GST & multi-currency vector PDF invoices in seconds. Free instant download without spreadsheets.",
     url: "https://www.luen.in",
-    siteName: "Luen Invoicing",
-    locale: "en_US",
-    alternateLocale: ["en_IN"],
+    siteName: "Luen",
+    locale: "en_IN",
+    alternateLocale: ["en_US"],
     type: "website",
     images: [
       {
-        url: "/favicon.png",
+        url: "/og-image.png", // Ensure you export a real 1200x630 UI snapshot to public/og-image.png
         width: 1200,
         height: 630,
-        type: "image/png",
-        alt: "Luen Interactive Invoicing Dashboard & Vector PDF Preview",
+        alt: "Luen Free Online GST Invoice Generator",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Luen — Professional Invoice Generator",
+    title: "Free Invoice Generator — GST & Multi-Currency PDF | Luen",
     description:
-      "Generate and manage compliant, vector-sharp PDF invoices without spreadsheets.",
-    images: ["/favicon.png"],
+      "Generate clean, compliant GST & multi-currency vector PDF invoices in seconds. Free instant download.",
+    images: ["/og-image.png"],
     creator: "@luen_in",
   },
   robots: {
     index: true,
     follow: true,
-    nocache: false,
     googleBot: {
       index: true,
       follow: true,
-      noimageindex: false,
-      "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
 };
@@ -134,78 +111,34 @@ export default function RootLayout({
         "@id": "https://www.luen.in/#website",
         "url": "https://www.luen.in",
         "name": "Luen",
-        "publisher": {
-          "@id": "https://www.luen.in/#organization",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.luen.in/blog?q={search_term_string}",
+          "query-input": "required name=search_term_string",
         },
-        "hasPart": [
-          {
-            "@type": "SiteNavigationElement",
-            "name": "Sign In",
-            "url": "https://www.luen.in/signin",
-          },
-          {
-            "@type": "SiteNavigationElement",
-            "name": "Blog",
-            "url": "https://www.luen.in/blog",
-          },
-          {
-            "@type": "SiteNavigationElement",
-            "name": "Documentation",
-            "url": "https://www.luen.in/docs",
-          },
-          {
-            "@type": "SiteNavigationElement",
-            "name": "Support",
-            "url": "https://www.luen.in/support",
-          },
-          {
-            "@type": "SiteNavigationElement",
-            "name": "Terms of Service",
-            "url": "https://www.luen.in/terms?tab=terms",
-          },
-          {
-            "@type": "SiteNavigationElement",
-            "name": "Privacy Policy",
-            "url": "https://www.luen.in/terms?tab=privacy",
-          },
-        ],
       },
       {
-        "@type": "SoftwareApplication",
-        "@id": "https://www.luen.in/#software",
-        "name": "Luen",
+        "@type": "WebApplication",
+        "@id": "https://www.luen.in/#app",
+        "name": "Luen Invoice Generator",
         "url": "https://www.luen.in",
         "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web Browser",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
         "description":
-          "Modern browser-based invoicing platform for freelancers, consultants, and agencies. Generate compliant GST invoices, international export documents, and vector PDFs with instant downloads.",
-        "offers": [
-          {
-            "@type": "Offer",
-            "name": "Starter Free Tier",
-            "price": "0",
-            "priceCurrency": "INR",
-            "description":
-              "5 free monthly invoice exports with essential templates and local persistence.",
-          },
-          {
-            "@type": "Offer",
-            "name": "Pro Tier (Domestic India)",
-            "price": "299",
-            "priceCurrency": "INR",
-            "billingDuration": "P1M",
-            "description":
-              "Unlimited invoice downloads, watermark suppression, and custom branding.",
-          },
-          {
-            "@type": "Offer",
-            "name": "Pro Tier (Global)",
-            "price": "12",
-            "priceCurrency": "USD",
-            "billingDuration": "P1M",
-            "description":
-              "Unlimited invoice downloads, multi-currency engine, and global payment support.",
-          },
+          "Free browser-based invoice generator for freelancers and businesses. Features built-in GST calculation, LUT export support, and instant vector PDF downloads.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR",
+          "category": "Free",
+        },
+        "featureList": [
+          "Instant Vector PDF Invoice Generation",
+          "Indian GST (CGST, SGST, IGST) Auto-Calculation",
+          "LUT Zero-Rated Export Compliance",
+          "Multi-Currency Invoicing (USD, EUR, GBP, INR)",
+          "Direct UPI QR Code Payment Embedding",
         ],
       },
       {
