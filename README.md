@@ -1,267 +1,132 @@
-````md
-<p align="center">
-  <img src="https://raw.githubusercontent.com/surajgupt01/Invo-Gen/main/public/favicon.png" width="80" alt="Luen Logo" />
-</p>
+<div align="center">
 
-<h1 align="center">Luen</h1>
+  <img src="https://raw.githubusercontent.com/surajgupt01/Invo-Gen/main/public/favicon.png" width="72" alt="Luen Logo" />
 
-<p align="center">
-  Modern Invoice Platform
-</p>
+  # Luen
 
-<p align="center">
-  Production-ready invoice generation for freelancers, consultants, and small businesses.
-</p>
+  **Production-grade invoice & billing platform with automated GST calculations, real-time document rendering, and high-fidelity PDF generation.**
 
-<p align="center">
-  <a href="https://www.Luen.in/">Live Demo</a> •
-  <a href="https://www.youtube.com/YOUR_VIDEO_ID">🎥 Product Demo</a> •
-  <a href="https://github.com/surajgupt01/Invo-Gen">Repository</a>
-</p>
+  [![Website](https://img.shields.io/badge/Website-luen.in-000000?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.luen.in/)
+  [![GitHub Stars](https://img.shields.io/github/stars/surajgupt01/Invo-Gen?style=for-the-badge&logo=github&color=181717)](https://github.com/surajgupt01/Invo-Gen/stargazers)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-teal?style=for-the-badge)](LICENSE)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white" alt="Next.js" />
-  <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License" />
-  <img src="https://img.shields.io/github/stars/surajgupt01/Invo-Gen?style=social" alt="GitHub Stars" />
-</p>
+  <br />
+
+  <p align="center">
+    <a href="https://www.luen.in/"><strong>Explore Live Application »</strong></a>
+    <br />
+    <a href="#-product-demo">Video Demo</a> •
+    <a href="#-architecture--tech-stack">System Architecture</a> •
+    <a href="#-invoice-generation-flow">Data Flow</a> •
+    <a href="#-key-capabilities">Key Capabilities</a> •
+    <a href="#-getting-started">Local Setup</a> •
+    <a href="#-roadmap">Roadmap</a>
+  </p>
+
+</div>
 
 ---
 
-## 🚀 Overview
+## ⚡ Overview
 
-**Luen** is a modern invoice generation platform built for freelancers, consultants, and small businesses.
+**Luen** is an open-source, high-performance invoice generation platform built to eliminate the overhead of bloated accounting software and error-prone spreadsheet templates. 
 
-It provides a fast, streamlined way to create professional invoices, preview them in real time, and export high-quality PDFs ready for printing, emailing, or sharing with clients.
+Engineered for precision and speed, it delivers zero-watermark, vector-sharp PDF documents with native support for statutory Indian tax compliance (**CGST / SGST / IGST**), cross-border **Letter of Undertaking (LUT) export billing**, dynamic **UPI QR codes**, and multi-currency conversions.
 
-The platform is designed around a simple principle:
+### Technical Highlights
 
-> **Create an invoice in seconds, without fighting with spreadsheets or complicated accounting software.**
-
-### Why Luen?
-
-- ⚡ Fast invoice creation
-- 📄 Professional, print-ready PDFs
-- 🧮 Automatic calculations for totals, taxes, and discounts
-- 💱 Multi-currency support
-- 👀 Real-time invoice preview
-- 🎨 Clean, modern invoice templates
-- 🔒 Privacy-focused invoice generation
-- 📱 Responsive experience across devices
+- ⚡ **Zero-Latency State Sync:** Reactive Zustand store synchronizes form inputs, calculation formulas, and the live A4 preview without network roundtrips.
+- 🇮🇳 **Statutory GST Engine:** Automated place-of-supply tax logic (intra-state vs. inter-state), HSN/SAC lookups, and reverse charge flags adhering strictly to Rule 46 of the CGST Act.
+- 🌍 **Cross-Border Billing:** Section 16 IGST Act-compliant export invoicing in USD ($), EUR (€), GBP (£), and INR (₹).
+- 🖨️ **Client/Server Vector PDF Engine:** High-performance PDF generation pipeline powered by `@react-pdf/renderer` for instant, pixel-perfect document downloads without heavy headless browser overhead.
+- 🔒 **Privacy-Centric Architecture:** Operates with minimal persistent server storage, eliminating unwanted data leakage of sensitive financial records.
 
 ---
 
 ## 🎥 Product Demo
 
-See Luen in action:
-
-<p align="center">
-  <a href="https://www.youtube.com/YOUR_VIDEO_ID">
-    <img
-      src="https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg"
-      alt="Luen Product Demo"
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=ubclSFQkqO8" target="_blank">
+    <img 
+      src="https://img.youtube.com/vi/ubclSFQkqO8/maxresdefault.jpg" 
+      alt="Luen Product Demo & Architecture Walkthrough" 
       width="800"
+      style="border-radius: 8px; border: 1px solid #e4e4e7;"
     />
   </a>
-</p>
-
-<p align="center">
-  <a href="https://www.youtube.com/YOUR_VIDEO_ID">
-    ▶️ Watch the Luen Product Demo on YouTube
-  </a>
-</p>
-
-The demo walks through the complete invoice creation workflow, including:
-
-- Creating an invoice
-- Adding business and client details
-- Adding products or services
-- Automatic calculations
-- Real-time invoice preview
-- Customizing invoice details
-- Exporting the final invoice as a PDF
+  <p align="center">
+    <sub>Click the preview image above to watch the end-to-end walkthrough on YouTube.</sub>
+  </p>
+</div>
 
 ---
 
-## ✨ Key Features
+## ✨ Key Capabilities
 
-### 📄 Professional Invoice Templates
-
-Create clean, business-ready invoices using modern templates designed for both digital sharing and printing.
-
-### ⚡ Real-Time Preview
-
-See changes instantly while editing your invoice. No need to repeatedly save, refresh, or open exported files to check the final result.
-
-### 🧮 Automated Calculations
-
-Automatically calculate:
-
-- Subtotals
-- Taxes
-- Discounts
-- Line-item totals
-- Final invoice amount
-
-### 💱 Multi-Currency Support
-
-Create invoices for clients around the world with support for multiple currencies, making Luen suitable for freelancers and businesses working with international clients.
-
-### 🖨️ High-Quality PDF Export
-
-Generate professional PDFs optimized for:
-
-- Email
-- WhatsApp
-- Printing
-- Client accounting systems
-- Digital record keeping
-
-### 🎨 Modern SaaS Interface
-
-A clean, responsive interface focused on reducing friction and making invoice creation straightforward.
-
-### 🔒 Privacy-First Architecture
-
-Invoice generation is designed with privacy in mind, minimizing unnecessary data handling and keeping invoice creation lightweight.
+| Capability | Description |
+| :--- | :--- |
+| **Statutory Tax Engine** | Automatically computes intra-state (`CGST + SGST`) and inter-state (`IGST`) distributions based on vendor and client GSTIN states. |
+| **Cross-Border Invoicing** | Handles zero-rated export invoicing under LUT (Letter of Undertaking) declaration pursuant to Section 16 of the IGST Act. |
+| **Dynamic UPI QR Codes** | Generates standard UPI payment intents (Google Pay, PhonePe, Paytm, BHIM) embedded directly onto the PDF for frictionless domestic settlement. |
+| **Reactive Calculation Matrix** | Client-side calculations for multi-tiered item rates, volume discounts, line-item taxes, and round-offs without page recalculation lag. |
+| **Pixel-Perfect Vector Export** | Produces crisp, zero-watermark, standard A4 vector PDFs matching exact print layout specs. |
 
 ---
 
 ## 🏗️ Architecture & Tech Stack
 
-### Frontend
+Luen is architected around isolated layers for state, computation, presentation, and vector document generation to ensure modularity and ease of testing.
 
-- **Next.js (App Router)** — Modern React framework and application architecture
-- **TypeScript** — Type-safe and maintainable development
-- **Tailwind CSS** — Utility-first styling
-- **shadcn/ui** — Accessible and reusable UI components
+### Technology Matrix
 
-### State Management
-
-- **Zustand** — Lightweight global state management for invoice data and application state
-
-### PDF Generation
-
-- **Puppeteer** — High-fidelity HTML-to-PDF generation for professional invoice exports
+| Layer | Technology | Engineering Role |
+| :--- | :--- | :--- |
+| **Framework** | [Next.js (App Router)](https://nextjs.org/) | Server & Client component orchestration, route layouts |
+| **Core** | [React](https://react.dev/) & [TypeScript](https://www.typescriptlang.org/) | Type-safe declarative UI state and structured data contracts |
+| **Styling & Primitives** | [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/) | Accessible Radix UI primitives with responsive utility styling |
+| **State Management** | [Zustand](https://github.com/pmndrs/zustand) | Lightweight, non-blocking centralized invoice store |
+| **Document Rendering** | [@react-pdf/renderer](https://react-pdf.org/) | Declarative React-based vector PDF generation engine |
 
 ---
 
-## 📂 Project Structure
-
-```bash
-src/
-├── app/            # Next.js routes and pages
-├── components/     # Reusable UI components
-├── store/          # Zustand stores
-├── constants/      # Application constants
-├── styles/         # Global styles
-└── utils/          # Utility functions
-````
-
----
-
-## ⚙️ Getting Started
-
-### Prerequisites
-
-Make sure you have installed:
-
-* Node.js 18+
-* npm
-
-### Installation
-
-```bash
-git clone https://github.com/surajgupt01/Invo-Gen.git
-
-cd Invo-Gen
-
-npm install
-```
-
-### Run the development server
-
-```bash
-npm run dev
-```
-
-Open your browser and visit:
+## 🔄 Invoice Generation Flow
 
 ```text
-http://localhost:3000
-```
-
----
-
-## 🛠️ Development
-
-The application uses the Next.js App Router and follows a component-driven architecture.
-
-Most invoice functionality is organized around:
-
-* Invoice state
-* Reusable UI components
-* Calculation utilities
-* Invoice templates
-* PDF generation
-
-This structure makes it easier to add new invoice formats, payment options, and business features as the platform evolves.
-
----
-
-## 🌐 Links
-
-| Resource             | Link                                    |
-| -------------------- | --------------------------------------- |
-| 🌐 Live Website      | https://www.Luen.in/                    |
-| 🎥 Product Demo      | https://www.youtube.com/YOUR_VIDEO_ID   |
-| 💻 GitHub Repository | https://github.com/surajgupt01/Invo-Gen |
-
----
-
-## 🗺️ Roadmap
-
-Potential improvements and upcoming features include:
-
-* [ ] More invoice templates
-* [ ] Saved client profiles
-* [ ] Invoice history
-* [ ] Payment tracking
-* [ ] Recurring invoices
-* [ ] UPI QR payments
-* [ ] Advanced GST invoicing
-* [ ] Custom branding
-* [ ] Cloud synchronization
-* [ ] Analytics and reporting
-
----
-
-## 🤝 Contributing
-
-Contributions, suggestions, and feedback are welcome.
-
-If you'd like to contribute:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Commit your changes
-5. Open a pull request
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
----
-
-<p align="center">
-  Built with ❤️ for freelancers and businesses.
-</p>
-
-<p align="center">
-  <a href="https://www.Luen.in/">Try Luen →</a>
-</p>
-```
+┌──────────────────────┐
+│    Invoice Editor    │
+│                      │
+│ Business / Client    │
+│ Items / Taxes        │
+│ Payment Details      │
+└──────────┬───────────┘
+           │ (Reactive Action Dispatch)
+           ▼
+┌──────────────────────┐
+│    Zustand Store     │
+│                      │
+│ Centralized Invoice  │
+│ State Tree           │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  Calculation Engine  │
+│                      │
+│ Subtotal & Discounts │
+│ CGST / SGST / IGST   │
+│ Exchange & Total     │
+└──────────┬───────────┘
+           │
+           ├─────────────────────────┐
+           ▼                         ▼
+┌──────────────────────┐  ┌──────────────────────┐
+│     Live Preview     │  │   React-PDF Engine   │
+│                      │  │                      │
+│ Real-Time DOM Sheet  │  │ Declarative Layout   │
+└──────────────────────┘  └──────────┬───────────┘
+                                     │
+                                     ▼
+                          ┌──────────────────────┐
+                          │    A4 Vector PDF     │
+                          │   (Instant Export)   │
+                          └──────────────────────┘
