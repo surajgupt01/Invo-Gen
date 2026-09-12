@@ -23,8 +23,308 @@ export interface BlogPost {
 }
 export const NEW_BLOG_POSTS: BlogPost[] = [
   {
+    slug: "gst-invoice-generator-how-to-create-gst-invoice-online",
+    title: "GST Invoice Generator: How to Create a GST Invoice Online",
+    description:
+      "Learn how to create a GST invoice online in minutes. Understand GST invoice requirements, CGST, SGST, IGST, HSN/SAC codes, GSTIN, invoice numbering, and how to download a professional GST invoice PDF.",
+    category: "GST & Tax",
+    categoryTab: "gst",
+    readTime: "9 min read",
+    publishedDate: "September 12, 2026",
+    author: "Luen Team",
+
+    content: [
+      {
+        id: "what-is-gst-invoice",
+        title: "1. What Is a GST Invoice?",
+
+        paragraphs: [
+          "A GST invoice is a document issued by a registered business when supplying taxable goods or services. It records important transaction details such as the seller and buyer information, invoice number, date, taxable value, GST rate, and the amount of tax charged.",
+
+          "For businesses registered under GST in India, creating accurate invoices is important not only for collecting payment but also for maintaining proper accounting records and enabling eligible customers to claim input tax credit.",
+
+          "Instead of creating every invoice manually in Excel or Word, businesses can use a GST invoice generator to automatically calculate taxes, format invoice details, and generate a professional PDF ready to send to customers.",
+        ],
+
+        bulletPoints: [
+          "Business and customer details",
+          "GSTIN of the supplier and recipient, where applicable",
+          "Unique and sequential invoice number",
+          "Invoice date",
+          "Description of goods or services",
+          "HSN or SAC code",
+          "Taxable value",
+          "Applicable GST rate",
+          "CGST, SGST/UTGST, or IGST amount",
+          "Total invoice value",
+        ],
+      },
+
+      {
+        id: "gst-invoice-format",
+        title: "2. What Should a GST Invoice Include?",
+
+        paragraphs: [
+          "A GST invoice should contain the information required to identify the supplier, recipient, transaction, taxable value, and applicable taxes. Keeping these details organized makes the invoice easier for customers, accountants, and tax records.",
+
+          "The exact requirements can vary depending on the type of transaction and taxpayer. Businesses should therefore verify their invoice requirements against the latest applicable GST rules.",
+        ],
+
+        bulletPoints: [
+          "Supplier name, address, and GSTIN",
+          "Customer name and billing address",
+          "Customer GSTIN when applicable",
+          "A unique invoice number",
+          "Invoice issue date",
+          "Product or service description",
+          "HSN or SAC classification",
+          "Quantity and unit price for applicable goods",
+          "Taxable amount",
+          "GST rate",
+          "CGST and SGST/UTGST for applicable intra-state supplies",
+          "IGST for applicable inter-state supplies",
+          "Total amount payable",
+          "Place of supply when required",
+          "Reverse charge information when applicable",
+        ],
+      },
+
+      {
+        id: "cgst-sgst-igst",
+        title: "3. CGST vs SGST vs IGST: Which Tax Should You Add?",
+
+        paragraphs: [
+          "One of the most common sources of confusion when creating a GST invoice is deciding whether to charge CGST and SGST or IGST. The applicable tax depends primarily on whether the supply is intra-state or inter-state.",
+
+          "For an intra-state supply, GST is generally divided between Central GST (CGST) and State GST (SGST), or UTGST where applicable. For an inter-state supply, Integrated GST (IGST) is generally charged.",
+
+          "For example, if a taxable supply is subject to an 18% GST rate and is an intra-state transaction, the tax may be split into 9% CGST and 9% SGST. For an applicable inter-state transaction at the same rate, the invoice may show 18% IGST.",
+        ],
+
+        bulletPoints: [
+          "Intra-state supply → generally CGST + SGST/UTGST",
+          "Inter-state supply → generally IGST",
+          "The applicable tax treatment depends on the nature and location of the supply",
+          "A GST invoice generator can reduce manual calculation errors by calculating the applicable tax amounts",
+        ],
+      },
+
+      {
+        id: "how-to-create-gst-invoice",
+        title: "4. How to Create a GST Invoice Online",
+
+        paragraphs: [
+          "Creating a GST invoice online does not need to involve complicated accounting software. A browser-based invoice generator can turn the process into a simple workflow.",
+        ],
+
+        bulletPoints: [
+          "1. Enter your business details: Add your business name, address, GSTIN, contact information, and logo.",
+          "2. Add customer details: Enter the customer's name, address, GSTIN, and other required information.",
+          "3. Add products or services: Enter the description, quantity, rate, HSN/SAC code, and applicable discount.",
+          "4. Select the tax treatment: Apply the appropriate GST rate and calculate CGST/SGST or IGST based on the transaction.",
+          "5. Add payment details: Include your bank account, UPI information, payment instructions, or UPI QR code.",
+          "6. Review the invoice: Check invoice numbering, customer details, taxable values, taxes, and the final amount.",
+          "7. Download the GST invoice PDF: Export the completed invoice and send it to your customer.",
+        ],
+      },
+
+      {
+        id: "gst-invoice-generator-benefits",
+        title: "5. Why Use a GST Invoice Generator?",
+
+        paragraphs: [
+          "Creating invoices manually works when you only have a few customers, but repetitive billing can quickly become time-consuming. A GST invoice generator automates calculations and formatting so you can focus on your actual business instead of maintaining spreadsheet templates.",
+
+          "For freelancers, consultants, agencies, small businesses, and independent professionals, an online invoice generator can be a faster alternative to building every invoice from scratch.",
+        ],
+
+        bulletPoints: [
+          "Automatic tax calculations",
+          "CGST, SGST, and IGST support",
+          "HSN/SAC fields",
+          "Consistent invoice numbering",
+          "Professional invoice templates",
+          "PDF invoice generation",
+          "Reusable customer information",
+          "Payment and bank details",
+          "UPI QR payment support",
+          "Multi-currency invoicing for eligible transactions",
+          "Accessible from a browser without installing desktop software",
+        ],
+      },
+
+      {
+        id: "gst-invoice-pdf",
+        title: "6. How to Download a GST Invoice as a PDF",
+
+        paragraphs: [
+          "PDF is one of the most convenient formats for sharing completed invoices because the layout remains consistent across devices. Once your GST invoice has been reviewed, you can export it as a PDF and send it to your customer through email, WhatsApp, or another business communication channel.",
+
+          "Before sending the invoice, verify the supplier GSTIN, customer details, invoice number, invoice date, taxable amount, GST rate, tax amounts, and total payable amount.",
+        ],
+
+        bulletPoints: [
+          "Review all invoice details before exporting",
+          "Use a unique invoice number",
+          "Verify GSTIN information",
+          "Check CGST, SGST, or IGST calculations",
+          "Confirm the final payable amount",
+          "Download the final PDF",
+          "Keep a copy for your business records",
+        ],
+      },
+
+      {
+        id: "gst-invoice-number",
+        title: "7. How Should GST Invoice Numbers Be Created?",
+
+        paragraphs: [
+          "Invoice numbering is an important part of keeping billing records organized. Businesses should use a clear, sequential invoice numbering system that makes individual invoices easy to identify and track.",
+
+          "For example, a business could use invoice numbers such as INV-001, INV-002, INV-003, and so on. The exact numbering approach should be consistent with the business's accounting and applicable GST requirements.",
+        ],
+
+        bulletPoints: [
+          "Use a unique invoice number",
+          "Keep invoice numbers sequential and organized",
+          "Avoid accidentally duplicating invoice numbers",
+          "Maintain records of issued invoices",
+          "Use a consistent numbering format across your billing workflow",
+        ],
+      },
+
+      {
+        id: "hsn-sac-gst",
+        title: "8. What Are HSN and SAC Codes on a GST Invoice?",
+
+        paragraphs: [
+          "HSN and SAC codes help classify the goods and services included on an invoice. HSN refers to the Harmonized System of Nomenclature used for goods, while SAC refers to the Services Accounting Code used for services.",
+
+          "Including the appropriate classification code on an invoice helps businesses maintain structured tax and accounting records. The requirements for displaying these codes can depend on factors such as the nature and value of supplies and the taxpayer's circumstances.",
+        ],
+
+        bulletPoints: [
+          "HSN is generally used for goods",
+          "SAC is generally used for services",
+          "Use the appropriate classification for the item being billed",
+          "Verify the applicable requirements for your business",
+        ],
+      },
+
+      {
+        id: "upi-gst-invoice",
+        title: "9. Can You Add a UPI QR Code to a GST Invoice?",
+
+        paragraphs: [
+          "Yes, businesses can include payment information such as UPI details on invoices. A QR code can make it easier for customers to initiate digital payments from a mobile device.",
+
+          "For businesses that frequently collect payments from Indian customers, placing payment instructions or a UPI QR code directly on the invoice can reduce friction between sending the bill and receiving payment.",
+        ],
+
+        bulletPoints: [
+          "Add UPI payment information to the invoice",
+          "Display payment instructions clearly",
+          "Use a QR code where appropriate",
+          "Include bank transfer details when required",
+          "Make the payment method easy for customers to understand",
+        ],
+      },
+
+      {
+        id: "gst-invoice-vs-bill-of-supply",
+        title: "10. GST Invoice vs Bill of Supply",
+
+        paragraphs: [
+          "A GST tax invoice and a bill of supply serve different purposes. A tax invoice is generally used for taxable supplies where GST is charged, while a bill of supply is used in situations where a tax invoice is not applicable, such as certain supplies by composition taxpayers or exempt supplies.",
+
+          "The correct document depends on the nature of the supply and the taxpayer's GST status.",
+        ],
+
+        bulletPoints: [
+          "Tax invoice → generally used when GST is charged on a taxable supply",
+          "Bill of supply → used for specified supplies where a tax invoice is not applicable",
+          "The correct document depends on the transaction and taxpayer status",
+        ],
+      },
+
+      {
+        id: "common-gst-invoice-mistakes",
+        title: "11. Common GST Invoice Mistakes to Avoid",
+
+        paragraphs: [
+          "Small invoice errors can create unnecessary back-and-forth with customers and accountants. Before sending a GST invoice, take a few seconds to verify the information that matters most.",
+        ],
+
+        bulletPoints: [
+          "Incorrect or missing GSTIN",
+          "Duplicate invoice numbers",
+          "Incorrect customer details",
+          "Wrong CGST, SGST, or IGST treatment",
+          "Incorrect GST rate",
+          "Missing HSN or SAC information where required",
+          "Incorrect taxable value",
+          "Incorrect final invoice total",
+          "Missing payment details",
+          "Sending an unfinished or incorrect invoice PDF",
+        ],
+      },
+
+      {
+        id: "free-gst-invoice-generator",
+        title: "12. Create a GST Invoice Online with Luen",
+
+        paragraphs: [
+          "Luen is an online invoice generator designed for freelancers, consultants, agencies, and growing businesses that want to create professional invoices without complicated accounting software.",
+
+          "With Luen, you can create GST-ready invoices, calculate CGST, SGST, and IGST, add HSN/SAC information, include payment details and UPI QR codes, and download professional PDF invoices from your browser.",
+
+          "Instead of building an invoice template in Excel every time you need to bill a customer, enter your business and customer information, add your line items, review the calculated totals, and generate your invoice.",
+        ],
+
+        bulletPoints: [
+          "Create GST-ready invoices online",
+          "Calculate CGST, SGST, and IGST",
+          "Add HSN/SAC information",
+          "Generate professional PDF invoices",
+          "Add UPI payment details",
+          "Save reusable customer information",
+          "Create invoices from your browser",
+        ],
+      },
+
+      {
+        id: "gst-invoice-faq",
+        title: "13. Frequently Asked Questions",
+
+        paragraphs: [
+          "Here are answers to common questions about GST invoices and online invoice generators.",
+        ],
+
+        bulletPoints: [
+          "What is a GST invoice? A GST invoice is a document issued for a taxable supply that records the supplier, recipient, goods or services, taxable value, applicable GST, and other required transaction information.",
+
+          "Can I create a GST invoice online? Yes. Businesses can use browser-based invoice generators to enter invoice details, calculate applicable taxes, and generate a PDF invoice.",
+
+          "Is a GST invoice the same as a GST bill? The terms are often used interchangeably in everyday business conversations, although a GST tax invoice is the formal document used for taxable supplies where GST is charged.",
+
+          "What is the difference between CGST and SGST? CGST is Central GST and SGST is State GST. For applicable intra-state supplies, GST is generally split between CGST and SGST.",
+
+          "When is IGST charged? IGST generally applies to inter-state supplies and certain other transactions covered by GST rules.",
+
+          "Can I create a GST invoice in PDF format? Yes. An online invoice generator can generate a completed GST invoice as a PDF for sharing and record keeping.",
+
+          "Can freelancers create GST invoices? GST-registered freelancers and professionals can issue GST invoices for applicable taxable supplies, subject to their registration status and applicable GST requirements.",
+
+          "Can I add a UPI QR code to my invoice? Yes. Payment information such as a UPI QR code can be included on an invoice to make digital payment easier for customers.",
+        ],
+      },
+    ],
+  },
+
+  {
     slug: "how-to-use-an-online-invoice-generator-free-guide",
-    title: "How to Use an Online Invoice Generator: The Fast, Free Way to Bill Clients",
+    title:
+      "How to Use an Online Invoice Generator: The Fast, Free Way to Bill Clients",
     description:
       "A complete guide to using an online invoice generator. Learn how to create professional PDF invoices in your browser, automate taxes, save client records, and get paid faster.",
     category: "Automation",
@@ -35,7 +335,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     content: [
       {
         id: "why-use-online-invoice-generator",
-        title: "1. Why Use an Online Invoice Generator Instead of Spreadsheets?",
+        title:
+          "1. Why Use an Online Invoice Generator Instead of Spreadsheets?",
         paragraphs: [
           "When you need to bill a client, formatting a document from scratch in Microsoft Word, Google Docs, or Excel is slow, clunky, and prone to errors. Spreadsheets don't automatically validate tax IDs, manual formulas often miscalculate sub-totals, and exporting them frequently breaks margins and page breaks.",
           "An online invoice generator runs directly inside your web browser and handles layout, calculations, and formatting automatically. Instead of wrestling with spreadsheet cells, you fill out intuitive fields—business name, client details, line items, and payment options—and export a print-ready vector PDF in seconds.",

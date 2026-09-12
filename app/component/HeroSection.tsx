@@ -30,7 +30,7 @@ export default function HeroSection() {
               href="/dashboard"
               className="inline-flex items-center justify-center px-5 py-2.5 text-xs sm:text-sm font-medium text-white bg-zinc-950 hover:bg-zinc-800 rounded-md transition-colors shadow-xs"
             >
-              Start Generating Free
+              Create Free Invoice
             </Link>
           </div>
         </div>
@@ -88,6 +88,89 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+      <ComplianceGrid />
     </section>
+  );
+}
+
+// import Link from "next/link";
+
+const formats = [
+  {
+    tag: "GST READY",
+    title: "Create GST Invoices",
+    desc: "Generate GST-compliant invoices with automatic CGST, SGST, and IGST calculations, HSN/SAC codes, GSTINs, and place-of-supply details.",
+  },
+  {
+    tag: "GET PAID FASTER",
+    title: "Add UPI QR Payments",
+    desc: "Let customers pay directly from your invoice with a dynamic UPI QR code compatible with Google Pay, PhonePe, Paytm, and BHIM.",
+  },
+  {
+    tag: "PROFESSIONAL PDF",
+    title: "Download Instant PDFs",
+    desc: "Turn your invoice into a clean, professional PDF that's ready to email, WhatsApp, print, or send to your customer.",
+  },
+  {
+    tag: "INTERNATIONAL",
+    title: "Invoice Global Clients",
+    desc: "Create invoices for international customers in USD, EUR, GBP, and other currencies with export-ready invoice details.",
+  },
+  {
+    tag: "BEFORE THE SALE",
+    title: "Quotes & Proforma Invoices",
+    desc: "Create estimates and proforma invoices, then convert them into final GST invoices without entering your items again.",
+  },
+  {
+    tag: "YOUR BRAND",
+    title: "Make It Yours",
+    desc: "Add your logo, business details, payment information, signature, and custom invoice preferences to every invoice.",
+  },
+];
+
+function ComplianceGrid() {
+  return (
+    <div className="w-full border-t border-zinc-200 bg-white py-14 sm:py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 sm:mb-14">
+          <div>
+            <p className="text-[11px] sm:text-xs font-mono font-medium tracking-widest text-zinc-400 uppercase mb-2">
+              Statutory Compliance & Formats
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-950 max-w-xl">
+              Engineered for every tax scenario,{" "}
+              <span className="text-zinc-400">domestic and cross-border.</span>
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-zinc-500 max-w-sm leading-relaxed">
+            Standardized templates adhering strictly to Rule 46 of the CGST Act
+            and global billing conventions.
+          </p>
+        </div>
+
+        {/* 6-Card Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-l border-zinc-200">
+          {formats.map((item, idx) => (
+            <div
+              key={idx}
+              className="p-6 sm:p-7 border-r border-b border-zinc-200 flex flex-col justify-between hover:bg-zinc-50/50 transition-colors"
+            >
+              <div>
+                <span className="font-mono text-[10px] tracking-wider uppercase font-semibold text-teal-600 mb-3 block">
+                  {item.tag}
+                </span>
+                <h3 className="text-base sm:text-lg font-medium text-zinc-950 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
